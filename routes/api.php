@@ -490,17 +490,17 @@ Route::middleware(['authorize.user'])->group(function () {
         });
     });
 
-    Route::group(['prefix' => 'role-workflows'], function () {
-        Route::controller(RoleWorkflowController::class)->group(function () {
-            Route::get('/', 'index')->name('role-workflows.index');
-            Route::get('/{id}', 'show');
-            Route::post('/', 'store')->name('role-workflows.store');
-            Route::put('/{id}', 'update')->name('role-workflows.update');
-            Route::delete('/{id}', 'destroy')->name('role-workflows.destroy');
-            Route::get('logs/{id}', 'logs')->name('role-workflows.logs');
-            Route::post("bulk-delete", "bulkDelete");
-        });
-    });
+    // Route::group(['prefix' => 'role-workflows'], function () {
+    //     Route::controller(RoleWorkflowController::class)->group(function () {
+    //         Route::get('/', 'index')->name('role-workflows.index');
+    //         Route::get('/{id}', 'show');
+    //         Route::post('/', 'store')->name('role-workflows.store');
+    //         Route::put('/{id}', 'update')->name('role-workflows.update');
+    //         Route::delete('/{id}', 'destroy')->name('role-workflows.destroy');
+    //         Route::get('logs/{id}', 'logs')->name('role-workflows.logs');
+    //         Route::post("bulk-delete", "bulkDelete");
+    //     });
+    // });
 
     Route::group(['prefix' => 'avenues'], function () {
         Route::controller(\App\Http\Controllers\Avenue\AvenueController::class)->group(function () {
@@ -670,17 +670,17 @@ Route::middleware(['authorize.user'])->group(function () {
         });
     });
 
-    Route::group(['prefix' => 'role-workflow-button'], function () {
-        Route::controller(\App\Http\Controllers\RoleWorkflowButton\RoleWorkflowButtonController::class)->group(function () {
-            Route::get('/', 'all')->name('role-workflow-button.index');
-            Route::get('/{id}', 'find');
-            Route::post('/', 'create')->name('role-workflow-button.create');
-            Route::post("bulk-delete", "bulkDelete");
-            Route::post('/{id}', 'update')->name('role-workflow-button.update');
-            Route::delete('/{id}', 'delete')->name('role-workflow-button.destroy');
-            Route::get('logs/{id}', 'logs')->name('role-workflow-button.logs');
-        });
-    });
+    // Route::group(['prefix' => 'role-workflow-button'], function () {
+    //     Route::controller(\App\Http\Controllers\RoleWorkflowButton\RoleWorkflowButtonController::class)->group(function () {
+    //         Route::get('/', 'all')->name('role-workflow-button.index');
+    //         Route::get('/{id}', 'find');
+    //         Route::post('/', 'create')->name('role-workflow-button.create');
+    //         Route::post("bulk-delete", "bulkDelete");
+    //         Route::post('/{id}', 'update')->name('role-workflow-button.update');
+    //         Route::delete('/{id}', 'delete')->name('role-workflow-button.destroy');
+    //         Route::get('logs/{id}', 'logs')->name('role-workflow-button.logs');
+    //     });
+    // });
 
     Route::group(['prefix' => 'workflow-hotfield'], function () {
         Route::controller(\App\Http\Controllers\WorkflowHotfield\WorkflowHotfieldController::class)->group(function () {
@@ -757,12 +757,12 @@ Route::middleware(['authorize.user'])->group(function () {
         });
     });
 
-    Route::group(['prefix' => 'role_types'], function () {
-        Route::controller(RoleTypeController::class)->group(function () {
-            Route::get('logs/{id}', 'logs')->name('role_types.logs');
-            Route::post("bulk-delete", "bulkDelete");
-        });
-    });
+    // Route::group(['prefix' => 'role_types'], function () {
+    //     Route::controller(RoleTypeController::class)->group(function () {
+    //         Route::get('logs/{id}', 'logs')->name('role_types.logs');
+    //         Route::post("bulk-delete", "bulkDelete");
+    //     });
+    // });
 
     Route::group(['prefix' => 'serials'], function () {
         Route::controller(SerialController::class)->group(function () {
@@ -1052,7 +1052,7 @@ Route::post('cities/bulk-delete', [CityController::class, 'bulkDelete']);
 Route::resource('currencies', CurrencyController::class)->except('create', 'edit');
 Route::get('currencies/logs/{id}', [CurrencyController::class, 'logs']);
 Route::post('currencies/bulk-delete', [CurrencyController::class, 'bulkDelete']);
-Route::resource('role_types', RoleTypeController::class)->except('create', 'edit');
+// Route::resource('role_types', RoleTypeController::class)->except('create', 'edit');
 Route::group(['prefix' => 'tree-properties'], function () {
     Route::controller(TreePropertyController::class)->group(function () {
         Route::get('/get-drop-down', 'getDropDown');

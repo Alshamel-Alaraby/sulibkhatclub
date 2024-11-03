@@ -61,6 +61,7 @@ export default {
   },
   data() {
     return {
+        sponsers: [],
       transactions: [],
       page_title: {},
       fields: [],
@@ -158,6 +159,7 @@ export default {
             last_name : '',
             family_name : '',
             home_phone : '',
+            sponser_ids: [],
         },
       filterSetting: [
         "full_name",
@@ -250,6 +252,7 @@ export default {
   mounted() {
     this.company_id = this.$store.getters["auth/company_id"];
     this.page_title = page_title.value
+    this.getSponsers();
     this.getData();
   },
   computed: {
@@ -258,6 +261,25 @@ export default {
     },
   },
   methods: {
+    async getSponsers() {
+            this.isLoader = true;
+            adminApi
+                .get(`/club-members/sponsers`)
+                .then((res) => {
+                let l = res.data.data;
+                this.sponsers = l;
+                })
+                .catch((err) => {
+                Swal.fire({
+                    icon: "error",
+                    title: `${this.$t("general.Error")}`,
+                    text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                });
+                })
+                .finally(() => {
+                this.isLoader = false;
+                });
+        },
     resetModalTransation(id){
         let editTable = this.edit;
         this.fullName = `${editTable.first_name} ${editTable.second_name ? editTable.second_name : ''} ${editTable.third_name? editTable.third_name: ''} ${editTable.last_name? editTable.last_name: ''} ${editTable.family_name ? editTable.family_name : ''}`;
@@ -351,9 +373,10 @@ export default {
       for (let i = 0; i < this.filterSetting.length; ++i) {
         filter += `columns[${i}]=${this.filterSetting[i]}&`;
       }
+       const sponsor_ids = JSON.stringify(this.filterMember.sponser_ids);
       adminApi
         .get(
-          `/club-members/members?page=${page}&per_page=${this.per_page}&company_id=${this.company_id}&search=${this.search}&${filter}&national_id=${this.filterMember.national_id??''}&membership_number=${this.filterMember.membership_number??''}&full_name=${this.filterMember.full_name??''}&home_phone=${this.filterMember.home_phone??''}&first_name=${this.filterMember.first_name??''}&second_name=${this.filterMember.second_name??''}&third_name=${this.filterMember.third_name}&last_name=${this.filterMember.last_name??''}&family_name=${this.filterMember.family_name}`
+          `/club-members/members?page=${page}&per_page=${this.per_page}&company_id=${this.company_id}&search=${this.search}&${filter}&national_id=${this.filterMember.national_id ?? ""}&membership_number=${this.filterMember.membership_number ?? ""}&full_name=${this.filterMember.full_name ?? ""}&home_phone=${this.filterMember.home_phone ?? ""}&first_name=${this.filterMember.first_name ?? ""}&second_name=${this.filterMember.second_name ?? ""}&third_name=${this.filterMember.third_name}&last_name=${this.filterMember.last_name ?? ""}&family_name=${this.filterMember.family_name}&sponser_ids=${encodeURIComponent(sponsor_ids)}`,
         )
         .then((res) => {
           let l = res.data;
@@ -394,10 +417,11 @@ export default {
           filter += `columns[${i}]=${this.filterSetting[i]}&`;
         }
 
-        adminApi
-          .get(
-            `/club-members/members?page=${this.current_page}&per_page=${this.per_page}&search=${this.search}&${filter}&company_id=${this.company_id}`
-          )
+         const sponsor_ids = JSON.stringify(this.filterMember.sponser_ids);
+      adminApi
+        .get(
+          `/club-members/members?page=${page}&per_page=${this.per_page}&company_id=${this.company_id}&search=${this.search}&${filter}&national_id=${this.filterMember.national_id ?? ""}&membership_number=${this.filterMember.membership_number ?? ""}&full_name=${this.filterMember.full_name ?? ""}&home_phone=${this.filterMember.home_phone ?? ""}&first_name=${this.filterMember.first_name ?? ""}&second_name=${this.filterMember.second_name ?? ""}&third_name=${this.filterMember.third_name}&last_name=${this.filterMember.last_name ?? ""}&family_name=${this.filterMember.family_name}&sponser_ids=${encodeURIComponent(sponsor_ids)}`,
+        )
           .then((res) => {
             let l = res.data;
             this.members = l.data;
@@ -694,6 +718,7 @@ export default {
           this.filterMember.last_name = '';
           this.filterMember.family_name = '';
           this.filterMember.home_phone = '';
+          this.filterMember.sponser_ids = [];
           this.is_disabled = false;
       },
   },
@@ -1132,6 +1157,25 @@ export default {
                                   />
                               </div>
                           </div>
+                          <div class="col-md-6">
+                            <div class="form-group position-relative">
+                            <label class="control-label">
+                                {{ $t("general.sponser") }}
+                            </label>
+                            <multiselect
+                                :multiple="true"
+                                v-model="filterMember.sponser_ids"
+                                :options="sponsers.map((type) => type.id)"
+                                :custom-label="
+                                (opt) =>
+                                    $i18n.locale == 'ar'
+                                    ? sponsers.find((x) => x.id == opt).name
+                                    : sponsers.find((x) => x.id == opt).name_e
+                                "
+                            >
+                            </multiselect>
+                            </div>
+                        </div>
                       </div>
                   </form>
               </b-modal>

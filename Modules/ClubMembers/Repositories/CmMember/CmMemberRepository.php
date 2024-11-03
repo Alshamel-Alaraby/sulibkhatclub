@@ -93,6 +93,13 @@ class CmMemberRepository implements CmMemberInterface
         if ($request->family_name) {
             $models->where('family_name', 'like', $request->family_name . '%');
         }
+        if ($request->has('sponser_ids') && $request->sponser_ids !== "[]") {
+
+             $sponser_ids = is_array($request->sponser_ids) ? $request->sponser_ids : json_decode($request->sponser_ids, true);
+            $models->whereHas('sponsors',function ($q) use ($sponser_ids){
+                $q->whereIn('sponsor_id',$sponser_ids);
+            });
+        }
 
         if ($request->per_page) {
             return ['data' => $models->paginate($request->per_page), 'paginate' => true];
@@ -748,6 +755,13 @@ class CmMemberRepository implements CmMemberInterface
         if ($request->year_number) {
             $membership_year = $request->year - $request->year_number;
             $models->whereYear('membership_date', '<=', $membership_year);
+        }
+        if ($request->has('sponser_ids') && $request->sponser_ids !== "[]") {
+
+             $sponser_ids = is_array($request->sponser_ids) ? $request->sponser_ids : json_decode($request->sponser_ids, true);
+            $models->whereHas('sponsors',function ($q) use ($sponser_ids){
+                $q->whereIn('sponsor_id',$sponser_ids);
+            });
         }
 
         if ($request->per_page) {

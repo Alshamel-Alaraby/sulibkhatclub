@@ -6471,7 +6471,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
-      version: "v2.3.9"
+      version: "v5.1.7"
     };
   }
 });
@@ -7163,7 +7163,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               _helper_global_js__WEBPACK_IMPORTED_MODULE_5__.selectedParents.value = [prog_id, prog_module_id, dashboard_id];
               localStorage.setItem("selectedParents", JSON.stringify(_helper_global_js__WEBPACK_IMPORTED_MODULE_5__.selectedParents.value));
               _context2.next = 5;
-              return axios__WEBPACK_IMPORTED_MODULE_7___default().get("".concat("https://admin.alshamelalaraby2.com/", "api/partners/get_children_inside_module_for_partner_sidebar_menu/").concat(prog_module_id)).then( /*#__PURE__*/function () {
+              return axios__WEBPACK_IMPORTED_MODULE_7___default().get("".concat("https://adminv2.alshamelalaraby.com/", "api/partners/get_children_inside_module_for_partner_sidebar_menu/").concat(prog_module_id)).then( /*#__PURE__*/function () {
                 var _ref = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee(res) {
                   var folders_and_pages, folders_and_pages_after_appended_show_property;
                   return _regeneratorRuntime().wrap(function _callee$(_context) {
@@ -17035,7 +17035,7 @@ var render = function render() {
     staticClass: "row"
   }, [_c("div", {
     staticClass: "col-md-6 color"
-  }, [_vm._v("\r\n                " + _vm._s(new Date().getFullYear()) + " © Al Shamel Al Araby\r\n                "), _c("span", {
+  }, [_vm._v("\n                " + _vm._s(new Date().getFullYear()) + " © Al Shamel Al Araby\n                "), _c("span", {
     staticStyle: {
       margin: "0px 30px"
     }
@@ -17110,7 +17110,7 @@ var render = function render() {
       }
     }, [_c("i", {
       "class": "".concat(item.icon, " mr-1")
-    }), _vm._v("\r\n                                " + _vm._s(_vm.$t(item.label)) + "\r\n                            ")]) : _vm._e(), _vm._v(" "), item.subItems ? _c("a", {
+    }), _vm._v("\n                                " + _vm._s(_vm.$t(item.label)) + "\n                            ")]) : _vm._e(), _vm._v(" "), item.subItems ? _c("a", {
       staticClass: "nav-link dropdown-toggle arrow-none",
       attrs: {
         href: "javascript: void(0);",
@@ -17122,7 +17122,7 @@ var render = function render() {
       }
     }, [_c("i", {
       "class": "".concat(item.icon, " mr-1")
-    }), _vm._v("\r\n                                " + _vm._s(_vm.$t(item.label)) + "\r\n                                "), _c("div", {
+    }), _vm._v("\n                                " + _vm._s(_vm.$t(item.label)) + "\n                                "), _c("div", {
       staticClass: "arrow-down"
     })]) : _vm._e(), _vm._v(" "), _vm.hasItems(item) ? _c("div", {
       staticClass: "dropdown-menu row",
@@ -17147,7 +17147,7 @@ var render = function render() {
         on: {
           click: _vm.onMenuClick
         }
-      }, [_vm._v("\r\n                                            " + _vm._s(_vm.$t(subitem.label)) + "\r\n                                            "), _c("div", {
+      }, [_vm._v("\n                                            " + _vm._s(_vm.$t(subitem.label)) + "\n                                            "), _c("div", {
         staticClass: "arrow-down"
       })]), _vm._v(" "), _c("div", {
         staticClass: "dropdown-menu"
@@ -18551,7 +18551,7 @@ var render = function render() {
         name: "home"
       }
     }
-  }, [_vm._v("\r\n                                        Sales\r\n                                    ")])], 1), _vm._v(" "), _c("li", {
+  }, [_vm._v("\n                                        Sales\n                                    ")])], 1), _vm._v(" "), _c("li", {
     staticClass: "nav-item"
   }, [_c("router-link", {
     staticClass: "nav-link side-nav-link-ref",
@@ -18560,7 +18560,7 @@ var render = function render() {
         name: "crm-dashboard"
       }
     }, "to", "/dashboard/crm")
-  }, [_vm._v("\r\n                                        CRM\r\n                                    ")])], 1), _vm._v(" "), _c("li", {
+  }, [_vm._v("\n                                        CRM\n                                    ")])], 1), _vm._v(" "), _c("li", {
     staticClass: "nav-item"
   }, [_c("router-link", {
     staticClass: "nav-link side-nav-link-ref",
@@ -18569,7 +18569,7 @@ var render = function render() {
     }, "to", {
       name: "analytics-dashboard"
     })
-  }, [_vm._v("\r\n                                        Analytics\r\n                                    ")])], 1)])])]) : _vm._e(), _vm._v(" "), _vm.activetab === 2 ? _c("div", {
+  }, [_vm._v("\n                                        Analytics\n                                    ")])], 1)])])]) : _vm._e(), _vm._v(" "), _vm.activetab === 2 ? _c("div", {
     staticClass: "twocolumn-menu-item d-block",
     attrs: {
       id: "apps"
@@ -18587,7 +18587,7 @@ var render = function render() {
         name: "calendar"
       }
     }
-  }, [_vm._v("\r\n                                    Calendar\r\n                                ")])], 1), _vm._v(" "), _c("li", {
+  }, [_vm._v("\n                                    Calendar\n                                ")])], 1), _vm._v(" "), _c("li", {
     staticClass: "nav-item"
   }, [_c("router-link", {
     staticClass: "nav-link side-nav-link-ref",
@@ -18596,7 +18596,7 @@ var render = function render() {
         name: "chat"
       }
     }
-  }, [_vm._v("\r\n                                    Chat\r\n                                ")])], 1), _vm._v(" "), _c("li", {
+  }, [_vm._v("\n                                    Chat\n                                ")])], 1), _vm._v(" "), _c("li", {
     staticClass: "nav-item"
   }, [_c("a", {
     directives: [{
@@ -18626,70 +18626,70 @@ var render = function render() {
         name: "products"
       }
     }
-  }, [_vm._v("\r\n                                                Products List\r\n                                            ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
+  }, [_vm._v("\n                                                Products List\n                                            ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
     staticClass: "side-nav-link-ref",
     attrs: {
       to: {
         name: "products-grid"
       }
     }
-  }, [_vm._v("\r\n                                                Products Grid\r\n                                            ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
+  }, [_vm._v("\n                                                Products Grid\n                                            ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
     staticClass: "side-nav-link-ref",
     attrs: {
       to: {
         name: "product-detail"
       }
     }
-  }, [_vm._v("\r\n                                                Product Detail\r\n                                            ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
+  }, [_vm._v("\n                                                Product Detail\n                                            ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
     staticClass: "side-nav-link-ref",
     attrs: {
       to: {
         name: "product-create"
       }
     }
-  }, [_vm._v("\r\n                                                Create Product\r\n                                            ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
+  }, [_vm._v("\n                                                Create Product\n                                            ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
     staticClass: "side-nav-link-ref",
     attrs: {
       to: {
         name: "customers"
       }
     }
-  }, [_vm._v("\r\n                                                Customers\r\n                                            ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
+  }, [_vm._v("\n                                                Customers\n                                            ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
     staticClass: "side-nav-link-ref",
     attrs: {
       to: {
         name: "orders"
       }
     }
-  }, [_vm._v("\r\n                                                Orders\r\n                                            ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
+  }, [_vm._v("\n                                                Orders\n                                            ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
     staticClass: "side-nav-link-ref",
     attrs: {
       to: {
         name: "order-detail"
       }
     }
-  }, [_vm._v("\r\n                                                Order Detail\r\n                                            ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
+  }, [_vm._v("\n                                                Order Detail\n                                            ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
     staticClass: "side-nav-link-ref",
     attrs: {
       to: {
         name: "sellers"
       }
     }
-  }, [_vm._v("\r\n                                                Sellers\r\n                                            ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
+  }, [_vm._v("\n                                                Sellers\n                                            ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
     staticClass: "side-nav-link-ref",
     attrs: {
       to: {
         name: "cart"
       }
     }
-  }, [_vm._v("\r\n                                                Shopping Cart\r\n                                            ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
+  }, [_vm._v("\n                                                Shopping Cart\n                                            ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
     staticClass: "side-nav-link-ref",
     attrs: {
       to: {
         name: "checkout"
       }
     }
-  }, [_vm._v("\r\n                                                Checkout\r\n                                            ")])], 1)])])], 1), _vm._v(" "), _c("li", {
+  }, [_vm._v("\n                                                Checkout\n                                            ")])], 1)])])], 1), _vm._v(" "), _c("li", {
     staticClass: "nav-item"
   }, [_c("a", {
     directives: [{
@@ -18719,21 +18719,21 @@ var render = function render() {
         name: "email-inbox"
       }
     }
-  }, [_vm._v("\r\n                                                Inbox\r\n                                            ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
+  }, [_vm._v("\n                                                Inbox\n                                            ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
     staticClass: "side-nav-link-ref",
     attrs: {
       to: {
         name: "reademail"
       }
     }
-  }, [_vm._v("\r\n                                                Read Email\r\n                                            ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
+  }, [_vm._v("\n                                                Read Email\n                                            ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
     staticClass: "side-nav-link-ref",
     attrs: _defineProperty({
       to: "/email/templates"
     }, "to", {
       name: "email-templates"
     })
-  }, [_vm._v("\r\n                                                Email Templates\r\n                                            ")])], 1)])])], 1), _vm._v(" "), _c("li", {
+  }, [_vm._v("\n                                                Email Templates\n                                            ")])], 1)])])], 1), _vm._v(" "), _c("li", {
     staticClass: "nav-item"
   }, [_c("router-link", {
     staticClass: "nav-link side-nav-link-ref",
@@ -18742,7 +18742,7 @@ var render = function render() {
     }, "to", {
       name: ""
     })
-  }, [_vm._v("\r\n                                    Companies\r\n                                ")])], 1), _vm._v(" "), _c("li", {
+  }, [_vm._v("\n                                    Companies\n                                ")])], 1), _vm._v(" "), _c("li", {
     staticClass: "nav-item"
   }, [_c("a", {
     directives: [{
@@ -18772,21 +18772,21 @@ var render = function render() {
         name: "task-list"
       }
     }
-  }, [_vm._v("\r\n                                                List\r\n                                            ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
+  }, [_vm._v("\n                                                List\n                                            ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
     staticClass: "side-nav-link-ref",
     attrs: {
       to: {
         name: "task-detail"
       }
     }
-  }, [_vm._v("\r\n                                                Details\r\n                                            ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
+  }, [_vm._v("\n                                                Details\n                                            ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
     staticClass: "side-nav-link-ref",
     attrs: {
       to: {
         name: "kanban-board"
       }
     }
-  }, [_vm._v("\r\n                                                Kanban Board\r\n                                            ")])], 1)])])], 1), _vm._v(" "), _c("li", {
+  }, [_vm._v("\n                                                Kanban Board\n                                            ")])], 1)])])], 1), _vm._v(" "), _c("li", {
     staticClass: "nav-item"
   }, [_c("a", {
     directives: [{
@@ -18816,14 +18816,14 @@ var render = function render() {
         name: "contacts-list"
       }
     }
-  }, [_vm._v("\r\n                                                Members List\r\n                                            ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
+  }, [_vm._v("\n                                                Members List\n                                            ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
     staticClass: "side-nav-link-ref",
     attrs: {
       to: {
         name: "contacts-profile"
       }
     }
-  }, [_vm._v("\r\n                                                Profile\r\n                                            ")])], 1)])])], 1), _vm._v(" "), _c("li", {
+  }, [_vm._v("\n                                                Profile\n                                            ")])], 1)])])], 1), _vm._v(" "), _c("li", {
     staticClass: "nav-item"
   }, [_c("router-link", {
     staticClass: "nav-link side-nav-link-ref",
@@ -18832,7 +18832,7 @@ var render = function render() {
         name: "file-manager"
       }
     }
-  }, [_vm._v("\r\n                                    File Manager\r\n                                ")])], 1), _vm._v(" "), _c("li", {
+  }, [_vm._v("\n                                    File Manager\n                                ")])], 1), _vm._v(" "), _c("li", {
     staticClass: "nav-item"
   }, [_c("router-link", {
     staticClass: "nav-link side-nav-link-ref",
@@ -18841,7 +18841,7 @@ var render = function render() {
         name: "tickets"
       }
     }
-  }, [_vm._v("\r\n                                    Tickets\r\n                                ")])], 1)])]) : _vm._e(), _vm._v(" "), _vm.activetab === 3 ? _c("div", {
+  }, [_vm._v("\n                                    Tickets\n                                ")])], 1)])]) : _vm._e(), _vm._v(" "), _vm.activetab === 3 ? _c("div", {
     staticClass: "twocolumn-menu-item d-block",
     attrs: {
       id: "pages"
@@ -19053,7 +19053,7 @@ var render = function render() {
       href: "javascript: void(0);",
       "data-toggle": "collapse"
     }
-  }, [_vm._v("\r\n                                        Error Pages\r\n                                        "), _c("span", {
+  }, [_vm._v("\n                                        Error Pages\n                                        "), _c("span", {
     staticClass: "menu-arrow"
   })]), _vm._v(" "), _c("b-collapse", {
     attrs: {
@@ -19418,49 +19418,49 @@ var render = function render() {
         name: "elements"
       }
     }
-  }, [_vm._v("\r\n                                                    General Elements\r\n                                                ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
+  }, [_vm._v("\n                                                    General Elements\n                                                ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
     staticClass: "side-nav-link-ref",
     attrs: {
       to: {
         name: "advanced-form"
       }
     }
-  }, [_vm._v("\r\n                                                    Advanced\r\n                                                ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
+  }, [_vm._v("\n                                                    Advanced\n                                                ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
     staticClass: "side-nav-link-ref",
     attrs: {
       to: {
         name: "validation"
       }
     }
-  }, [_vm._v("\r\n                                                    Validation\r\n                                                ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
+  }, [_vm._v("\n                                                    Validation\n                                                ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
     staticClass: "side-nav-link-ref",
     attrs: {
       to: {
         name: "wizard"
       }
     }
-  }, [_vm._v("\r\n                                                    Wizard\r\n                                                ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
+  }, [_vm._v("\n                                                    Wizard\n                                                ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
     staticClass: "side-nav-link-ref",
     attrs: {
       to: {
         name: "mask"
       }
     }
-  }, [_vm._v("\r\n                                                    Masks\r\n                                                ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
+  }, [_vm._v("\n                                                    Masks\n                                                ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
     staticClass: "side-nav-link-ref",
     attrs: {
       to: {
         name: "quill"
       }
     }
-  }, [_vm._v("\r\n                                                    Quill Editor\r\n                                                ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
+  }, [_vm._v("\n                                                    Quill Editor\n                                                ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
     staticClass: "side-nav-link-ref",
     attrs: _defineProperty({
       to: "/forms/file-uploads"
     }, "to", {
       name: "file-uploads"
     })
-  }, [_vm._v("\r\n                                                    File Uploads\r\n                                                ")])], 1)])])], 1), _vm._v(" "), _c("li", {
+  }, [_vm._v("\n                                                    File Uploads\n                                                ")])], 1)])])], 1), _vm._v(" "), _c("li", {
     staticClass: "nav-item"
   }, [_c("a", {
     directives: [{
@@ -19490,14 +19490,14 @@ var render = function render() {
         name: "basic"
       }
     }
-  }, [_vm._v("\r\n                                                    Basic Tables\r\n                                                ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
+  }, [_vm._v("\n                                                    Basic Tables\n                                                ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
     staticClass: "side-nav-link-ref",
     attrs: {
       to: {
         name: "advanced"
       }
     }
-  }, [_vm._v("\r\n                                                    Advanced Tables\r\n                                                ")])], 1)])])], 1), _vm._v(" "), _c("li", {
+  }, [_vm._v("\n                                                    Advanced Tables\n                                                ")])], 1)])])], 1), _vm._v(" "), _c("li", {
     staticClass: "nav-item"
   }, [_c("a", {
     directives: [{
@@ -19527,35 +19527,35 @@ var render = function render() {
         name: "charts-apex"
       }
     }
-  }, [_vm._v("\r\n                                                    Apex Charts\r\n                                                ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
+  }, [_vm._v("\n                                                    Apex Charts\n                                                ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
     staticClass: "side-nav-link-ref",
     attrs: {
       to: {
         name: "charts-chartjs"
       }
     }
-  }, [_vm._v("\r\n                                                    Chartjs Charts\r\n                                                ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
+  }, [_vm._v("\n                                                    Chartjs Charts\n                                                ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
     staticClass: "side-nav-link-ref",
     attrs: {
       to: {
         name: "charts-c3"
       }
     }
-  }, [_vm._v("\r\n                                                    C3 Charts\r\n                                                ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
+  }, [_vm._v("\n                                                    C3 Charts\n                                                ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
     staticClass: "side-nav-link-ref",
     attrs: {
       to: {
         name: "charts-chartist"
       }
     }
-  }, [_vm._v("\r\n                                                    Chartist Charts\r\n                                                ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
+  }, [_vm._v("\n                                                    Chartist Charts\n                                                ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
     staticClass: "side-nav-link-ref",
     attrs: {
       to: {
         name: "charts-knob"
       }
     }
-  }, [_vm._v("\r\n                                                    Knob Charts\r\n                                                ")])], 1)])])], 1), _vm._v(" "), _c("li", {
+  }, [_vm._v("\n                                                    Knob Charts\n                                                ")])], 1)])])], 1), _vm._v(" "), _c("li", {
     staticClass: "nav-item"
   }, [_c("a", {
     directives: [{
@@ -19585,7 +19585,7 @@ var render = function render() {
         name: "maps-google"
       }
     }
-  }, [_vm._v("\r\n                                                    Google Maps\r\n                                                ")])], 1)])])], 1), _vm._v(" "), _c("li", {
+  }, [_vm._v("\n                                                    Google Maps\n                                                ")])], 1)])])], 1), _vm._v(" "), _c("li", {
     staticClass: "nav-item"
   }, [_c("a", {
     directives: [{
@@ -19621,7 +19621,7 @@ var render = function render() {
       href: "javascript: void(0);",
       "data-toggle": "collapse"
     }
-  }, [_vm._v("\r\n                                                    Second Level\r\n                                                    "), _c("span", {
+  }, [_vm._v("\n                                                    Second Level\n                                                    "), _c("span", {
     staticClass: "menu-arrow"
   })]), _vm._v(" "), _c("b-collapse", {
     attrs: {
@@ -22198,7 +22198,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\nform {\r\n    position: relative;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\nform {\n    position: relative;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -22222,7 +22222,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\nform {\r\n    position: relative;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\nform {\n    position: relative;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -22246,7 +22246,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\nform {\r\n   position: relative;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\nform {\n   position: relative;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -22270,7 +22270,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\nform {\r\n    position: relative;\n}\n.modal-dialog .card {\r\n  margin: 0 !important;\n}\n.country.modal-body {\r\n  padding: 0 !important;\n}\n.modal-dialog .card-body {\r\n  padding: 1.5rem 1.5rem 0 1.5rem !important;\n}\n.nav-bordered {\r\n  border: unset !important;\n}\n.nav {\r\n  background-color: #dff0fe;\n}\n.tab-content {\r\n  padding: 70px 60px 40px;\r\n  min-height: 300px;\r\n  background-color: #f5f5f5;\r\n  position: relative;\n}\n.nav-tabs .nav-link {\r\n  border: 1px solid #b7b7b7 !important;\r\n  background-color: #d7e5f2;\r\n  border-bottom: 0 !important;\r\n  margin-bottom: 1px;\n}\n.nav-tabs .nav-link.active,\r\n.nav-tabs .nav-item.show .nav-link {\r\n  color: #000;\r\n  background-color: hsl(0deg 0% 96%);\r\n  border-bottom: 0 !important;\n}\n.img-thumbnail {\r\n  max-height: 400px !important;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\nform {\n    position: relative;\n}\n.modal-dialog .card {\n  margin: 0 !important;\n}\n.country.modal-body {\n  padding: 0 !important;\n}\n.modal-dialog .card-body {\n  padding: 1.5rem 1.5rem 0 1.5rem !important;\n}\n.nav-bordered {\n  border: unset !important;\n}\n.nav {\n  background-color: #dff0fe;\n}\n.tab-content {\n  padding: 70px 60px 40px;\n  min-height: 300px;\n  background-color: #f5f5f5;\n  position: relative;\n}\n.nav-tabs .nav-link {\n  border: 1px solid #b7b7b7 !important;\n  background-color: #d7e5f2;\n  border-bottom: 0 !important;\n  margin-bottom: 1px;\n}\n.nav-tabs .nav-link.active,\n.nav-tabs .nav-item.show .nav-link {\n  color: #000;\n  background-color: hsl(0deg 0% 96%);\n  border-bottom: 0 !important;\n}\n.img-thumbnail {\n  max-height: 400px !important;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -22294,7 +22294,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.dropdown-menu-custom-company.dropdown .dropdown-menu {\r\n  padding: 5px 10px !important;\r\n  overflow-y: scroll;\r\n  height: 300px;\n}\n.modal-body .card .tabs .tab-content {\r\n  padding: 20px 60px 40px !important;\n}\nform {\r\n    position: relative;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.dropdown-menu-custom-company.dropdown .dropdown-menu {\n  padding: 5px 10px !important;\n  overflow-y: scroll;\n  height: 300px;\n}\n.modal-body .card .tabs .tab-content {\n  padding: 20px 60px 40px !important;\n}\nform {\n    position: relative;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -22318,7 +22318,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\nform[data-v-27aa3950] {\r\n    position: relative;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\nform[data-v-27aa3950] {\n    position: relative;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -22342,7 +22342,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\nform {\r\n    position: relative;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\nform {\n    position: relative;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -22366,7 +22366,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\nform[data-v-114d8f40] {\r\n    position: relative;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\nform[data-v-114d8f40] {\n    position: relative;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -22390,7 +22390,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\nform[data-v-5ec6e7b6] {\r\n    position: relative;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\nform[data-v-5ec6e7b6] {\n    position: relative;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -22414,7 +22414,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\nform[data-v-77cdf02d] {\r\n  position: relative;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\nform[data-v-77cdf02d] {\n  position: relative;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -22438,7 +22438,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\nform {\r\n    position: relative;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\nform {\n    position: relative;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -22462,7 +22462,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\nform {\r\n    position: relative;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\nform {\n    position: relative;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -22486,7 +22486,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\nform[data-v-02dcb607] {\r\n    position: relative;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\nform[data-v-02dcb607] {\n    position: relative;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -22510,7 +22510,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\nform[data-v-37237a96] {\r\n    position: relative;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\nform[data-v-37237a96] {\n    position: relative;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -22534,7 +22534,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\nform[data-v-2689ebf0] {\r\n    position: relative;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\nform[data-v-2689ebf0] {\n    position: relative;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -22558,7 +22558,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.color {\r\n    color: #6c757d !important;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.color {\n    color: #6c757d !important;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -22606,7 +22606,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.logo-lg img[data-v-45f7331a] {\r\n  width: 70px;\r\n  height: 45px;\n}\n.logo-sm img[data-v-45f7331a] {\r\n  width: 70px;\r\n  height: 45px;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.logo-lg img[data-v-45f7331a] {\n  width: 70px;\n  height: 45px;\n}\n.logo-sm img[data-v-45f7331a] {\n  width: 70px;\n  height: 45px;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -22630,7 +22630,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.selected-program .dropdown-item {\r\n    background: #f1f5f7 !important;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.selected-program .dropdown-item {\n    background: #f1f5f7 !important;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -22678,7 +22678,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.dropdown .dropdown-menu.dropdown-menu-custom[data-v-cd71e306] {\r\n    padding: 0 !important;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.dropdown .dropdown-menu.dropdown-menu-custom[data-v-cd71e306] {\n    padding: 0 !important;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -22726,7 +22726,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.invoice-table {\r\n    display: block !important;\r\n    width: 100% !important;\n}\n.invoice-table .table {\r\n    border-collapse: collapse !important;\r\n    width: 100% !important;\r\n    padding: 5px !important;\r\n    font-weight:500 !important;\n}\n.product-card-font {\r\n    font-size: 0.75rem !important;\n}\n.table {\r\n    width: 100% !important;\r\n    margin-bottom: 1rem !important;\r\n    color: #212529 !important;\n}\n.cart-border-right {\r\n    border-right: 1px solid #dee2e6 !important;\n}\n.invoice-table .table tbody tr td:first-child {\r\n    padding-left: 0 !important;\n}\n.invoice-table .table tbody tr td {\r\n    border-top: 1px solid #dee2e6;\n}\ntd.cart-summary-table {\r\n    padding: 5px 5px !important;\n}\n.btn:not(:disabled):not(.disabled) {\r\n    cursor: pointer;\n}\n.modal-content-row {\r\n    min-height: 68vh;\n}\n.btn.app-color {\r\n    color: #ffffff;\r\n    background: rgba(59, 175, 218, 0.7490196078) ;\r\n    border-color: rgba(59, 175, 218, 0.7490196078);\r\n    transition: all 0.2s ease-in-out;\n}\n.btn.app-color:hover {\r\n    background: #0a8fc0 !important;\r\n    border-color: #0a8fc0 !important;\n}\n.activePayment {\r\n    background: #0a8fc0 !important;\r\n    border-color: #0a8fc0 !important;\n}\n.cart-border-right .btn-before-receipt {\r\n    padding: 8px 0;\r\n    margin: 0 0 0 auto;\r\n    border: 1px solid #0a8fc0;\r\n    position: absolute;\r\n    bottom: 0;\r\n    right: 10px;\r\n    left: 0;\r\n    color: #0a8fc0;\r\n    background-color: #dff0fe !important;\n}\n.cart-border-right .btn-before-receipt:hover {\r\n    border: 1px solid #0a8fc0;\r\n    color: #FFFFFF;\r\n    background-color: #0a8fc0 !important;\n}\n.printReceiptButton {\r\n    padding: 13px 0;\r\n    margin: 37px 0;\r\n    text-align: center !important;\r\n    width: 100%;\r\n    border: 1px solid #0a8fc0;\r\n    background-color: #dff0fe !important;\r\n    color: #0a8fc0;\n}\n.printReceiptButton:hover {\r\n    border: 1px solid #0a8fc0;\r\n    color: #FFFFFF;\r\n    background-color: #0a8fc0 !important;\n}\n.horizontal-scroll {\r\n    overflow-x: auto;\r\n    height: 92%;\r\n    max-height: 70vh;\r\n    background-color: #dff0fe;\n}\n@media print {\n.do-not-print {\r\n        display: none;\n}\n.arrow-sort {\r\n        display: none;\n}\nth{\r\n        color: black;\r\n        text-align: center !important;\n}\nth.cart-summary-table{\r\n        color: black;\r\n        text-align: center !important;\n}\ntd.cart-summary-table {\r\n        padding: 5px 5px !important;\r\n        text-align: center !important;\n}\n.data-header-print {\r\n        width: 100%;\r\n        display: inline-block;\n}\nbody {\r\n        background-color: #FFFFFF !important;\n}\n.horizontal-scroll {\r\n        background-color: #FFFFFF !important;\n}\n.modal-content {\r\n        background-color: #FFFFFF !important;\n}\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.invoice-table {\n    display: block !important;\n    width: 100% !important;\n}\n.invoice-table .table {\n    border-collapse: collapse !important;\n    width: 100% !important;\n    padding: 5px !important;\n    font-weight:500 !important;\n}\n.product-card-font {\n    font-size: 0.75rem !important;\n}\n.table {\n    width: 100% !important;\n    margin-bottom: 1rem !important;\n    color: #212529 !important;\n}\n.cart-border-right {\n    border-right: 1px solid #dee2e6 !important;\n}\n.invoice-table .table tbody tr td:first-child {\n    padding-left: 0 !important;\n}\n.invoice-table .table tbody tr td {\n    border-top: 1px solid #dee2e6;\n}\ntd.cart-summary-table {\n    padding: 5px 5px !important;\n}\n.btn:not(:disabled):not(.disabled) {\n    cursor: pointer;\n}\n.modal-content-row {\n    min-height: 68vh;\n}\n.btn.app-color {\n    color: #ffffff;\n    background: rgba(59, 175, 218, 0.7490196078) ;\n    border-color: rgba(59, 175, 218, 0.7490196078);\n    transition: all 0.2s ease-in-out;\n}\n.btn.app-color:hover {\n    background: #0a8fc0 !important;\n    border-color: #0a8fc0 !important;\n}\n.activePayment {\n    background: #0a8fc0 !important;\n    border-color: #0a8fc0 !important;\n}\n.cart-border-right .btn-before-receipt {\n    padding: 8px 0;\n    margin: 0 0 0 auto;\n    border: 1px solid #0a8fc0;\n    position: absolute;\n    bottom: 0;\n    right: 10px;\n    left: 0;\n    color: #0a8fc0;\n    background-color: #dff0fe !important;\n}\n.cart-border-right .btn-before-receipt:hover {\n    border: 1px solid #0a8fc0;\n    color: #FFFFFF;\n    background-color: #0a8fc0 !important;\n}\n.printReceiptButton {\n    padding: 13px 0;\n    margin: 37px 0;\n    text-align: center !important;\n    width: 100%;\n    border: 1px solid #0a8fc0;\n    background-color: #dff0fe !important;\n    color: #0a8fc0;\n}\n.printReceiptButton:hover {\n    border: 1px solid #0a8fc0;\n    color: #FFFFFF;\n    background-color: #0a8fc0 !important;\n}\n.horizontal-scroll {\n    overflow-x: auto;\n    height: 92%;\n    max-height: 70vh;\n    background-color: #dff0fe;\n}\n@media print {\n.do-not-print {\n        display: none;\n}\n.arrow-sort {\n        display: none;\n}\nth{\n        color: black;\n        text-align: center !important;\n}\nth.cart-summary-table{\n        color: black;\n        text-align: center !important;\n}\ntd.cart-summary-table {\n        padding: 5px 5px !important;\n        text-align: center !important;\n}\n.data-header-print {\n        width: 100%;\n        display: inline-block;\n}\nbody {\n        background-color: #FFFFFF !important;\n}\n.horizontal-scroll {\n        background-color: #FFFFFF !important;\n}\n.modal-content {\n        background-color: #FFFFFF !important;\n}\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -22750,7 +22750,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\r\n/* Chrome, Safari, Edge, Opera */\ninput::-webkit-outer-spin-button,\r\ninput::-webkit-inner-spin-button {\r\n  -webkit-appearance: none;\r\n  margin: 0;\n}\r\n\r\n/* Firefox */\ninput[type=\"number\"] {\r\n  -moz-appearance: textfield;\n}\n.multiselect__single {\r\n  font-weight: 600 !important;\r\n  color: black !important;\n}\n.td5 {\r\n  font-size: 16px !important;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n/* Chrome, Safari, Edge, Opera */\ninput::-webkit-outer-spin-button,\ninput::-webkit-inner-spin-button {\n  -webkit-appearance: none;\n  margin: 0;\n}\n\n/* Firefox */\ninput[type=\"number\"] {\n  -moz-appearance: textfield;\n}\n.multiselect__single {\n  font-weight: 600 !important;\n  color: black !important;\n}\n.td5 {\n  font-size: 16px !important;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 

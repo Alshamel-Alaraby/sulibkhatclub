@@ -1941,6 +1941,7 @@
         "updated_at": "Updated At",
         "printDocuments": "Print Documents",
         "showSponsorPrint": "Show Sponsor Print",
-        "application_number": "Application Number"
+        "application_number": "Application Number",
+        "sponser": "Sponsor"
     }
 }

@@ -55,6 +55,7 @@ export default {
                 status_id: null,
                 year_number: '',
                 year: '',
+                sponser_ids: [],
             },
             errors: {},
             is_disabled: false,
@@ -109,6 +110,7 @@ export default {
             ],
             Tooltip: '',
             mouseEnter: null,
+            sponsers:[],
         }
     },
     validations: {
@@ -154,10 +156,32 @@ export default {
             }
         },
     },
+    mounted() {
+        this.getSponsers();
+    },
     methods: {
         /**
          *  start get Data module && pagination
          */
+        async getSponsers() {
+            this.isLoader = true;
+            adminApi
+                .get(`/club-members/sponsers`)
+                .then((res) => {
+                let l = res.data.data;
+                this.sponsers = l;
+                })
+                .catch((err) => {
+                Swal.fire({
+                    icon: "error",
+                    title: `${this.$t("general.Error")}`,
+                    text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                });
+                })
+                .finally(() => {
+                this.isLoader = false;
+                });
+        },
         getData(page = 1) {
             this.$v.create.$touch();
             if (this.$v.create.$invalid) {
@@ -168,8 +192,12 @@ export default {
                 for (let i = 0; i < this.filterSetting.length; ++i) {
                     filter += `columns[${i}]=${this.filterSetting[i]}&`;
                 }
+                const sponsor_ids = JSON.stringify(this.create.sponser_ids);
+                adminApi
+                    .get(
+                        `/club-members/members/report-to-members?financial_status_id=${this.create.financial_status_id ?? ""}&member_type_id=${this.create.member_type_id ?? ""}&status_id=${this.create.status_id ?? ""}&year_number=${this.create.year_number ?? ""}&year=${this.create.year ?? ""}&page=${page}&per_page=${this.per_page}&search=${this.search}&${filter}&sponser_ids=${encodeURIComponent(sponsor_ids)}&order=full_name&sort=ASC`,
+                    )
 
-                adminApi.get(`/club-members/members/report-to-members?financial_status_id=${this.create.financial_status_id ?? ''}&member_type_id=${this.create.member_type_id ?? ''}&status_id=${this.create.status_id ?? ''}&year_number=${this.create.year_number ?? ''}&year=${this.create.year ?? ''}&page=${page}&per_page=${this.per_page}&search=${this.search}&${filter}&order=full_name&sort=ASC`)
                     .then((res) => {
                         let l = res.data;
                         this.installmentStatus = l.data;
@@ -199,7 +227,11 @@ export default {
                     for (let i = 0; i < this.filterSetting.length; ++i) {
                         filter += `columns[${i}]=${this.filterSetting[i]}&`;
                     }
-                    adminApi.get(`/club-members/members/report-to-members?financial_status_id=${this.create.financial_status_id ?? ''}&member_type_id=${this.create.member_type_id ?? ''}&status_id=${this.create.status_id ?? ''}&year_number=${this.create.year_number ?? ''}&year=${this.create.year ?? ''}&page=${this.current_page}&per_page=${this.per_page}&search=${this.search}&${filter}&order=full_name&sort=ASC`)
+                   const sponsor_ids = JSON.stringify(this.create.sponser_ids);
+                    adminApi
+                        .get(
+                            `/club-members/members/report-to-members?financial_status_id=${this.create.financial_status_id ?? ""}&member_type_id=${this.create.member_type_id ?? ""}&status_id=${this.create.status_id ?? ""}&year_number=${this.create.year_number ?? ""}&year=${this.create.year ?? ""}&page=${page}&per_page=${this.per_page}&search=${this.search}&${filter}&sponser_ids=${encodeURIComponent(sponsor_ids)}&order=full_name&sort=ASC`,
+                        )
                         .then((res) => {
                             let l = res.data;
                             this.installmentStatus = l.data;
@@ -715,6 +747,25 @@ export default {
                                                 {{ $t("general.fieldIsRequired") }}
                                             </div>
 
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group position-relative">
+                                        <label class="control-label">
+                                            {{ $t("general.sponser") }}
+                                        </label>
+                                        <multiselect
+                                            :multiple="true"
+                                            v-model="create.sponser_ids"
+                                            :options="sponsers.map((type) => type.id)"
+                                            :custom-label="
+                                            (opt) =>
+                                                $i18n.locale == 'ar'
+                                                ? sponsers.find((x) => x.id == opt).name
+                                                : sponsers.find((x) => x.id == opt).name_e
+                                            "
+                                        >
+                                        </multiselect>
                                         </div>
                                     </div>
                                 </div>

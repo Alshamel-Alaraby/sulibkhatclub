@@ -108,7 +108,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         var _email = this.email,
           password = this.password;
         if (this.login_as == "admin") {
-          axios.post("".concat("https://admin.alshamelalaraby2.com/", "api/partners/login"), {
+          axios.post("".concat("https://adminv2.alshamelalaraby.com/", "api/partners/login"), {
             email: _email,
             password: password,
             url: 0
@@ -313,7 +313,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
             case 0:
               _this4.isLoader = true;
               _context5.next = 3;
-              return axios.get("".concat("https://admin.alshamelalaraby2.com/", "api/partners/get_programs_and_modules_for_company/").concat(company_id)).then(function (res) {
+              return axios.get("".concat("https://adminv2.alshamelalaraby.com/", "api/partners/get_programs_and_modules_for_company/").concat(company_id)).then(function (res) {
                 if (type == 'user') {
                   var filtered_prog_modules = [];
                   res.data.data.forEach(function (element) {
@@ -386,7 +386,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           while (1) switch (_context7.prev = _context7.next) {
             case 0:
               _context7.next = 2;
-              return axios.get("".concat("https://admin.alshamelalaraby2.com/", "api/project-program-modules/find-company-program/").concat(id)).then(function (res) {
+              return axios.get("".concat("https://adminv2.alshamelalaraby.com/", "api/project-program-modules/find-company-program/").concat(id)).then(function (res) {
                 var l = res.data.data;
                 _this6.$store.commit("auth/editCompanyId", id);
                 _helper_allRoute_js__WEBPACK_IMPORTED_MODULE_4__["default"].value = l.Program;

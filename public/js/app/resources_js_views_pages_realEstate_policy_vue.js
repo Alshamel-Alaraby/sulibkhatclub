@@ -11984,7 +11984,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
-      version: "v2.3.9"
+      version: "v5.1.7"
     };
   }
 });
@@ -12676,7 +12676,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               _helper_global_js__WEBPACK_IMPORTED_MODULE_5__.selectedParents.value = [prog_id, prog_module_id, dashboard_id];
               localStorage.setItem("selectedParents", JSON.stringify(_helper_global_js__WEBPACK_IMPORTED_MODULE_5__.selectedParents.value));
               _context2.next = 5;
-              return axios__WEBPACK_IMPORTED_MODULE_7___default().get("".concat("https://admin.alshamelalaraby2.com/", "api/partners/get_children_inside_module_for_partner_sidebar_menu/").concat(prog_module_id)).then( /*#__PURE__*/function () {
+              return axios__WEBPACK_IMPORTED_MODULE_7___default().get("".concat("https://adminv2.alshamelalaraby.com/", "api/partners/get_children_inside_module_for_partner_sidebar_menu/").concat(prog_module_id)).then( /*#__PURE__*/function () {
                 var _ref = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee(res) {
                   var folders_and_pages, folders_and_pages_after_appended_show_property;
                   return _regeneratorRuntime().wrap(function _callee$(_context) {
@@ -24621,7 +24621,7 @@ var render = function render() {
         return _vm.resetForm.apply(null, arguments);
       }
     }
-  }, [_vm._v("\r\n                    " + _vm._s(_vm.$t("general.AddNewRecord")) + "\r\n                ")]) : _vm._e(), _vm._v(" "), !_vm.is_disabled ? [!_vm.isLoader ? _c("b-button", {
+  }, [_vm._v("\n                    " + _vm._s(_vm.$t("general.AddNewRecord")) + "\n                ")]) : _vm._e(), _vm._v(" "), !_vm.is_disabled ? [!_vm.isLoader ? _c("b-button", {
     staticClass: "mx-1",
     attrs: {
       variant: "success",
@@ -24633,7 +24633,7 @@ var render = function render() {
         return _vm.AddSubmit.apply(null, arguments);
       }
     }
-  }, [_vm._v("\r\n                        " + _vm._s(_vm.type != "edit" ? _vm.$t("general.Add") : _vm.$t("general.edit")) + "\r\n                    ")]) : _c("b-button", {
+  }, [_vm._v("\n                        " + _vm._s(_vm.type != "edit" ? _vm.$t("general.Add") : _vm.$t("general.edit")) + "\n                    ")]) : _c("b-button", {
     staticClass: "mx-1",
     attrs: {
       variant: "success",
@@ -24656,7 +24656,7 @@ var render = function render() {
         return _vm.resetModalHidden.apply(null, arguments);
       }
     }
-  }, [_vm._v("\r\n                    " + _vm._s(_vm.$t("general.Cancel")) + "\r\n                ")])], 2), _vm._v(" "), _c("div", {
+  }, [_vm._v("\n                    " + _vm._s(_vm.$t("general.Cancel")) + "\n                ")])], 2), _vm._v(" "), _c("div", {
     staticClass: "row"
   }, [_vm.isVisible("name") ? _c("div", {
     staticClass: "col-md-6"
@@ -24664,7 +24664,7 @@ var render = function render() {
     staticClass: "form-group"
   }, [_c("label", {
     staticClass: "control-label"
-  }, [_vm._v("\r\n                          " + _vm._s(_vm.getCompanyKey("installment_payment_type_name")) + "\r\n                          "), _vm.isRequired("name") ? _c("span", {
+  }, [_vm._v("\n                          " + _vm._s(_vm.getCompanyKey("installment_payment_type_name")) + "\n                          "), _vm.isRequired("name") ? _c("span", {
     staticClass: "text-danger"
   }, [_vm._v("*")]) : _vm._e()]), _vm._v(" "), _c("div", {
     attrs: {
@@ -24700,19 +24700,19 @@ var render = function render() {
     }
   })]), _vm._v(" "), !_vm.$v.create.name.minLength ? _c("div", {
     staticClass: "invalid-feedback"
-  }, [_vm._v("\r\n                          " + _vm._s(_vm.$t("general.Itmustbeatleast")) + "\r\n                          " + _vm._s(_vm.$v.create.name.$params.minLength.min) + "\r\n                          " + _vm._s(_vm.$t("general.letters")) + "\r\n                      ")]) : _vm._e(), _vm._v(" "), !_vm.$v.create.name.maxLength ? _c("div", {
+  }, [_vm._v("\n                          " + _vm._s(_vm.$t("general.Itmustbeatleast")) + "\n                          " + _vm._s(_vm.$v.create.name.$params.minLength.min) + "\n                          " + _vm._s(_vm.$t("general.letters")) + "\n                      ")]) : _vm._e(), _vm._v(" "), !_vm.$v.create.name.maxLength ? _c("div", {
     staticClass: "invalid-feedback"
-  }, [_vm._v("\r\n                          " + _vm._s(_vm.$t("general.Itmustbeatmost")) + "\r\n                          " + _vm._s(_vm.$v.create.name.$params.maxLength.max) + "\r\n                          " + _vm._s(_vm.$t("general.letters")) + "\r\n                      ")]) : _vm._e(), _vm._v(" "), _vm.errors.name ? _vm._l(_vm.errors.name, function (errorMessage, index) {
+  }, [_vm._v("\n                          " + _vm._s(_vm.$t("general.Itmustbeatmost")) + "\n                          " + _vm._s(_vm.$v.create.name.$params.maxLength.max) + "\n                          " + _vm._s(_vm.$t("general.letters")) + "\n                      ")]) : _vm._e(), _vm._v(" "), _vm.errors.name ? _vm._l(_vm.errors.name, function (errorMessage, index) {
     return _c("ErrorMessage", {
       key: index
-    }, [_vm._v("\r\n                              " + _vm._s(errorMessage) + "\r\n                          ")]);
+    }, [_vm._v("\n                              " + _vm._s(errorMessage) + "\n                          ")]);
   }) : _vm._e()], 2)]) : _vm._e(), _vm._v(" "), _vm.isVisible("name_e") ? _c("div", {
     staticClass: "col-md-6"
   }, [_c("div", {
     staticClass: "form-group"
   }, [_c("label", {
     staticClass: "control-label"
-  }, [_vm._v("\r\n                          " + _vm._s(_vm.getCompanyKey("installment_payment_type_name_e")) + "\r\n                          "), _vm.isRequired("name_e") ? _c("span", {
+  }, [_vm._v("\n                          " + _vm._s(_vm.getCompanyKey("installment_payment_type_name_e")) + "\n                          "), _vm.isRequired("name_e") ? _c("span", {
     staticClass: "text-danger"
   }, [_vm._v("*")]) : _vm._e()]), _vm._v(" "), _c("div", [_c("input", {
     directives: [{
@@ -24744,19 +24744,19 @@ var render = function render() {
     }
   })]), _vm._v(" "), !_vm.$v.create.name_e.minLength ? _c("div", {
     staticClass: "invalid-feedback"
-  }, [_vm._v("\r\n                          " + _vm._s(_vm.$t("general.Itmustbeatleast")) + "\r\n                          " + _vm._s(_vm.$v.create.name_e.$params.minLength.min) + "\r\n                          " + _vm._s(_vm.$t("general.letters")) + "\r\n                      ")]) : _vm._e(), _vm._v(" "), !_vm.$v.create.name_e.maxLength ? _c("div", {
+  }, [_vm._v("\n                          " + _vm._s(_vm.$t("general.Itmustbeatleast")) + "\n                          " + _vm._s(_vm.$v.create.name_e.$params.minLength.min) + "\n                          " + _vm._s(_vm.$t("general.letters")) + "\n                      ")]) : _vm._e(), _vm._v(" "), !_vm.$v.create.name_e.maxLength ? _c("div", {
     staticClass: "invalid-feedback"
-  }, [_vm._v("\r\n                          " + _vm._s(_vm.$t("general.Itmustbeatmost")) + "\r\n                          " + _vm._s(_vm.$v.create.name_e.$params.maxLength.max) + "\r\n                          " + _vm._s(_vm.$t("general.letters")) + "\r\n                      ")]) : _vm._e(), _vm._v(" "), _vm.errors.name_e ? _vm._l(_vm.errors.name_e, function (errorMessage, index) {
+  }, [_vm._v("\n                          " + _vm._s(_vm.$t("general.Itmustbeatmost")) + "\n                          " + _vm._s(_vm.$v.create.name_e.$params.maxLength.max) + "\n                          " + _vm._s(_vm.$t("general.letters")) + "\n                      ")]) : _vm._e(), _vm._v(" "), _vm.errors.name_e ? _vm._l(_vm.errors.name_e, function (errorMessage, index) {
     return _c("ErrorMessage", {
       key: index
-    }, [_vm._v(_vm._s(errorMessage) + "\r\n                          ")]);
+    }, [_vm._v(_vm._s(errorMessage) + "\n                          ")]);
   }) : _vm._e()], 2)]) : _vm._e(), _vm._v(" "), _vm.isVisible("is_conditional") ? _c("div", {
     staticClass: "col-md-6"
   }, [_c("div", {
     staticClass: "form-group"
   }, [_c("label", {
     staticClass: "mr-2"
-  }, [_vm._v("\r\n                          " + _vm._s(_vm.getCompanyKey("is_conditional")) + "\r\n                      ")]), _vm._v(" "), _c("b-form-group", {
+  }, [_vm._v("\n                          " + _vm._s(_vm.getCompanyKey("is_conditional")) + "\n                      ")]), _vm._v(" "), _c("b-form-group", {
     "class": {
       "is-invalid": _vm.$v.create.is_conditional.$error || _vm.errors.is_conditional,
       "is-valid": !_vm.$v.create.is_conditional.$invalid && !_vm.errors.is_conditional
@@ -24793,14 +24793,14 @@ var render = function render() {
   }, [_vm._v(_vm._s(_vm.$t("general.No")))])], 1), _vm._v(" "), _vm.errors.is_conditional ? _vm._l(_vm.errors.is_conditional, function (errorMessage, index) {
     return _c("ErrorMessage", {
       key: index
-    }, [_vm._v(_vm._s(errorMessage) + "\r\n                          ")]);
+    }, [_vm._v(_vm._s(errorMessage) + "\n                          ")]);
   }) : _vm._e()], 2)]) : _vm._e(), _vm._v(" "), _vm.create.is_conditional == 1 && _vm.isVisible("installment_condation_id") ? [_c("div", {
     staticClass: "col-md-6"
   }, [_c("div", {
     staticClass: "form-group"
   }, [_c("label", {
     staticClass: "my-1 mr-2"
-  }, [_vm._v("\r\n                              " + _vm._s(_vm.getCompanyKey("condition")) + "\r\n                              "), _vm.isRequired("installment_condation_id") ? _c("span", {
+  }, [_vm._v("\n                              " + _vm._s(_vm.getCompanyKey("condition")) + "\n                              "), _vm.isRequired("installment_condation_id") ? _c("span", {
     staticClass: "text-danger"
   }, [_vm._v("*")]) : _vm._e()]), _vm._v(" "), _c("multiselect", {
     "class": {
@@ -24832,10 +24832,10 @@ var render = function render() {
     }
   }), _vm._v(" "), !_vm.$v.create.Condition_id.required ? _c("div", {
     staticClass: "invalid-feedback"
-  }, [_vm._v("\r\n                              " + _vm._s(_vm.$t("general.fieldIsRequired")) + "\r\n                          ")]) : _vm._e(), _vm._v(" "), _vm.errors.condition_id ? _vm._l(_vm.errors.condition_id, function (errorMessage, index) {
+  }, [_vm._v("\n                              " + _vm._s(_vm.$t("general.fieldIsRequired")) + "\n                          ")]) : _vm._e(), _vm._v(" "), _vm.errors.condition_id ? _vm._l(_vm.errors.condition_id, function (errorMessage, index) {
     return _c("ErrorMessage", {
       key: index
-    }, [_vm._v(_vm._s(errorMessage) + "\r\n                              ")]);
+    }, [_vm._v(_vm._s(errorMessage) + "\n                              ")]);
   }) : _vm._e()], 2)])] : [_c("div", {
     staticClass: "col-md-6"
   })], _vm._v(" "), _vm.isVisible("installment_payment_type_freq") ? _c("div", {
@@ -24844,7 +24844,7 @@ var render = function render() {
     staticClass: "form-group"
   }, [_c("label", {
     staticClass: "control-label"
-  }, [_vm._v("\r\n                          " + _vm._s(_vm.getCompanyKey("installmentPaymentType_freq")) + "\r\n                          "), _vm.isRequired("installment_payment_type_freq") ? _c("span", {
+  }, [_vm._v("\n                          " + _vm._s(_vm.getCompanyKey("installmentPaymentType_freq")) + "\n                          "), _vm.isRequired("installment_payment_type_freq") ? _c("span", {
     staticClass: "text-danger"
   }, [_vm._v("*")]) : _vm._e()]), _vm._v(" "), _c("b-form-group", {
     "class": {
@@ -24867,7 +24867,7 @@ var render = function render() {
       },
       expression: "$v.create.installmentPaymentType_freq.$model"
     }
-  }, [_vm._v("\r\n                              " + _vm._s(_vm.$t("general.Yes")) + "\r\n                          ")]), _vm._v(" "), _c("b-form-radio", {
+  }, [_vm._v("\n                              " + _vm._s(_vm.$t("general.Yes")) + "\n                          ")]), _vm._v(" "), _c("b-form-radio", {
     staticClass: "d-inline-block m-1",
     attrs: {
       name: "installmentPaymentType_freq",
@@ -24880,17 +24880,17 @@ var render = function render() {
       },
       expression: "$v.create.installmentPaymentType_freq.$model"
     }
-  }, [_vm._v("\r\n                              " + _vm._s(_vm.$t("general.No")) + "\r\n                          ")])], 1), _vm._v(" "), _vm.errors.installmentPaymentType_freq ? _vm._l(_vm.errors.installmentPaymentType_freq, function (errorMessage, index) {
+  }, [_vm._v("\n                              " + _vm._s(_vm.$t("general.No")) + "\n                          ")])], 1), _vm._v(" "), _vm.errors.installmentPaymentType_freq ? _vm._l(_vm.errors.installmentPaymentType_freq, function (errorMessage, index) {
     return _c("ErrorMessage", {
       key: index
-    }, [_vm._v(_vm._s(errorMessage) + "\r\n                          ")]);
+    }, [_vm._v(_vm._s(errorMessage) + "\n                          ")]);
   }) : _vm._e()], 2)]) : _vm._e(), _vm._v(" "), _vm.create.installmentPaymentType_freq == 1 ? [_vm.isVisible("step") ? _c("div", {
     staticClass: "col-md-3"
   }, [_c("div", {
     staticClass: "form-group position-relative"
   }, [_c("label", {
     staticClass: "control-label"
-  }, [_vm._v("\r\n                              " + _vm._s(_vm.getCompanyKey("installmentPaymentTyp_step")) + "\r\n                              "), _vm.isRequired("step") ? _c("span", {
+  }, [_vm._v("\n                              " + _vm._s(_vm.getCompanyKey("installmentPaymentTyp_step")) + "\n                              "), _vm.isRequired("step") ? _c("span", {
     staticClass: "text-danger"
   }, [_vm._v("*")]) : _vm._e()]), _vm._v(" "), _c("select", {
     directives: [{
@@ -24926,14 +24926,14 @@ var render = function render() {
   }, [_vm._v(_vm._s(_vm.$t("general.yearly")))])]), _vm._v(" "), _vm.errors.step ? _vm._l(_vm.errors.step, function (errorMessage, index) {
     return _c("ErrorMessage", {
       key: index
-    }, [_vm._v("\r\n                                  " + _vm._s(errorMessage) + "\r\n                              ")]);
+    }, [_vm._v("\n                                  " + _vm._s(errorMessage) + "\n                              ")]);
   }) : _vm._e()], 2)]) : _vm._e(), _vm._v(" "), _vm.isVisible("freq_period") ? _c("div", {
     staticClass: "col-md-3"
   }, [_c("div", {
     staticClass: "form-group"
   }, [_c("label", {
     staticClass: "control-label"
-  }, [_vm._v("\r\n                      " + _vm._s(_vm.getCompanyKey("freq_period")) + "\r\n                      "), _vm.isRequired("freq_period") ? _c("span", {
+  }, [_vm._v("\n                      " + _vm._s(_vm.getCompanyKey("freq_period")) + "\n                      "), _vm.isRequired("freq_period") ? _c("span", {
     staticClass: "text-danger"
   }, [_vm._v("*")]) : _vm._e()]), _vm._v(" "), _c("input", {
     directives: [{
@@ -24963,7 +24963,7 @@ var render = function render() {
   }), _vm._v(" "), _vm.errors.Freq_period ? _vm._l(_vm.errors.Freq_period, function (errorMessage, index) {
     return _c("ErrorMessage", {
       key: index
-    }, [_vm._v(_vm._s(errorMessage) + "\r\n                      ")]);
+    }, [_vm._v(_vm._s(errorMessage) + "\n                      ")]);
   }) : _vm._e()], 2)]) : _vm._e()] : [_c("div", {
     staticClass: "col-md-6"
   })], _vm._v(" "), _vm.isVisible("is_partially") ? _c("div", {
@@ -24972,7 +24972,7 @@ var render = function render() {
     staticClass: "form-group"
   }, [_c("label", {
     staticClass: "mr-2"
-  }, [_vm._v("\r\n                    " + _vm._s(_vm.getCompanyKey("installment_payment_is_partially")) + "\r\n                  ")]), _vm._v(" "), _c("b-form-group", {
+  }, [_vm._v("\n                    " + _vm._s(_vm.getCompanyKey("installment_payment_is_partially")) + "\n                  ")]), _vm._v(" "), _c("b-form-group", {
     "class": {
       "is-invalid": _vm.$v.create.is_partially.$error || _vm.errors.is_partially,
       "is-valid": !_vm.$v.create.is_partially.$invalid && !_vm.errors.is_partially
@@ -24993,7 +24993,7 @@ var render = function render() {
       },
       expression: "$v.create.is_partially.$model"
     }
-  }, [_vm._v("\r\n                      " + _vm._s(_vm.$t("general.Yes")) + "\r\n                    ")]), _vm._v(" "), _c("b-form-radio", {
+  }, [_vm._v("\n                      " + _vm._s(_vm.$t("general.Yes")) + "\n                    ")]), _vm._v(" "), _c("b-form-radio", {
     staticClass: "d-inline-block m-1",
     attrs: {
       name: "some-radios-is_partially",
@@ -25006,17 +25006,17 @@ var render = function render() {
       },
       expression: "$v.create.is_partially.$model"
     }
-  }, [_vm._v("\r\n                      " + _vm._s(_vm.$t("general.No")) + "\r\n                    ")])], 1), _vm._v(" "), _vm.errors.is_partially ? _vm._l(_vm.errors.is_partially, function (errorMessage, index) {
+  }, [_vm._v("\n                      " + _vm._s(_vm.$t("general.No")) + "\n                    ")])], 1), _vm._v(" "), _vm.errors.is_partially ? _vm._l(_vm.errors.is_partially, function (errorMessage, index) {
     return _c("ErrorMessage", {
       key: index
-    }, [_vm._v(_vm._s(errorMessage) + "\r\n                    ")]);
+    }, [_vm._v(_vm._s(errorMessage) + "\n                    ")]);
   }) : _vm._e()], 2)]) : _vm._e(), _vm._v(" "), _vm.isVisible("is_passed") ? _c("div", {
     staticClass: "col-md-6"
   }, [_c("div", {
     staticClass: "form-group"
   }, [_c("label", {
     staticClass: "mr-2"
-  }, [_vm._v("\r\n                    " + _vm._s(_vm.getCompanyKey("is_passed")) + "\r\n                  ")]), _vm._v(" "), _c("b-form-group", {
+  }, [_vm._v("\n                    " + _vm._s(_vm.getCompanyKey("is_passed")) + "\n                  ")]), _vm._v(" "), _c("b-form-group", {
     "class": {
       "is-invalid": _vm.$v.create.is_passed.$error || _vm.errors.is_passed,
       "is-valid": !_vm.$v.create.is_passed.$invalid && !_vm.errors.is_passed
@@ -25034,7 +25034,7 @@ var render = function render() {
       },
       expression: "$v.create.is_passed.$model"
     }
-  }, [_vm._v("\r\n                      " + _vm._s(_vm.$t("general.Yes")) + "\r\n                    ")]), _vm._v(" "), _c("b-form-radio", {
+  }, [_vm._v("\n                      " + _vm._s(_vm.$t("general.Yes")) + "\n                    ")]), _vm._v(" "), _c("b-form-radio", {
     staticClass: "d-inline-block m-1",
     attrs: {
       name: "some-radioscreate-is_passed",
@@ -25047,10 +25047,10 @@ var render = function render() {
       },
       expression: "$v.create.is_passed.$model"
     }
-  }, [_vm._v("\r\n                      " + _vm._s(_vm.$t("general.No")) + "\r\n                    ")])], 1), _vm._v(" "), _vm.errors.is_passed ? _vm._l(_vm.errors.is_passed, function (errorMessage, index) {
+  }, [_vm._v("\n                      " + _vm._s(_vm.$t("general.No")) + "\n                    ")])], 1), _vm._v(" "), _vm.errors.is_passed ? _vm._l(_vm.errors.is_passed, function (errorMessage, index) {
     return _c("ErrorMessage", {
       key: index
-    }, [_vm._v(_vm._s(errorMessage) + "\r\n                    ")]);
+    }, [_vm._v(_vm._s(errorMessage) + "\n                    ")]);
   }) : _vm._e()], 2)]) : _vm._e()], 2)], 1)])], 1);
 };
 var staticRenderFns = [];
@@ -26690,7 +26690,7 @@ var render = function render() {
     staticClass: "row"
   }, [_c("div", {
     staticClass: "col-md-6 color"
-  }, [_vm._v("\r\n                " + _vm._s(new Date().getFullYear()) + " © Al Shamel Al Araby\r\n                "), _c("span", {
+  }, [_vm._v("\n                " + _vm._s(new Date().getFullYear()) + " © Al Shamel Al Araby\n                "), _c("span", {
     staticStyle: {
       margin: "0px 30px"
     }
@@ -26765,7 +26765,7 @@ var render = function render() {
       }
     }, [_c("i", {
       "class": "".concat(item.icon, " mr-1")
-    }), _vm._v("\r\n                                " + _vm._s(_vm.$t(item.label)) + "\r\n                            ")]) : _vm._e(), _vm._v(" "), item.subItems ? _c("a", {
+    }), _vm._v("\n                                " + _vm._s(_vm.$t(item.label)) + "\n                            ")]) : _vm._e(), _vm._v(" "), item.subItems ? _c("a", {
       staticClass: "nav-link dropdown-toggle arrow-none",
       attrs: {
         href: "javascript: void(0);",
@@ -26777,7 +26777,7 @@ var render = function render() {
       }
     }, [_c("i", {
       "class": "".concat(item.icon, " mr-1")
-    }), _vm._v("\r\n                                " + _vm._s(_vm.$t(item.label)) + "\r\n                                "), _c("div", {
+    }), _vm._v("\n                                " + _vm._s(_vm.$t(item.label)) + "\n                                "), _c("div", {
       staticClass: "arrow-down"
     })]) : _vm._e(), _vm._v(" "), _vm.hasItems(item) ? _c("div", {
       staticClass: "dropdown-menu row",
@@ -26802,7 +26802,7 @@ var render = function render() {
         on: {
           click: _vm.onMenuClick
         }
-      }, [_vm._v("\r\n                                            " + _vm._s(_vm.$t(subitem.label)) + "\r\n                                            "), _c("div", {
+      }, [_vm._v("\n                                            " + _vm._s(_vm.$t(subitem.label)) + "\n                                            "), _c("div", {
         staticClass: "arrow-down"
       })]), _vm._v(" "), _c("div", {
         staticClass: "dropdown-menu"
@@ -28206,7 +28206,7 @@ var render = function render() {
         name: "home"
       }
     }
-  }, [_vm._v("\r\n                                        Sales\r\n                                    ")])], 1), _vm._v(" "), _c("li", {
+  }, [_vm._v("\n                                        Sales\n                                    ")])], 1), _vm._v(" "), _c("li", {
     staticClass: "nav-item"
   }, [_c("router-link", {
     staticClass: "nav-link side-nav-link-ref",
@@ -28215,7 +28215,7 @@ var render = function render() {
         name: "crm-dashboard"
       }
     }, "to", "/dashboard/crm")
-  }, [_vm._v("\r\n                                        CRM\r\n                                    ")])], 1), _vm._v(" "), _c("li", {
+  }, [_vm._v("\n                                        CRM\n                                    ")])], 1), _vm._v(" "), _c("li", {
     staticClass: "nav-item"
   }, [_c("router-link", {
     staticClass: "nav-link side-nav-link-ref",
@@ -28224,7 +28224,7 @@ var render = function render() {
     }, "to", {
       name: "analytics-dashboard"
     })
-  }, [_vm._v("\r\n                                        Analytics\r\n                                    ")])], 1)])])]) : _vm._e(), _vm._v(" "), _vm.activetab === 2 ? _c("div", {
+  }, [_vm._v("\n                                        Analytics\n                                    ")])], 1)])])]) : _vm._e(), _vm._v(" "), _vm.activetab === 2 ? _c("div", {
     staticClass: "twocolumn-menu-item d-block",
     attrs: {
       id: "apps"
@@ -28242,7 +28242,7 @@ var render = function render() {
         name: "calendar"
       }
     }
-  }, [_vm._v("\r\n                                    Calendar\r\n                                ")])], 1), _vm._v(" "), _c("li", {
+  }, [_vm._v("\n                                    Calendar\n                                ")])], 1), _vm._v(" "), _c("li", {
     staticClass: "nav-item"
   }, [_c("router-link", {
     staticClass: "nav-link side-nav-link-ref",
@@ -28251,7 +28251,7 @@ var render = function render() {
         name: "chat"
       }
     }
-  }, [_vm._v("\r\n                                    Chat\r\n                                ")])], 1), _vm._v(" "), _c("li", {
+  }, [_vm._v("\n                                    Chat\n                                ")])], 1), _vm._v(" "), _c("li", {
     staticClass: "nav-item"
   }, [_c("a", {
     directives: [{
@@ -28281,70 +28281,70 @@ var render = function render() {
         name: "products"
       }
     }
-  }, [_vm._v("\r\n                                                Products List\r\n                                            ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
+  }, [_vm._v("\n                                                Products List\n                                            ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
     staticClass: "side-nav-link-ref",
     attrs: {
       to: {
         name: "products-grid"
       }
     }
-  }, [_vm._v("\r\n                                                Products Grid\r\n                                            ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
+  }, [_vm._v("\n                                                Products Grid\n                                            ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
     staticClass: "side-nav-link-ref",
     attrs: {
       to: {
         name: "product-detail"
       }
     }
-  }, [_vm._v("\r\n                                                Product Detail\r\n                                            ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
+  }, [_vm._v("\n                                                Product Detail\n                                            ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
     staticClass: "side-nav-link-ref",
     attrs: {
       to: {
         name: "product-create"
       }
     }
-  }, [_vm._v("\r\n                                                Create Product\r\n                                            ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
+  }, [_vm._v("\n                                                Create Product\n                                            ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
     staticClass: "side-nav-link-ref",
     attrs: {
       to: {
         name: "customers"
       }
     }
-  }, [_vm._v("\r\n                                                Customers\r\n                                            ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
+  }, [_vm._v("\n                                                Customers\n                                            ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
     staticClass: "side-nav-link-ref",
     attrs: {
       to: {
         name: "orders"
       }
     }
-  }, [_vm._v("\r\n                                                Orders\r\n                                            ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
+  }, [_vm._v("\n                                                Orders\n                                            ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
     staticClass: "side-nav-link-ref",
     attrs: {
       to: {
         name: "order-detail"
       }
     }
-  }, [_vm._v("\r\n                                                Order Detail\r\n                                            ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
+  }, [_vm._v("\n                                                Order Detail\n                                            ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
     staticClass: "side-nav-link-ref",
     attrs: {
       to: {
         name: "sellers"
       }
     }
-  }, [_vm._v("\r\n                                                Sellers\r\n                                            ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
+  }, [_vm._v("\n                                                Sellers\n                                            ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
     staticClass: "side-nav-link-ref",
     attrs: {
       to: {
         name: "cart"
       }
     }
-  }, [_vm._v("\r\n                                                Shopping Cart\r\n                                            ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
+  }, [_vm._v("\n                                                Shopping Cart\n                                            ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
     staticClass: "side-nav-link-ref",
     attrs: {
       to: {
         name: "checkout"
       }
     }
-  }, [_vm._v("\r\n                                                Checkout\r\n                                            ")])], 1)])])], 1), _vm._v(" "), _c("li", {
+  }, [_vm._v("\n                                                Checkout\n                                            ")])], 1)])])], 1), _vm._v(" "), _c("li", {
     staticClass: "nav-item"
   }, [_c("a", {
     directives: [{
@@ -28374,21 +28374,21 @@ var render = function render() {
         name: "email-inbox"
       }
     }
-  }, [_vm._v("\r\n                                                Inbox\r\n                                            ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
+  }, [_vm._v("\n                                                Inbox\n                                            ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
     staticClass: "side-nav-link-ref",
     attrs: {
       to: {
         name: "reademail"
       }
     }
-  }, [_vm._v("\r\n                                                Read Email\r\n                                            ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
+  }, [_vm._v("\n                                                Read Email\n                                            ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
     staticClass: "side-nav-link-ref",
     attrs: _defineProperty({
       to: "/email/templates"
     }, "to", {
       name: "email-templates"
     })
-  }, [_vm._v("\r\n                                                Email Templates\r\n                                            ")])], 1)])])], 1), _vm._v(" "), _c("li", {
+  }, [_vm._v("\n                                                Email Templates\n                                            ")])], 1)])])], 1), _vm._v(" "), _c("li", {
     staticClass: "nav-item"
   }, [_c("router-link", {
     staticClass: "nav-link side-nav-link-ref",
@@ -28397,7 +28397,7 @@ var render = function render() {
     }, "to", {
       name: ""
     })
-  }, [_vm._v("\r\n                                    Companies\r\n                                ")])], 1), _vm._v(" "), _c("li", {
+  }, [_vm._v("\n                                    Companies\n                                ")])], 1), _vm._v(" "), _c("li", {
     staticClass: "nav-item"
   }, [_c("a", {
     directives: [{
@@ -28427,21 +28427,21 @@ var render = function render() {
         name: "task-list"
       }
     }
-  }, [_vm._v("\r\n                                                List\r\n                                            ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
+  }, [_vm._v("\n                                                List\n                                            ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
     staticClass: "side-nav-link-ref",
     attrs: {
       to: {
         name: "task-detail"
       }
     }
-  }, [_vm._v("\r\n                                                Details\r\n                                            ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
+  }, [_vm._v("\n                                                Details\n                                            ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
     staticClass: "side-nav-link-ref",
     attrs: {
       to: {
         name: "kanban-board"
       }
     }
-  }, [_vm._v("\r\n                                                Kanban Board\r\n                                            ")])], 1)])])], 1), _vm._v(" "), _c("li", {
+  }, [_vm._v("\n                                                Kanban Board\n                                            ")])], 1)])])], 1), _vm._v(" "), _c("li", {
     staticClass: "nav-item"
   }, [_c("a", {
     directives: [{
@@ -28471,14 +28471,14 @@ var render = function render() {
         name: "contacts-list"
       }
     }
-  }, [_vm._v("\r\n                                                Members List\r\n                                            ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
+  }, [_vm._v("\n                                                Members List\n                                            ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
     staticClass: "side-nav-link-ref",
     attrs: {
       to: {
         name: "contacts-profile"
       }
     }
-  }, [_vm._v("\r\n                                                Profile\r\n                                            ")])], 1)])])], 1), _vm._v(" "), _c("li", {
+  }, [_vm._v("\n                                                Profile\n                                            ")])], 1)])])], 1), _vm._v(" "), _c("li", {
     staticClass: "nav-item"
   }, [_c("router-link", {
     staticClass: "nav-link side-nav-link-ref",
@@ -28487,7 +28487,7 @@ var render = function render() {
         name: "file-manager"
       }
     }
-  }, [_vm._v("\r\n                                    File Manager\r\n                                ")])], 1), _vm._v(" "), _c("li", {
+  }, [_vm._v("\n                                    File Manager\n                                ")])], 1), _vm._v(" "), _c("li", {
     staticClass: "nav-item"
   }, [_c("router-link", {
     staticClass: "nav-link side-nav-link-ref",
@@ -28496,7 +28496,7 @@ var render = function render() {
         name: "tickets"
       }
     }
-  }, [_vm._v("\r\n                                    Tickets\r\n                                ")])], 1)])]) : _vm._e(), _vm._v(" "), _vm.activetab === 3 ? _c("div", {
+  }, [_vm._v("\n                                    Tickets\n                                ")])], 1)])]) : _vm._e(), _vm._v(" "), _vm.activetab === 3 ? _c("div", {
     staticClass: "twocolumn-menu-item d-block",
     attrs: {
       id: "pages"
@@ -28708,7 +28708,7 @@ var render = function render() {
       href: "javascript: void(0);",
       "data-toggle": "collapse"
     }
-  }, [_vm._v("\r\n                                        Error Pages\r\n                                        "), _c("span", {
+  }, [_vm._v("\n                                        Error Pages\n                                        "), _c("span", {
     staticClass: "menu-arrow"
   })]), _vm._v(" "), _c("b-collapse", {
     attrs: {
@@ -29073,49 +29073,49 @@ var render = function render() {
         name: "elements"
       }
     }
-  }, [_vm._v("\r\n                                                    General Elements\r\n                                                ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
+  }, [_vm._v("\n                                                    General Elements\n                                                ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
     staticClass: "side-nav-link-ref",
     attrs: {
       to: {
         name: "advanced-form"
       }
     }
-  }, [_vm._v("\r\n                                                    Advanced\r\n                                                ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
+  }, [_vm._v("\n                                                    Advanced\n                                                ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
     staticClass: "side-nav-link-ref",
     attrs: {
       to: {
         name: "validation"
       }
     }
-  }, [_vm._v("\r\n                                                    Validation\r\n                                                ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
+  }, [_vm._v("\n                                                    Validation\n                                                ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
     staticClass: "side-nav-link-ref",
     attrs: {
       to: {
         name: "wizard"
       }
     }
-  }, [_vm._v("\r\n                                                    Wizard\r\n                                                ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
+  }, [_vm._v("\n                                                    Wizard\n                                                ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
     staticClass: "side-nav-link-ref",
     attrs: {
       to: {
         name: "mask"
       }
     }
-  }, [_vm._v("\r\n                                                    Masks\r\n                                                ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
+  }, [_vm._v("\n                                                    Masks\n                                                ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
     staticClass: "side-nav-link-ref",
     attrs: {
       to: {
         name: "quill"
       }
     }
-  }, [_vm._v("\r\n                                                    Quill Editor\r\n                                                ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
+  }, [_vm._v("\n                                                    Quill Editor\n                                                ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
     staticClass: "side-nav-link-ref",
     attrs: _defineProperty({
       to: "/forms/file-uploads"
     }, "to", {
       name: "file-uploads"
     })
-  }, [_vm._v("\r\n                                                    File Uploads\r\n                                                ")])], 1)])])], 1), _vm._v(" "), _c("li", {
+  }, [_vm._v("\n                                                    File Uploads\n                                                ")])], 1)])])], 1), _vm._v(" "), _c("li", {
     staticClass: "nav-item"
   }, [_c("a", {
     directives: [{
@@ -29145,14 +29145,14 @@ var render = function render() {
         name: "basic"
       }
     }
-  }, [_vm._v("\r\n                                                    Basic Tables\r\n                                                ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
+  }, [_vm._v("\n                                                    Basic Tables\n                                                ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
     staticClass: "side-nav-link-ref",
     attrs: {
       to: {
         name: "advanced"
       }
     }
-  }, [_vm._v("\r\n                                                    Advanced Tables\r\n                                                ")])], 1)])])], 1), _vm._v(" "), _c("li", {
+  }, [_vm._v("\n                                                    Advanced Tables\n                                                ")])], 1)])])], 1), _vm._v(" "), _c("li", {
     staticClass: "nav-item"
   }, [_c("a", {
     directives: [{
@@ -29182,35 +29182,35 @@ var render = function render() {
         name: "charts-apex"
       }
     }
-  }, [_vm._v("\r\n                                                    Apex Charts\r\n                                                ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
+  }, [_vm._v("\n                                                    Apex Charts\n                                                ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
     staticClass: "side-nav-link-ref",
     attrs: {
       to: {
         name: "charts-chartjs"
       }
     }
-  }, [_vm._v("\r\n                                                    Chartjs Charts\r\n                                                ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
+  }, [_vm._v("\n                                                    Chartjs Charts\n                                                ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
     staticClass: "side-nav-link-ref",
     attrs: {
       to: {
         name: "charts-c3"
       }
     }
-  }, [_vm._v("\r\n                                                    C3 Charts\r\n                                                ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
+  }, [_vm._v("\n                                                    C3 Charts\n                                                ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
     staticClass: "side-nav-link-ref",
     attrs: {
       to: {
         name: "charts-chartist"
       }
     }
-  }, [_vm._v("\r\n                                                    Chartist Charts\r\n                                                ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
+  }, [_vm._v("\n                                                    Chartist Charts\n                                                ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
     staticClass: "side-nav-link-ref",
     attrs: {
       to: {
         name: "charts-knob"
       }
     }
-  }, [_vm._v("\r\n                                                    Knob Charts\r\n                                                ")])], 1)])])], 1), _vm._v(" "), _c("li", {
+  }, [_vm._v("\n                                                    Knob Charts\n                                                ")])], 1)])])], 1), _vm._v(" "), _c("li", {
     staticClass: "nav-item"
   }, [_c("a", {
     directives: [{
@@ -29240,7 +29240,7 @@ var render = function render() {
         name: "maps-google"
       }
     }
-  }, [_vm._v("\r\n                                                    Google Maps\r\n                                                ")])], 1)])])], 1), _vm._v(" "), _c("li", {
+  }, [_vm._v("\n                                                    Google Maps\n                                                ")])], 1)])])], 1), _vm._v(" "), _c("li", {
     staticClass: "nav-item"
   }, [_c("a", {
     directives: [{
@@ -29276,7 +29276,7 @@ var render = function render() {
       href: "javascript: void(0);",
       "data-toggle": "collapse"
     }
-  }, [_vm._v("\r\n                                                    Second Level\r\n                                                    "), _c("span", {
+  }, [_vm._v("\n                                                    Second Level\n                                                    "), _c("span", {
     staticClass: "menu-arrow"
   })]), _vm._v(" "), _c("b-collapse", {
     attrs: {
@@ -31374,7 +31374,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\nform {\r\n    position: relative;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\nform {\n    position: relative;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -31398,7 +31398,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\nform {\r\n    position: relative;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\nform {\n    position: relative;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -31422,7 +31422,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\nform {\r\n    position: relative;\n}\n.nav-bordered {\r\n    border: unset !important;\n}\n.nav {\r\n    background-color: #dff0fe;\n}\n.tab-content {\r\n    padding: 70px 60px 40px;\r\n    min-height: 300px;\r\n    background-color: #f5f5f5;\r\n    position: relative;\n}\n.nav-tabs .nav-link {\r\n    border: 1px solid #b7b7b7 !important;\r\n    background-color: #d7e5f2;\r\n    border-bottom: 0 !important;\r\n    margin-bottom: 1px;\n}\n.nav-tabs .nav-link.active,\r\n.nav-tabs .nav-item.show .nav-link {\r\n    color: #000;\r\n    background-color: hsl(0deg 0% 96%);\r\n    border-bottom: 0 !important;\n}\n.img-thumbnail {\r\n    max-height: 400px !important;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\nform {\n    position: relative;\n}\n.nav-bordered {\n    border: unset !important;\n}\n.nav {\n    background-color: #dff0fe;\n}\n.tab-content {\n    padding: 70px 60px 40px;\n    min-height: 300px;\n    background-color: #f5f5f5;\n    position: relative;\n}\n.nav-tabs .nav-link {\n    border: 1px solid #b7b7b7 !important;\n    background-color: #d7e5f2;\n    border-bottom: 0 !important;\n    margin-bottom: 1px;\n}\n.nav-tabs .nav-link.active,\n.nav-tabs .nav-item.show .nav-link {\n    color: #000;\n    background-color: hsl(0deg 0% 96%);\n    border-bottom: 0 !important;\n}\n.img-thumbnail {\n    max-height: 400px !important;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -31446,7 +31446,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\nform {\r\n   position: relative;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\nform {\n   position: relative;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -31470,7 +31470,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\nform {\r\n    position: relative;\n}\n.modal-dialog .card {\r\n  margin: 0 !important;\n}\n.country.modal-body {\r\n  padding: 0 !important;\n}\n.modal-dialog .card-body {\r\n  padding: 1.5rem 1.5rem 0 1.5rem !important;\n}\n.nav-bordered {\r\n  border: unset !important;\n}\n.nav {\r\n  background-color: #dff0fe;\n}\n.tab-content {\r\n  padding: 70px 60px 40px;\r\n  min-height: 300px;\r\n  background-color: #f5f5f5;\r\n  position: relative;\n}\n.nav-tabs .nav-link {\r\n  border: 1px solid #b7b7b7 !important;\r\n  background-color: #d7e5f2;\r\n  border-bottom: 0 !important;\r\n  margin-bottom: 1px;\n}\n.nav-tabs .nav-link.active,\r\n.nav-tabs .nav-item.show .nav-link {\r\n  color: #000;\r\n  background-color: hsl(0deg 0% 96%);\r\n  border-bottom: 0 !important;\n}\n.img-thumbnail {\r\n  max-height: 400px !important;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\nform {\n    position: relative;\n}\n.modal-dialog .card {\n  margin: 0 !important;\n}\n.country.modal-body {\n  padding: 0 !important;\n}\n.modal-dialog .card-body {\n  padding: 1.5rem 1.5rem 0 1.5rem !important;\n}\n.nav-bordered {\n  border: unset !important;\n}\n.nav {\n  background-color: #dff0fe;\n}\n.tab-content {\n  padding: 70px 60px 40px;\n  min-height: 300px;\n  background-color: #f5f5f5;\n  position: relative;\n}\n.nav-tabs .nav-link {\n  border: 1px solid #b7b7b7 !important;\n  background-color: #d7e5f2;\n  border-bottom: 0 !important;\n  margin-bottom: 1px;\n}\n.nav-tabs .nav-link.active,\n.nav-tabs .nav-item.show .nav-link {\n  color: #000;\n  background-color: hsl(0deg 0% 96%);\n  border-bottom: 0 !important;\n}\n.img-thumbnail {\n  max-height: 400px !important;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -31494,7 +31494,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.dropdown-menu-custom-company.dropdown .dropdown-menu {\r\n  padding: 5px 10px !important;\r\n  overflow-y: scroll;\r\n  height: 300px;\n}\n.modal-body .card .tabs .tab-content {\r\n  padding: 20px 60px 40px !important;\n}\nform {\r\n    position: relative;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.dropdown-menu-custom-company.dropdown .dropdown-menu {\n  padding: 5px 10px !important;\n  overflow-y: scroll;\n  height: 300px;\n}\n.modal-body .card .tabs .tab-content {\n  padding: 20px 60px 40px !important;\n}\nform {\n    position: relative;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -31518,7 +31518,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\nform[data-v-27aa3950] {\r\n    position: relative;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\nform[data-v-27aa3950] {\n    position: relative;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -31542,7 +31542,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\nform {\r\n    position: relative;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\nform {\n    position: relative;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -31566,7 +31566,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\nform[data-v-114d8f40] {\r\n    position: relative;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\nform[data-v-114d8f40] {\n    position: relative;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -31590,7 +31590,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\nform[data-v-5ec6e7b6] {\r\n    position: relative;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\nform[data-v-5ec6e7b6] {\n    position: relative;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -31614,7 +31614,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\nform[data-v-77cdf02d] {\r\n  position: relative;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\nform[data-v-77cdf02d] {\n  position: relative;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -31638,7 +31638,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\nform {\r\n    position: relative;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\nform {\n    position: relative;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -31662,7 +31662,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\nform {\r\n    position: relative;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\nform {\n    position: relative;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -31686,7 +31686,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\nform[data-v-02dcb607] {\r\n    position: relative;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\nform[data-v-02dcb607] {\n    position: relative;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -31710,7 +31710,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\nform[data-v-37237a96] {\r\n    position: relative;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\nform[data-v-37237a96] {\n    position: relative;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -31734,7 +31734,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\nform[data-v-2689ebf0] {\r\n    position: relative;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\nform[data-v-2689ebf0] {\n    position: relative;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -31758,7 +31758,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\nform {\r\n  position: relative;\n}\n.dropdown-menu-custom-company.dropdown .dropdown-menu {\r\n  padding: 5px 10px !important;\r\n  overflow-y: scroll;\r\n  height: 400px;\n}\n.modal-dialog .card {\r\n  margin: 0 !important;\n}\n.modal-body.paddingUnset {\r\n  padding: 0 !important;\n}\n.modal-dialog .card-body {\r\n  padding: 1.5rem 1.5rem 0 1.5rem !important;\n}\n.nav-bordered {\r\n  border: unset !important;\n}\n.nav {\r\n  background-color: #dff0fe;\n}\n.tab-content {\r\n  padding: 70px 60px 40px;\r\n  min-height: 300px;\r\n  background-color: #f5f5f5;\r\n  position: relative;\n}\n.nav-tabs .nav-link {\r\n  border: 1px solid #b7b7b7 !important;\r\n  background-color: #d7e5f2;\r\n  border-bottom: 0 !important;\r\n  margin-bottom: 1px;\n}\n.nav-tabs .nav-link.active,\r\n.nav-tabs .nav-item.show .nav-link {\r\n  color: #000;\r\n  background-color: hsl(0deg 0% 96%);\r\n  border-bottom: 0 !important;\n}\n.img-thumbnail {\r\n  max-height: 400px !important;\n}\n@media print {\n.do-not-print {\r\n    display: none;\n}\n.arrow-sort {\r\n    display: none;\n}\n.bg-soft-success {\r\n    background-color: unset;\r\n    color: #000000 !important;\r\n    border: unset;\n}\n.bg-soft-danger {\r\n    background-color: unset;\r\n    color: #000000 !important;\r\n    border: unset;\n}\n}\n.tooltip-inner {\r\n  max-width: 750px !important;\r\n  background-color: #eed900;\r\n  color: black;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\nform {\n  position: relative;\n}\n.dropdown-menu-custom-company.dropdown .dropdown-menu {\n  padding: 5px 10px !important;\n  overflow-y: scroll;\n  height: 400px;\n}\n.modal-dialog .card {\n  margin: 0 !important;\n}\n.modal-body.paddingUnset {\n  padding: 0 !important;\n}\n.modal-dialog .card-body {\n  padding: 1.5rem 1.5rem 0 1.5rem !important;\n}\n.nav-bordered {\n  border: unset !important;\n}\n.nav {\n  background-color: #dff0fe;\n}\n.tab-content {\n  padding: 70px 60px 40px;\n  min-height: 300px;\n  background-color: #f5f5f5;\n  position: relative;\n}\n.nav-tabs .nav-link {\n  border: 1px solid #b7b7b7 !important;\n  background-color: #d7e5f2;\n  border-bottom: 0 !important;\n  margin-bottom: 1px;\n}\n.nav-tabs .nav-link.active,\n.nav-tabs .nav-item.show .nav-link {\n  color: #000;\n  background-color: hsl(0deg 0% 96%);\n  border-bottom: 0 !important;\n}\n.img-thumbnail {\n  max-height: 400px !important;\n}\n@media print {\n.do-not-print {\n    display: none;\n}\n.arrow-sort {\n    display: none;\n}\n.bg-soft-success {\n    background-color: unset;\n    color: #000000 !important;\n    border: unset;\n}\n.bg-soft-danger {\n    background-color: unset;\n    color: #000000 !important;\n    border: unset;\n}\n}\n.tooltip-inner {\n  max-width: 750px !important;\n  background-color: #eed900;\n  color: black;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -31782,7 +31782,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n*[data-v-19e21e0a] {\r\n  font-size: 16px;\n}\n.node[data-v-19e21e0a] {\r\n  font-size: 18px;\n}\n.title-tree[data-v-19e21e0a] {\r\n  font-size: 16px;\r\n  font-weight: 500;\n}\n.type[data-v-19e21e0a] {\r\n  margin-right: 10px;\n}\r\n\r\n/*ali*/\n.node[data-v-19e21e0a] {\r\n  --spacing: 1.5rem;\r\n  --radius: 10px;\n}\n.node .node[data-v-19e21e0a] {\r\n  display: block;\r\n  position: relative;\r\n  padding-left: calc(1.5 * var(--spacing) - var(--radius) - 2px);\n}\n.node .dragArea[data-v-19e21e0a] {\r\n  margin-left: calc(var(--radius) - var(--spacing));\r\n  padding-left: 0;\n}\n.node .dragArea .node[data-v-19e21e0a] {\r\n  border-left: 2px solid #ddd;\n}\n.node .dragArea .node.dir-node[data-v-19e21e0a] {\r\n  border-right: 2px solid #ddd;\r\n  border-left: unset;\n}\n.node .dragArea .node[data-v-19e21e0a]:last-child {\r\n  border-color: transparent;\n}\n.node .dragArea .node[data-v-19e21e0a]::before {\r\n  content: \"\";\r\n  display: block;\r\n  position: absolute;\r\n  top: calc(var(--spacing) / -2);\r\n  left: -2px;\r\n  width: calc(var(--spacing) + 2px);\r\n  height: calc(var(--spacing) + 5px);\r\n  border: solid #ddd;\r\n  border-width: 0 0 2px 2px;\n}\n.node .dragArea .node.dir-node[data-v-19e21e0a]::before {\r\n  content: \"\";\r\n  display: block;\r\n  position: absolute;\r\n  top: calc(var(--spacing) / -2);\r\n  right: -2px;\r\n  width: 12px;\r\n  height: calc(var(--spacing) + 5px);\r\n  border: solid #ddd;\r\n  border-width: 0 2px 2px 0;\r\n  left: unset;\n}\ni[data-v-19e21e0a] {\r\n  background-color: #3bafda;\r\n  color: snow;\r\n  border-radius: 50%;\r\n  padding: 3px;\r\n  font-size: 12px;\r\n  margin: 0px;\r\n  position: relative;\r\n  z-index: 1;\n}\n.active[data-v-19e21e0a] {\r\n  color: #159a80 !important;\n}\n.delete[data-v-19e21e0a] {\r\n  cursor: pointer;\r\n  background: none !important;\n}\nspan[data-v-19e21e0a] {\r\n  cursor: pointer !important;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n*[data-v-19e21e0a] {\n  font-size: 16px;\n}\n.node[data-v-19e21e0a] {\n  font-size: 18px;\n}\n.title-tree[data-v-19e21e0a] {\n  font-size: 16px;\n  font-weight: 500;\n}\n.type[data-v-19e21e0a] {\n  margin-right: 10px;\n}\n\n/*ali*/\n.node[data-v-19e21e0a] {\n  --spacing: 1.5rem;\n  --radius: 10px;\n}\n.node .node[data-v-19e21e0a] {\n  display: block;\n  position: relative;\n  padding-left: calc(1.5 * var(--spacing) - var(--radius) - 2px);\n}\n.node .dragArea[data-v-19e21e0a] {\n  margin-left: calc(var(--radius) - var(--spacing));\n  padding-left: 0;\n}\n.node .dragArea .node[data-v-19e21e0a] {\n  border-left: 2px solid #ddd;\n}\n.node .dragArea .node.dir-node[data-v-19e21e0a] {\n  border-right: 2px solid #ddd;\n  border-left: unset;\n}\n.node .dragArea .node[data-v-19e21e0a]:last-child {\n  border-color: transparent;\n}\n.node .dragArea .node[data-v-19e21e0a]::before {\n  content: \"\";\n  display: block;\n  position: absolute;\n  top: calc(var(--spacing) / -2);\n  left: -2px;\n  width: calc(var(--spacing) + 2px);\n  height: calc(var(--spacing) + 5px);\n  border: solid #ddd;\n  border-width: 0 0 2px 2px;\n}\n.node .dragArea .node.dir-node[data-v-19e21e0a]::before {\n  content: \"\";\n  display: block;\n  position: absolute;\n  top: calc(var(--spacing) / -2);\n  right: -2px;\n  width: 12px;\n  height: calc(var(--spacing) + 5px);\n  border: solid #ddd;\n  border-width: 0 2px 2px 0;\n  left: unset;\n}\ni[data-v-19e21e0a] {\n  background-color: #3bafda;\n  color: snow;\n  border-radius: 50%;\n  padding: 3px;\n  font-size: 12px;\n  margin: 0px;\n  position: relative;\n  z-index: 1;\n}\n.active[data-v-19e21e0a] {\n  color: #159a80 !important;\n}\n.delete[data-v-19e21e0a] {\n  cursor: pointer;\n  background: none !important;\n}\nspan[data-v-19e21e0a] {\n  cursor: pointer !important;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -31806,7 +31806,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\nform {\r\n    position: relative;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\nform {\n    position: relative;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -31830,7 +31830,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\nform {\r\n    position: relative;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\nform {\n    position: relative;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -31854,7 +31854,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\ninput::-webkit-outer-spin-button,\r\ninput::-webkit-inner-spin-button {\r\n    /* display: none; <- Crashes Chrome on hover */\r\n    -webkit-appearance: none;\r\n    margin: 0; /* <-- Apparently some margin are still there even though it's hidden */\n}\ninput[type=number] {\r\n    -moz-appearance:textfield; /* Firefox */\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\ninput::-webkit-outer-spin-button,\ninput::-webkit-inner-spin-button {\n    /* display: none; <- Crashes Chrome on hover */\n    -webkit-appearance: none;\n    margin: 0; /* <-- Apparently some margin are still there even though it's hidden */\n}\ninput[type=number] {\n    -moz-appearance:textfield; /* Firefox */\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -31878,7 +31878,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.color {\r\n    color: #6c757d !important;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.color {\n    color: #6c757d !important;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -31926,7 +31926,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.logo-lg img[data-v-45f7331a] {\r\n  width: 70px;\r\n  height: 45px;\n}\n.logo-sm img[data-v-45f7331a] {\r\n  width: 70px;\r\n  height: 45px;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.logo-lg img[data-v-45f7331a] {\n  width: 70px;\n  height: 45px;\n}\n.logo-sm img[data-v-45f7331a] {\n  width: 70px;\n  height: 45px;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -31950,7 +31950,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.selected-program .dropdown-item {\r\n    background: #f1f5f7 !important;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.selected-program .dropdown-item {\n    background: #f1f5f7 !important;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -31998,7 +31998,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.dropdown .dropdown-menu.dropdown-menu-custom[data-v-cd71e306] {\r\n    padding: 0 !important;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.dropdown .dropdown-menu.dropdown-menu-custom[data-v-cd71e306] {\n    padding: 0 !important;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 

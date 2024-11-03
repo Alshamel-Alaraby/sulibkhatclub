@@ -374,7 +374,9 @@ export default {
      * watch per_page
      */
     per_page(after, befour) {
-      this.getData();
+      setTimeout(() => {
+          this.getData();
+      }, 2500);
     },
     /**
      * watch search
@@ -1353,6 +1355,19 @@ export default {
                     <!-- Basic dropdown -->
                   </div>
                   <!-- end filter and setting -->
+                   <div class="d-inline-flex align-items-center">
+                    <label for="rows" class="control-label mb-0">
+                      {{ $t("general.chooseRows") }}
+                    </label>
+                    <span class="mx-1">:</span>
+                    <input
+                      type="number"
+                      id="rows"
+                      v-model="per_page"
+                      class="form-control-sm mb-0"
+                      style="width: 70px"
+                    />
+                  </div>
 
                   <!-- start Pagination -->
                   <div

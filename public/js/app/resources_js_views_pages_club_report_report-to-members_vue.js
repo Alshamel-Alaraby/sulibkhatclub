@@ -17,7 +17,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
-      version: "v2.3.9"
+      version: "v5.1.7"
     };
   }
 });
@@ -709,7 +709,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               _helper_global_js__WEBPACK_IMPORTED_MODULE_5__.selectedParents.value = [prog_id, prog_module_id, dashboard_id];
               localStorage.setItem("selectedParents", JSON.stringify(_helper_global_js__WEBPACK_IMPORTED_MODULE_5__.selectedParents.value));
               _context2.next = 5;
-              return axios__WEBPACK_IMPORTED_MODULE_7___default().get("".concat("https://admin.alshamelalaraby2.com/", "api/partners/get_children_inside_module_for_partner_sidebar_menu/").concat(prog_module_id)).then( /*#__PURE__*/function () {
+              return axios__WEBPACK_IMPORTED_MODULE_7___default().get("".concat("https://adminv2.alshamelalaraby.com/", "api/partners/get_children_inside_module_for_partner_sidebar_menu/").concat(prog_module_id)).then( /*#__PURE__*/function () {
                 var _ref = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee(res) {
                   var folders_and_pages, folders_and_pages_after_appended_show_property;
                   return _regeneratorRuntime().wrap(function _callee$(_context) {
@@ -1732,7 +1732,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         member_type_id: null,
         status_id: null,
         year_number: '',
-        year: ''
+        year: '',
+        sponser_ids: []
       },
       errors: {},
       is_disabled: false,
@@ -1770,7 +1771,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       },
       filterSetting: ["membership_number", "first_name", "second_name", "third_name", "last_name", "family_name", "birth_date", "national_id", "home_phone", "work_phone", "home_address", "work_address", "job", "degree"],
       Tooltip: '',
-      mouseEnter: null
+      mouseEnter: null,
+      sponsers: []
     };
   },
   validations: {
@@ -1818,12 +1820,41 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }
     }
   },
+  mounted: function mounted() {
+    this.getSponsers();
+  },
   methods: {
     /**
      *  start get Data module && pagination
      */
-    getData: function getData() {
+    getSponsers: function getSponsers() {
       var _this4 = this;
+      return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
+        return _regeneratorRuntime().wrap(function _callee$(_context) {
+          while (1) switch (_context.prev = _context.next) {
+            case 0:
+              _this4.isLoader = true;
+              _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/club-members/sponsers").then(function (res) {
+                var l = res.data.data;
+                _this4.sponsers = l;
+              })["catch"](function (err) {
+                sweetalert2__WEBPACK_IMPORTED_MODULE_4___default().fire({
+                  icon: "error",
+                  title: "".concat(_this4.$t("general.Error")),
+                  text: "".concat(_this4.$t("general.Thereisanerrorinthesystem"))
+                });
+              })["finally"](function () {
+                _this4.isLoader = false;
+              });
+            case 2:
+            case "end":
+              return _context.stop();
+          }
+        }, _callee);
+      }))();
+    },
+    getData: function getData() {
+      var _this5 = this;
       var page = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
       this.$v.create.$touch();
       if (this.$v.create.$invalid) {
@@ -1835,24 +1866,25 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         for (var i = 0; i < this.filterSetting.length; ++i) {
           filter += "columns[".concat(i, "]=").concat(this.filterSetting[i], "&");
         }
-        _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/club-members/members/report-to-members?financial_status_id=".concat((_this$create$financia = this.create.financial_status_id) !== null && _this$create$financia !== void 0 ? _this$create$financia : '', "&member_type_id=").concat((_this$create$member_t = this.create.member_type_id) !== null && _this$create$member_t !== void 0 ? _this$create$member_t : '', "&status_id=").concat((_this$create$status_i = this.create.status_id) !== null && _this$create$status_i !== void 0 ? _this$create$status_i : '', "&year_number=").concat((_this$create$year_num = this.create.year_number) !== null && _this$create$year_num !== void 0 ? _this$create$year_num : '', "&year=").concat((_this$create$year = this.create.year) !== null && _this$create$year !== void 0 ? _this$create$year : '', "&page=").concat(page, "&per_page=").concat(this.per_page, "&search=").concat(this.search, "&").concat(filter, "&order=full_name&sort=ASC")).then(function (res) {
+        var sponsor_ids = JSON.stringify(this.create.sponser_ids);
+        _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/club-members/members/report-to-members?financial_status_id=".concat((_this$create$financia = this.create.financial_status_id) !== null && _this$create$financia !== void 0 ? _this$create$financia : "", "&member_type_id=").concat((_this$create$member_t = this.create.member_type_id) !== null && _this$create$member_t !== void 0 ? _this$create$member_t : "", "&status_id=").concat((_this$create$status_i = this.create.status_id) !== null && _this$create$status_i !== void 0 ? _this$create$status_i : "", "&year_number=").concat((_this$create$year_num = this.create.year_number) !== null && _this$create$year_num !== void 0 ? _this$create$year_num : "", "&year=").concat((_this$create$year = this.create.year) !== null && _this$create$year !== void 0 ? _this$create$year : "", "&page=").concat(page, "&per_page=").concat(this.per_page, "&search=").concat(this.search, "&").concat(filter, "&sponser_ids=").concat(encodeURIComponent(sponsor_ids), "&order=full_name&sort=ASC")).then(function (res) {
           var l = res.data;
-          _this4.installmentStatus = l.data;
-          _this4.installmentStatusPagination = l.pagination;
-          _this4.current_page = l.pagination.current_page;
+          _this5.installmentStatus = l.data;
+          _this5.installmentStatusPagination = l.pagination;
+          _this5.current_page = l.pagination.current_page;
         })["catch"](function (err) {
           sweetalert2__WEBPACK_IMPORTED_MODULE_4___default().fire({
             icon: 'error',
-            title: "".concat(_this4.$t('general.Error')),
-            text: "".concat(_this4.$t('general.Thereisanerrorinthesystem'))
+            title: "".concat(_this5.$t('general.Error')),
+            text: "".concat(_this5.$t('general.Thereisanerrorinthesystem'))
           });
         })["finally"](function () {
-          _this4.isLoader = false;
+          _this5.isLoader = false;
         });
       }
     },
     getDataCurrentPage: function getDataCurrentPage() {
-      var _this5 = this;
+      var _this6 = this;
       var page = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
       this.$v.create.$touch();
       if (this.$v.create.$invalid) {
@@ -1865,19 +1897,20 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           for (var i = 0; i < this.filterSetting.length; ++i) {
             filter += "columns[".concat(i, "]=").concat(this.filterSetting[i], "&");
           }
-          _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/club-members/members/report-to-members?financial_status_id=".concat((_this$create$financia2 = this.create.financial_status_id) !== null && _this$create$financia2 !== void 0 ? _this$create$financia2 : '', "&member_type_id=").concat((_this$create$member_t2 = this.create.member_type_id) !== null && _this$create$member_t2 !== void 0 ? _this$create$member_t2 : '', "&status_id=").concat((_this$create$status_i2 = this.create.status_id) !== null && _this$create$status_i2 !== void 0 ? _this$create$status_i2 : '', "&year_number=").concat((_this$create$year_num2 = this.create.year_number) !== null && _this$create$year_num2 !== void 0 ? _this$create$year_num2 : '', "&year=").concat((_this$create$year2 = this.create.year) !== null && _this$create$year2 !== void 0 ? _this$create$year2 : '', "&page=").concat(this.current_page, "&per_page=").concat(this.per_page, "&search=").concat(this.search, "&").concat(filter, "&order=full_name&sort=ASC")).then(function (res) {
+          var sponsor_ids = JSON.stringify(this.create.sponser_ids);
+          _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/club-members/members/report-to-members?financial_status_id=".concat((_this$create$financia2 = this.create.financial_status_id) !== null && _this$create$financia2 !== void 0 ? _this$create$financia2 : "", "&member_type_id=").concat((_this$create$member_t2 = this.create.member_type_id) !== null && _this$create$member_t2 !== void 0 ? _this$create$member_t2 : "", "&status_id=").concat((_this$create$status_i2 = this.create.status_id) !== null && _this$create$status_i2 !== void 0 ? _this$create$status_i2 : "", "&year_number=").concat((_this$create$year_num2 = this.create.year_number) !== null && _this$create$year_num2 !== void 0 ? _this$create$year_num2 : "", "&year=").concat((_this$create$year2 = this.create.year) !== null && _this$create$year2 !== void 0 ? _this$create$year2 : "", "&page=").concat(page, "&per_page=").concat(this.per_page, "&search=").concat(this.search, "&").concat(filter, "&sponser_ids=").concat(encodeURIComponent(sponsor_ids), "&order=full_name&sort=ASC")).then(function (res) {
             var l = res.data;
-            _this5.installmentStatus = l.data;
-            _this5.installmentStatusPagination = l.pagination;
-            _this5.current_page = l.pagination.current_page;
+            _this6.installmentStatus = l.data;
+            _this6.installmentStatusPagination = l.pagination;
+            _this6.current_page = l.pagination.current_page;
           })["catch"](function (err) {
             sweetalert2__WEBPACK_IMPORTED_MODULE_4___default().fire({
               icon: 'error',
-              title: "".concat(_this5.$t('general.Error')),
-              text: "".concat(_this5.$t('general.Thereisanerrorinthesystem'))
+              title: "".concat(_this6.$t('general.Error')),
+              text: "".concat(_this6.$t('general.Thereisanerrorinthesystem'))
             });
           })["finally"](function () {
-            _this5.isLoader = false;
+            _this6.isLoader = false;
           });
         }
       }
@@ -1889,36 +1922,6 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
      *  get financial status
      */
     getFinancialStatus: function getFinancialStatus() {
-      var _this6 = this;
-      return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
-        return _regeneratorRuntime().wrap(function _callee$(_context) {
-          while (1) switch (_context.prev = _context.next) {
-            case 0:
-              _this6.isLoader = true;
-              _context.next = 3;
-              return _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/club-members/financial-status").then(function (res) {
-                var l = res.data.data;
-                _this6.financial_status = l;
-              })["catch"](function (err) {
-                sweetalert2__WEBPACK_IMPORTED_MODULE_4___default().fire({
-                  icon: "error",
-                  title: "".concat(_this6.$t("general.Error")),
-                  text: "".concat(_this6.$t("general.Thereisanerrorinthesystem"))
-                });
-              })["finally"](function () {
-                _this6.isLoader = false;
-              });
-            case 3:
-            case "end":
-              return _context.stop();
-          }
-        }, _callee);
-      }))();
-    },
-    /**
-     *  get type
-     */
-    getType: function getType() {
       var _this7 = this;
       return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
         return _regeneratorRuntime().wrap(function _callee2$(_context2) {
@@ -1926,9 +1929,9 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
             case 0:
               _this7.isLoader = true;
               _context2.next = 3;
-              return _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/club-members/members-types").then(function (res) {
+              return _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/club-members/financial-status").then(function (res) {
                 var l = res.data.data;
-                _this7.typs = l;
+                _this7.financial_status = l;
               })["catch"](function (err) {
                 sweetalert2__WEBPACK_IMPORTED_MODULE_4___default().fire({
                   icon: "error",
@@ -1946,9 +1949,9 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }))();
     },
     /**
-     *  get status
+     *  get type
      */
-    getStatus: function getStatus() {
+    getType: function getType() {
       var _this8 = this;
       return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3() {
         return _regeneratorRuntime().wrap(function _callee3$(_context3) {
@@ -1956,9 +1959,9 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
             case 0:
               _this8.isLoader = true;
               _context3.next = 3;
-              return _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/club-members/member-status").then(function (res) {
+              return _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/club-members/members-types").then(function (res) {
                 var l = res.data.data;
-                _this8.status = l;
+                _this8.typs = l;
               })["catch"](function (err) {
                 sweetalert2__WEBPACK_IMPORTED_MODULE_4___default().fire({
                   icon: "error",
@@ -1976,13 +1979,43 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }))();
     },
     /**
+     *  get status
+     */
+    getStatus: function getStatus() {
+      var _this9 = this;
+      return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee4() {
+        return _regeneratorRuntime().wrap(function _callee4$(_context4) {
+          while (1) switch (_context4.prev = _context4.next) {
+            case 0:
+              _this9.isLoader = true;
+              _context4.next = 3;
+              return _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/club-members/member-status").then(function (res) {
+                var l = res.data.data;
+                _this9.status = l;
+              })["catch"](function (err) {
+                sweetalert2__WEBPACK_IMPORTED_MODULE_4___default().fire({
+                  icon: "error",
+                  title: "".concat(_this9.$t("general.Error")),
+                  text: "".concat(_this9.$t("general.Thereisanerrorinthesystem"))
+                });
+              })["finally"](function () {
+                _this9.isLoader = false;
+              });
+            case 3:
+            case "end":
+              return _context4.stop();
+          }
+        }, _callee4);
+      }))();
+    },
+    /**
      *  reset Modal (create)
      */
     resetModalHidden: function resetModalHidden() {
-      var _this9 = this;
+      var _this10 = this;
       this.is_disabled = false;
       this.$nextTick(function () {
-        _this9.$v.$reset();
+        _this10.$v.$reset();
       });
       this.errors = {};
       this.$bvModal.hide("create");
@@ -1991,30 +2024,30 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
      *  hidden Modal (create)
      */
     resetModal: function resetModal() {
-      var _this10 = this;
-      return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee4() {
-        return _regeneratorRuntime().wrap(function _callee4$(_context4) {
-          while (1) switch (_context4.prev = _context4.next) {
+      var _this11 = this;
+      return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee5() {
+        return _regeneratorRuntime().wrap(function _callee5$(_context5) {
+          while (1) switch (_context5.prev = _context5.next) {
             case 0:
-              _context4.next = 2;
-              return _this10.getFinancialStatus();
+              _context5.next = 2;
+              return _this11.getFinancialStatus();
             case 2:
-              _context4.next = 4;
-              return _this10.getType();
+              _context5.next = 4;
+              return _this11.getType();
             case 4:
-              _context4.next = 6;
-              return _this10.getStatus();
+              _context5.next = 6;
+              return _this11.getStatus();
             case 6:
-              _this10.is_disabled = false;
-              _this10.$nextTick(function () {
-                _this10.$v.$reset();
+              _this11.is_disabled = false;
+              _this11.$nextTick(function () {
+                _this11.$v.$reset();
               });
-              _this10.errors = {};
+              _this11.errors = {};
             case 9:
             case "end":
-              return _context4.stop();
+              return _context5.stop();
           }
-        }, _callee4);
+        }, _callee5);
       }))();
     },
     /**
@@ -2030,10 +2063,10 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       return (0,_helper_startDate__WEBPACK_IMPORTED_MODULE_8__.formatDateOnly)(value);
     },
     ExportExcel: function ExportExcel(type, fn, dl) {
-      var _this11 = this;
+      var _this12 = this;
       this.enabled3 = false;
       setTimeout(function () {
-        var elt = _this11.$refs.exportable_table;
+        var elt = _this12.$refs.exportable_table;
         var wb = XLSX.utils.table_to_book(elt, {
           sheet: "Sheet JS"
         });
@@ -2046,7 +2079,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         } else {
           XLSX.writeFile(wb, fn || ('Payment Report' + '.' || 0) + (type || 'xlsx'));
         }
-        _this11.enabled3 = true;
+        _this12.enabled3 = true;
       }, 100);
     },
     choseAllFinancialStatus: function choseAllFinancialStatus() {
@@ -2092,7 +2125,7 @@ var render = function render() {
     staticClass: "row"
   }, [_c("div", {
     staticClass: "col-md-6 color"
-  }, [_vm._v("\r\n                " + _vm._s(new Date().getFullYear()) + " © Al Shamel Al Araby\r\n                "), _c("span", {
+  }, [_vm._v("\n                " + _vm._s(new Date().getFullYear()) + " © Al Shamel Al Araby\n                "), _c("span", {
     staticStyle: {
       margin: "0px 30px"
     }
@@ -2167,7 +2200,7 @@ var render = function render() {
       }
     }, [_c("i", {
       "class": "".concat(item.icon, " mr-1")
-    }), _vm._v("\r\n                                " + _vm._s(_vm.$t(item.label)) + "\r\n                            ")]) : _vm._e(), _vm._v(" "), item.subItems ? _c("a", {
+    }), _vm._v("\n                                " + _vm._s(_vm.$t(item.label)) + "\n                            ")]) : _vm._e(), _vm._v(" "), item.subItems ? _c("a", {
       staticClass: "nav-link dropdown-toggle arrow-none",
       attrs: {
         href: "javascript: void(0);",
@@ -2179,7 +2212,7 @@ var render = function render() {
       }
     }, [_c("i", {
       "class": "".concat(item.icon, " mr-1")
-    }), _vm._v("\r\n                                " + _vm._s(_vm.$t(item.label)) + "\r\n                                "), _c("div", {
+    }), _vm._v("\n                                " + _vm._s(_vm.$t(item.label)) + "\n                                "), _c("div", {
       staticClass: "arrow-down"
     })]) : _vm._e(), _vm._v(" "), _vm.hasItems(item) ? _c("div", {
       staticClass: "dropdown-menu row",
@@ -2204,7 +2237,7 @@ var render = function render() {
         on: {
           click: _vm.onMenuClick
         }
-      }, [_vm._v("\r\n                                            " + _vm._s(_vm.$t(subitem.label)) + "\r\n                                            "), _c("div", {
+      }, [_vm._v("\n                                            " + _vm._s(_vm.$t(subitem.label)) + "\n                                            "), _c("div", {
         staticClass: "arrow-down"
       })]), _vm._v(" "), _c("div", {
         staticClass: "dropdown-menu"
@@ -3608,7 +3641,7 @@ var render = function render() {
         name: "home"
       }
     }
-  }, [_vm._v("\r\n                                        Sales\r\n                                    ")])], 1), _vm._v(" "), _c("li", {
+  }, [_vm._v("\n                                        Sales\n                                    ")])], 1), _vm._v(" "), _c("li", {
     staticClass: "nav-item"
   }, [_c("router-link", {
     staticClass: "nav-link side-nav-link-ref",
@@ -3617,7 +3650,7 @@ var render = function render() {
         name: "crm-dashboard"
       }
     }, "to", "/dashboard/crm")
-  }, [_vm._v("\r\n                                        CRM\r\n                                    ")])], 1), _vm._v(" "), _c("li", {
+  }, [_vm._v("\n                                        CRM\n                                    ")])], 1), _vm._v(" "), _c("li", {
     staticClass: "nav-item"
   }, [_c("router-link", {
     staticClass: "nav-link side-nav-link-ref",
@@ -3626,7 +3659,7 @@ var render = function render() {
     }, "to", {
       name: "analytics-dashboard"
     })
-  }, [_vm._v("\r\n                                        Analytics\r\n                                    ")])], 1)])])]) : _vm._e(), _vm._v(" "), _vm.activetab === 2 ? _c("div", {
+  }, [_vm._v("\n                                        Analytics\n                                    ")])], 1)])])]) : _vm._e(), _vm._v(" "), _vm.activetab === 2 ? _c("div", {
     staticClass: "twocolumn-menu-item d-block",
     attrs: {
       id: "apps"
@@ -3644,7 +3677,7 @@ var render = function render() {
         name: "calendar"
       }
     }
-  }, [_vm._v("\r\n                                    Calendar\r\n                                ")])], 1), _vm._v(" "), _c("li", {
+  }, [_vm._v("\n                                    Calendar\n                                ")])], 1), _vm._v(" "), _c("li", {
     staticClass: "nav-item"
   }, [_c("router-link", {
     staticClass: "nav-link side-nav-link-ref",
@@ -3653,7 +3686,7 @@ var render = function render() {
         name: "chat"
       }
     }
-  }, [_vm._v("\r\n                                    Chat\r\n                                ")])], 1), _vm._v(" "), _c("li", {
+  }, [_vm._v("\n                                    Chat\n                                ")])], 1), _vm._v(" "), _c("li", {
     staticClass: "nav-item"
   }, [_c("a", {
     directives: [{
@@ -3683,70 +3716,70 @@ var render = function render() {
         name: "products"
       }
     }
-  }, [_vm._v("\r\n                                                Products List\r\n                                            ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
+  }, [_vm._v("\n                                                Products List\n                                            ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
     staticClass: "side-nav-link-ref",
     attrs: {
       to: {
         name: "products-grid"
       }
     }
-  }, [_vm._v("\r\n                                                Products Grid\r\n                                            ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
+  }, [_vm._v("\n                                                Products Grid\n                                            ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
     staticClass: "side-nav-link-ref",
     attrs: {
       to: {
         name: "product-detail"
       }
     }
-  }, [_vm._v("\r\n                                                Product Detail\r\n                                            ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
+  }, [_vm._v("\n                                                Product Detail\n                                            ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
     staticClass: "side-nav-link-ref",
     attrs: {
       to: {
         name: "product-create"
       }
     }
-  }, [_vm._v("\r\n                                                Create Product\r\n                                            ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
+  }, [_vm._v("\n                                                Create Product\n                                            ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
     staticClass: "side-nav-link-ref",
     attrs: {
       to: {
         name: "customers"
       }
     }
-  }, [_vm._v("\r\n                                                Customers\r\n                                            ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
+  }, [_vm._v("\n                                                Customers\n                                            ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
     staticClass: "side-nav-link-ref",
     attrs: {
       to: {
         name: "orders"
       }
     }
-  }, [_vm._v("\r\n                                                Orders\r\n                                            ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
+  }, [_vm._v("\n                                                Orders\n                                            ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
     staticClass: "side-nav-link-ref",
     attrs: {
       to: {
         name: "order-detail"
       }
     }
-  }, [_vm._v("\r\n                                                Order Detail\r\n                                            ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
+  }, [_vm._v("\n                                                Order Detail\n                                            ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
     staticClass: "side-nav-link-ref",
     attrs: {
       to: {
         name: "sellers"
       }
     }
-  }, [_vm._v("\r\n                                                Sellers\r\n                                            ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
+  }, [_vm._v("\n                                                Sellers\n                                            ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
     staticClass: "side-nav-link-ref",
     attrs: {
       to: {
         name: "cart"
       }
     }
-  }, [_vm._v("\r\n                                                Shopping Cart\r\n                                            ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
+  }, [_vm._v("\n                                                Shopping Cart\n                                            ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
     staticClass: "side-nav-link-ref",
     attrs: {
       to: {
         name: "checkout"
       }
     }
-  }, [_vm._v("\r\n                                                Checkout\r\n                                            ")])], 1)])])], 1), _vm._v(" "), _c("li", {
+  }, [_vm._v("\n                                                Checkout\n                                            ")])], 1)])])], 1), _vm._v(" "), _c("li", {
     staticClass: "nav-item"
   }, [_c("a", {
     directives: [{
@@ -3776,21 +3809,21 @@ var render = function render() {
         name: "email-inbox"
       }
     }
-  }, [_vm._v("\r\n                                                Inbox\r\n                                            ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
+  }, [_vm._v("\n                                                Inbox\n                                            ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
     staticClass: "side-nav-link-ref",
     attrs: {
       to: {
         name: "reademail"
       }
     }
-  }, [_vm._v("\r\n                                                Read Email\r\n                                            ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
+  }, [_vm._v("\n                                                Read Email\n                                            ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
     staticClass: "side-nav-link-ref",
     attrs: _defineProperty({
       to: "/email/templates"
     }, "to", {
       name: "email-templates"
     })
-  }, [_vm._v("\r\n                                                Email Templates\r\n                                            ")])], 1)])])], 1), _vm._v(" "), _c("li", {
+  }, [_vm._v("\n                                                Email Templates\n                                            ")])], 1)])])], 1), _vm._v(" "), _c("li", {
     staticClass: "nav-item"
   }, [_c("router-link", {
     staticClass: "nav-link side-nav-link-ref",
@@ -3799,7 +3832,7 @@ var render = function render() {
     }, "to", {
       name: ""
     })
-  }, [_vm._v("\r\n                                    Companies\r\n                                ")])], 1), _vm._v(" "), _c("li", {
+  }, [_vm._v("\n                                    Companies\n                                ")])], 1), _vm._v(" "), _c("li", {
     staticClass: "nav-item"
   }, [_c("a", {
     directives: [{
@@ -3829,21 +3862,21 @@ var render = function render() {
         name: "task-list"
       }
     }
-  }, [_vm._v("\r\n                                                List\r\n                                            ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
+  }, [_vm._v("\n                                                List\n                                            ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
     staticClass: "side-nav-link-ref",
     attrs: {
       to: {
         name: "task-detail"
       }
     }
-  }, [_vm._v("\r\n                                                Details\r\n                                            ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
+  }, [_vm._v("\n                                                Details\n                                            ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
     staticClass: "side-nav-link-ref",
     attrs: {
       to: {
         name: "kanban-board"
       }
     }
-  }, [_vm._v("\r\n                                                Kanban Board\r\n                                            ")])], 1)])])], 1), _vm._v(" "), _c("li", {
+  }, [_vm._v("\n                                                Kanban Board\n                                            ")])], 1)])])], 1), _vm._v(" "), _c("li", {
     staticClass: "nav-item"
   }, [_c("a", {
     directives: [{
@@ -3873,14 +3906,14 @@ var render = function render() {
         name: "contacts-list"
       }
     }
-  }, [_vm._v("\r\n                                                Members List\r\n                                            ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
+  }, [_vm._v("\n                                                Members List\n                                            ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
     staticClass: "side-nav-link-ref",
     attrs: {
       to: {
         name: "contacts-profile"
       }
     }
-  }, [_vm._v("\r\n                                                Profile\r\n                                            ")])], 1)])])], 1), _vm._v(" "), _c("li", {
+  }, [_vm._v("\n                                                Profile\n                                            ")])], 1)])])], 1), _vm._v(" "), _c("li", {
     staticClass: "nav-item"
   }, [_c("router-link", {
     staticClass: "nav-link side-nav-link-ref",
@@ -3889,7 +3922,7 @@ var render = function render() {
         name: "file-manager"
       }
     }
-  }, [_vm._v("\r\n                                    File Manager\r\n                                ")])], 1), _vm._v(" "), _c("li", {
+  }, [_vm._v("\n                                    File Manager\n                                ")])], 1), _vm._v(" "), _c("li", {
     staticClass: "nav-item"
   }, [_c("router-link", {
     staticClass: "nav-link side-nav-link-ref",
@@ -3898,7 +3931,7 @@ var render = function render() {
         name: "tickets"
       }
     }
-  }, [_vm._v("\r\n                                    Tickets\r\n                                ")])], 1)])]) : _vm._e(), _vm._v(" "), _vm.activetab === 3 ? _c("div", {
+  }, [_vm._v("\n                                    Tickets\n                                ")])], 1)])]) : _vm._e(), _vm._v(" "), _vm.activetab === 3 ? _c("div", {
     staticClass: "twocolumn-menu-item d-block",
     attrs: {
       id: "pages"
@@ -4110,7 +4143,7 @@ var render = function render() {
       href: "javascript: void(0);",
       "data-toggle": "collapse"
     }
-  }, [_vm._v("\r\n                                        Error Pages\r\n                                        "), _c("span", {
+  }, [_vm._v("\n                                        Error Pages\n                                        "), _c("span", {
     staticClass: "menu-arrow"
   })]), _vm._v(" "), _c("b-collapse", {
     attrs: {
@@ -4475,49 +4508,49 @@ var render = function render() {
         name: "elements"
       }
     }
-  }, [_vm._v("\r\n                                                    General Elements\r\n                                                ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
+  }, [_vm._v("\n                                                    General Elements\n                                                ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
     staticClass: "side-nav-link-ref",
     attrs: {
       to: {
         name: "advanced-form"
       }
     }
-  }, [_vm._v("\r\n                                                    Advanced\r\n                                                ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
+  }, [_vm._v("\n                                                    Advanced\n                                                ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
     staticClass: "side-nav-link-ref",
     attrs: {
       to: {
         name: "validation"
       }
     }
-  }, [_vm._v("\r\n                                                    Validation\r\n                                                ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
+  }, [_vm._v("\n                                                    Validation\n                                                ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
     staticClass: "side-nav-link-ref",
     attrs: {
       to: {
         name: "wizard"
       }
     }
-  }, [_vm._v("\r\n                                                    Wizard\r\n                                                ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
+  }, [_vm._v("\n                                                    Wizard\n                                                ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
     staticClass: "side-nav-link-ref",
     attrs: {
       to: {
         name: "mask"
       }
     }
-  }, [_vm._v("\r\n                                                    Masks\r\n                                                ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
+  }, [_vm._v("\n                                                    Masks\n                                                ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
     staticClass: "side-nav-link-ref",
     attrs: {
       to: {
         name: "quill"
       }
     }
-  }, [_vm._v("\r\n                                                    Quill Editor\r\n                                                ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
+  }, [_vm._v("\n                                                    Quill Editor\n                                                ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
     staticClass: "side-nav-link-ref",
     attrs: _defineProperty({
       to: "/forms/file-uploads"
     }, "to", {
       name: "file-uploads"
     })
-  }, [_vm._v("\r\n                                                    File Uploads\r\n                                                ")])], 1)])])], 1), _vm._v(" "), _c("li", {
+  }, [_vm._v("\n                                                    File Uploads\n                                                ")])], 1)])])], 1), _vm._v(" "), _c("li", {
     staticClass: "nav-item"
   }, [_c("a", {
     directives: [{
@@ -4547,14 +4580,14 @@ var render = function render() {
         name: "basic"
       }
     }
-  }, [_vm._v("\r\n                                                    Basic Tables\r\n                                                ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
+  }, [_vm._v("\n                                                    Basic Tables\n                                                ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
     staticClass: "side-nav-link-ref",
     attrs: {
       to: {
         name: "advanced"
       }
     }
-  }, [_vm._v("\r\n                                                    Advanced Tables\r\n                                                ")])], 1)])])], 1), _vm._v(" "), _c("li", {
+  }, [_vm._v("\n                                                    Advanced Tables\n                                                ")])], 1)])])], 1), _vm._v(" "), _c("li", {
     staticClass: "nav-item"
   }, [_c("a", {
     directives: [{
@@ -4584,35 +4617,35 @@ var render = function render() {
         name: "charts-apex"
       }
     }
-  }, [_vm._v("\r\n                                                    Apex Charts\r\n                                                ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
+  }, [_vm._v("\n                                                    Apex Charts\n                                                ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
     staticClass: "side-nav-link-ref",
     attrs: {
       to: {
         name: "charts-chartjs"
       }
     }
-  }, [_vm._v("\r\n                                                    Chartjs Charts\r\n                                                ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
+  }, [_vm._v("\n                                                    Chartjs Charts\n                                                ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
     staticClass: "side-nav-link-ref",
     attrs: {
       to: {
         name: "charts-c3"
       }
     }
-  }, [_vm._v("\r\n                                                    C3 Charts\r\n                                                ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
+  }, [_vm._v("\n                                                    C3 Charts\n                                                ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
     staticClass: "side-nav-link-ref",
     attrs: {
       to: {
         name: "charts-chartist"
       }
     }
-  }, [_vm._v("\r\n                                                    Chartist Charts\r\n                                                ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
+  }, [_vm._v("\n                                                    Chartist Charts\n                                                ")])], 1), _vm._v(" "), _c("li", [_c("router-link", {
     staticClass: "side-nav-link-ref",
     attrs: {
       to: {
         name: "charts-knob"
       }
     }
-  }, [_vm._v("\r\n                                                    Knob Charts\r\n                                                ")])], 1)])])], 1), _vm._v(" "), _c("li", {
+  }, [_vm._v("\n                                                    Knob Charts\n                                                ")])], 1)])])], 1), _vm._v(" "), _c("li", {
     staticClass: "nav-item"
   }, [_c("a", {
     directives: [{
@@ -4642,7 +4675,7 @@ var render = function render() {
         name: "maps-google"
       }
     }
-  }, [_vm._v("\r\n                                                    Google Maps\r\n                                                ")])], 1)])])], 1), _vm._v(" "), _c("li", {
+  }, [_vm._v("\n                                                    Google Maps\n                                                ")])], 1)])])], 1), _vm._v(" "), _c("li", {
     staticClass: "nav-item"
   }, [_c("a", {
     directives: [{
@@ -4678,7 +4711,7 @@ var render = function render() {
       href: "javascript: void(0);",
       "data-toggle": "collapse"
     }
-  }, [_vm._v("\r\n                                                    Second Level\r\n                                                    "), _c("span", {
+  }, [_vm._v("\n                                                    Second Level\n                                                    "), _c("span", {
     staticClass: "menu-arrow"
   })]), _vm._v(" "), _c("b-collapse", {
     attrs: {
@@ -5934,7 +5967,34 @@ var render = function render() {
     }
   }), _vm._v(" "), _vm.$v.create.year.$error || _vm.errors.year ? _c("div", {
     staticClass: "text-danger"
-  }, [_vm._v("\n                                            " + _vm._s(_vm.$t("general.fieldIsRequired")) + "\n                                        ")]) : _vm._e()], 1)]) : _vm._e()])])]), _vm._v(" "), _c("div", {
+  }, [_vm._v("\n                                            " + _vm._s(_vm.$t("general.fieldIsRequired")) + "\n                                        ")]) : _vm._e()], 1)]) : _vm._e(), _vm._v(" "), _c("div", {
+    staticClass: "col-md-6"
+  }, [_c("div", {
+    staticClass: "form-group position-relative"
+  }, [_c("label", {
+    staticClass: "control-label"
+  }, [_vm._v("\n                                        " + _vm._s(_vm.$t("general.sponser")) + "\n                                    ")]), _vm._v(" "), _c("multiselect", {
+    attrs: {
+      multiple: true,
+      options: _vm.sponsers.map(function (type) {
+        return type.id;
+      }),
+      "custom-label": function customLabel(opt) {
+        return _vm.$i18n.locale == "ar" ? _vm.sponsers.find(function (x) {
+          return x.id == opt;
+        }).name : _vm.sponsers.find(function (x) {
+          return x.id == opt;
+        }).name_e;
+      }
+    },
+    model: {
+      value: _vm.create.sponser_ids,
+      callback: function callback($$v) {
+        _vm.$set(_vm.create, "sponser_ids", $$v);
+      },
+      expression: "create.sponser_ids"
+    }
+  })], 1)])])])]), _vm._v(" "), _c("div", {
     ref: "exportable_table",
     staticClass: "table-responsive mb-3 custom-table-theme position-relative",
     attrs: {
@@ -6536,7 +6596,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.color {\r\n    color: #6c757d !important;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.color {\n    color: #6c757d !important;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -6584,7 +6644,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.logo-lg img[data-v-45f7331a] {\r\n  width: 70px;\r\n  height: 45px;\n}\n.logo-sm img[data-v-45f7331a] {\r\n  width: 70px;\r\n  height: 45px;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.logo-lg img[data-v-45f7331a] {\n  width: 70px;\n  height: 45px;\n}\n.logo-sm img[data-v-45f7331a] {\n  width: 70px;\n  height: 45px;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -6608,7 +6668,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.selected-program .dropdown-item {\r\n    background: #f1f5f7 !important;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.selected-program .dropdown-item {\n    background: #f1f5f7 !important;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -6656,7 +6716,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.dropdown .dropdown-menu.dropdown-menu-custom[data-v-cd71e306] {\r\n    padding: 0 !important;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.dropdown .dropdown-menu.dropdown-menu-custom[data-v-cd71e306] {\n    padding: 0 !important;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -6704,7 +6764,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\r\n/* Chrome, Safari, Edge, Opera */\ninput::-webkit-outer-spin-button,\r\ninput::-webkit-inner-spin-button {\r\n    -webkit-appearance: none;\r\n    margin: 0;\n}\r\n\r\n/* Firefox */\ninput[type=number] {\r\n    -moz-appearance: textfield;\n}\n.multiselect__single {\r\n    font-weight: 600 !important;\r\n    color: black !important;\n}\n.td5 {\r\n    font-size: 16px !important;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n/* Chrome, Safari, Edge, Opera */\ninput::-webkit-outer-spin-button,\ninput::-webkit-inner-spin-button {\n    -webkit-appearance: none;\n    margin: 0;\n}\n\n/* Firefox */\ninput[type=number] {\n    -moz-appearance: textfield;\n}\n.multiselect__single {\n    font-weight: 600 !important;\n    color: black !important;\n}\n.td5 {\n    font-size: 16px !important;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 

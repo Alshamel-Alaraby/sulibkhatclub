@@ -158,7 +158,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
             case 0:
               _this3.isLoader = true;
               _context3.next = 3;
-              return axios__WEBPACK_IMPORTED_MODULE_6___default().get("".concat("https://admin.alshamelalaraby2.com/", "api/partners/get_programs_and_modules_for_company/").concat(company_id)).then(function (res) {
+              return axios__WEBPACK_IMPORTED_MODULE_6___default().get("".concat("https://adminv2.alshamelalaraby.com/", "api/partners/get_programs_and_modules_for_company/").concat(company_id)).then(function (res) {
                 _this3.programs_and_modules = res.data.data;
                 _this3.$store.commit("auth/editParentModule", res.data.data);
               })["catch"](function (err) {
@@ -520,7 +520,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.company[data-v-50b212c2] {\r\n  background-color: #dff0fe;\r\n  min-height: 100vh;\r\n  width: 100%;\r\n  padding: 40px 0;\n}\n.company-content[data-v-50b212c2] {\r\n  height: 100%;\n}\nimg[data-v-50b212c2] {\r\n  max-height: 150px;\r\n  max-width: 250px;\n}\n.company-item[data-v-50b212c2] {\r\n  cursor: pointer;\r\n  background: #fff;\r\n  padding: 40px 20px;\r\n  border-radius: 14px;\r\n  height: 260px;\r\n  margin: 7px 0;\n}\n.container[data-v-50b212c2] {\r\n  max-width: 1100px !important;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.company[data-v-50b212c2] {\n  background-color: #dff0fe;\n  min-height: 100vh;\n  width: 100%;\n  padding: 40px 0;\n}\n.company-content[data-v-50b212c2] {\n  height: 100%;\n}\nimg[data-v-50b212c2] {\n  max-height: 150px;\n  max-width: 250px;\n}\n.company-item[data-v-50b212c2] {\n  cursor: pointer;\n  background: #fff;\n  padding: 40px 20px;\n  border-radius: 14px;\n  height: 260px;\n  margin: 7px 0;\n}\n.container[data-v-50b212c2] {\n  max-width: 1100px !important;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
