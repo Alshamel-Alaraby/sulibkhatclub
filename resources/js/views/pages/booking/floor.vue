@@ -13,6 +13,7 @@ import tableCustom from "../../../components/general/tableCustom";
 /**
  * Advanced Table component
  */
+
 export default {
     page: {
         title: "floors",
