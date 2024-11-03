@@ -3,7 +3,7 @@ import Layout from "../../../layouts/main";
 import PageHeader from "../../../../components/general/Page-header";
 import loader from "../../../../components/general/loader";
 import permissionGuard from "../../../../helper/permission";
-import Message from "../../../../components/create/general/Message.vue";
+import Message from "../../../../components/create/general/message.vue";
 import searchPage from "../../../../components/general/searchPage";
 import actionSetting from "../../../../components/general/actionSetting";
 import tableCustom from "../../../../components/general/tableCustom";

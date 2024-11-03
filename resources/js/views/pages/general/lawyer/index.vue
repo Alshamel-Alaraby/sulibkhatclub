@@ -10,7 +10,7 @@ import crudHelper from "../../../../helper/mixin/crudHelper";
 import searchPage from "../../../../components/general/searchPage";
 import actionSetting from "../../../../components/general/actionSetting";
 import tableCustom from "../../../../components/general/tableCustom";
-import Lawyer from "../../../../components/create/general/Lawyer";
+import Lawyer from "../../../../components/create/general/lawyer";
 
 /**
  * Advanced Table component

@@ -6,7 +6,7 @@ import loader from "../../../components/general/loader";
 import translation from "../../../helper/mixin/translation-mixin";
 import customTable from "../../../helper/mixin/customTable";
 import crudHelper from "../../../helper/mixin/crudHelper";
-import Floor from "../../../components/create/booking/floor";
+import Floor from "../../../components/create/booking/Floor";
 import searchPage from "../../../components/general/searchPage";
 import actionSetting from "../../../components/general/actionSetting";
 import tableCustom from "../../../components/general/tableCustom";

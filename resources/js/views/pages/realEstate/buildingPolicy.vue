@@ -142,7 +142,7 @@ import translation from "../../../helper/mixin/translation-mixin";
 import customTable from "../../../helper/mixin/customTable";
 import successError from "../../../helper/mixin/success&error";
 import crudHelper from "../../../helper/mixin/crudHelper";
-import BuildingPolicy from "../../../components/create/realEstate/buildingPolicy";
+import BuildingPolicy from "../../../components/create/realEstate/BuildingPolicy";
 
 /**
  * Advanced Table component

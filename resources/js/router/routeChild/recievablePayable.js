@@ -48,7 +48,8 @@ export default [
         meta: {
             middleware: [auth, checkAuth]
         },
-        component: () => import('../../views/pages/recievablePayable/InstallmentPaymentPlanDetail'),
+
+        component: () => import('../../views/pages/recievablePayable/InstallmentPaymentPlanDetail.vue'),
     },
     {
         path: '/dashboard/installment-payment-plan',
@@ -56,7 +57,7 @@ export default [
         meta: {
             middleware: [auth, checkAuth]
         },
-        component: () => import('../../views/pages/recievablePayable/installmentPaymentPlan'),
+        component: () => import('../../views/pages/recievablePayable/InstallmentPaymentPlan'),
     },
     {
         path: '/dashboard/payment-plan-installments',
@@ -209,7 +210,7 @@ export default [
         meta: {
             middleware: [auth, checkAuth]
         },
-        component: () => import('../../views/pages/recievablePayable/report/Payments'),
+        component: () => import('../../views/pages/recievablePayable/report/payments.vue'),
     },
     {
         path: '/dashboard/receivablePayable/DetailedPaymentReport',
@@ -217,6 +218,6 @@ export default [
         meta: {
             middleware: [auth, checkAuth]
         },
-        component: () => import('../../views/pages/recievablePayable/report/DetailedPayments'),
+        component: () => import('../../views/pages/recievablePayable/report/detailedPayments.vue'),
     },
 ];

@@ -127,7 +127,7 @@ export default [
         meta: {
             middleware: [auth,checkAuth]
         },
-        component: () => import('../../views/pages/boardRent/YearlyContractInvoice'),
+        component: () => import('../../views/pages/boardRent/yearlyContractInvoice'),
     },
 
 ];

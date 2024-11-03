@@ -335,7 +335,7 @@ import {arabicValue, englishValue} from "../../../helper/langTransform";
 import transMixinComp from "../../../helper/mixin/translation-comp-mixin";
 import successError from "../../../helper/mixin/success&error";
 import Swal from "sweetalert2";
-import Floor from "./floor.vue";
+import Floor from "./Floor.vue";
 import Multiselect from "vue-multiselect";
 
 export default {
