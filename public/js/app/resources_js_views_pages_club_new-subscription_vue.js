@@ -1729,6 +1729,9 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
   },
   data: function data() {
     return {
+      inputPerPage: null,
+      debounceTimer: null,
+      serachInput: "",
       fields: [],
       per_page: 50,
       search: "",
@@ -1748,9 +1751,9 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         serial_id: null,
         member_request_id: null,
         document_id: 38,
-        date_from: '',
-        date_to: '',
-        year: '',
+        date_from: "",
+        date_to: "",
+        year: "",
         type: "subscribe",
         amount: "",
         module_type: "club",
@@ -1761,9 +1764,9 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         branch_id: null,
         member_request_id: null,
         document_id: 38,
-        date_from: '',
-        date_to: '',
-        year: '',
+        date_from: "",
+        date_to: "",
+        year: "",
         type: "subscribe",
         amount: "",
         module_type: "club",
@@ -1882,28 +1885,27 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     /**
      * watch per_page
      */
-    per_page: function per_page(after, befour) {
-      this.getData();
-    },
-    /**
-     * watch search
-     */
-    search: function search(after, befour) {
-      var _this = this;
-      clearTimeout(this.debounce);
-      this.debounce = setTimeout(function () {
-        _this.getData();
-      }, 400);
-    },
+    // per_page(after, befour) {
+    //     this.getData();
+    // },
+    // /**
+    //  * watch search
+    //  */
+    // search(after, befour) {
+    //     clearTimeout(this.debounce);
+    //     this.debounce = setTimeout(() => {
+    //         this.getData();
+    //     }, 400);
+    // },
     /**
      * watch check All table
      */
     isCheckAll: function isCheckAll(after, befour) {
-      var _this2 = this;
+      var _this = this;
       if (after) {
         this.transactions.forEach(function (el) {
-          if (!_this2.checkAll.includes(el.id)) {
-            _this2.checkAll.push(el.id);
+          if (!_this.checkAll.includes(el.id)) {
+            _this.checkAll.push(el.id);
           }
         });
       } else {
@@ -1917,18 +1919,34 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     this.getData();
   },
   methods: {
-    getCustomTableFields: function getCustomTableFields() {
+    handelSerach: function handelSerach() {
+      var _this2 = this;
+      clearTimeout(this.debounce);
+      this.debounce = setTimeout(function () {
+        _this2.search = _this2.serachInput;
+        _this2.getData();
+      }, 1000);
+    },
+    handelPerPageInput: function handelPerPageInput() {
       var _this3 = this;
+      clearTimeout(this.debounceTimer);
+      this.debounceTimer = setTimeout(function () {
+        _this3.per_page = _this3.inputPerPage;
+        _this3.getData();
+      }, 1000);
+    },
+    getCustomTableFields: function getCustomTableFields() {
+      var _this4 = this;
       _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/customTable/table-columns/cm_transactions").then(function (res) {
-        _this3.fields = res.data;
+        _this4.fields = res.data;
       })["catch"](function (err) {
         sweetalert2__WEBPACK_IMPORTED_MODULE_4___default().fire({
           icon: "error",
-          title: "".concat(_this3.$t("general.Error")),
-          text: "".concat(_this3.$t("general.Thereisanerrorinthesystem"))
+          title: "".concat(_this4.$t("general.Error")),
+          text: "".concat(_this4.$t("general.Thereisanerrorinthesystem"))
         });
       })["finally"](function () {
-        _this3.isLoader = false;
+        _this4.isLoader = false;
       });
     },
     isVisible: function isVisible(fieldName) {
@@ -1944,28 +1962,28 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       return res.length > 0 && res[0].is_required == 1 ? true : false;
     },
     isPermission: function isPermission(item) {
-      if (this.$store.state.auth.type == 'user') {
+      if (this.$store.state.auth.type == "user") {
         return this.$store.state.auth.permissions.includes(item);
       }
       return true;
     },
     showBranchModal: function showBranchModal() {
-      var _this4 = this;
+      var _this5 = this;
       return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
         return _regeneratorRuntime().wrap(function _callee$(_context) {
           while (1) switch (_context.prev = _context.next) {
             case 0:
-              if (!(_this4.create.branch_id == 0)) {
+              if (!(_this5.create.branch_id == 0)) {
                 _context.next = 5;
                 break;
               }
-              _this4.$bvModal.show("create_branch");
-              _this4.create.branch_id = null;
+              _this5.$bvModal.show("create_branch");
+              _this5.create.branch_id = null;
               _context.next = 7;
               break;
             case 5:
               _context.next = 7;
-              return _this4.getSerials();
+              return _this5.getSerials();
             case 7:
             case "end":
               return _context.stop();
@@ -1980,15 +1998,15 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }
     },
     resetForm: function resetForm() {
-      var _this5 = this;
+      var _this6 = this;
       this.financial_years_validate = true;
       this.create = {
         branch_id: null,
         serial_id: null,
         member_request_id: null,
-        date_from: '',
-        date_to: '',
-        year: '',
+        date_from: "",
+        date_to: "",
+        year: "",
         type: "subscribe",
         document_id: 38,
         amount: "",
@@ -1996,7 +2014,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         date: new Date().toISOString().slice(0, 10)
       };
       this.$nextTick(function () {
-        _this5.$v.$reset();
+        _this6.$v.$reset();
       });
       this.is_disabled = false;
     },
@@ -2004,7 +2022,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
      *  start get Data && pagination
      */
     getData: function getData() {
-      var _this6 = this;
+      var _this7 = this;
       var page = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
       this.isLoader = true;
       var _filterSetting = _toConsumableArray(this.filterSetting);
@@ -2018,21 +2036,21 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }
       _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/club-members/transactions?document_id=38&module_type=club&sponsor=0&page=".concat(page, "&per_page=").concat(this.per_page, "&search=").concat(this.search, "&").concat(filter)).then(function (res) {
         var l = res.data;
-        _this6.transactions = l.data;
-        _this6.transactionsPagination = l.pagination;
-        _this6.current_page = l.pagination.current_page;
+        _this7.transactions = l.data;
+        _this7.transactionsPagination = l.pagination;
+        _this7.current_page = l.pagination.current_page;
       })["catch"](function (err) {
         sweetalert2__WEBPACK_IMPORTED_MODULE_4___default().fire({
           icon: "error",
-          title: "".concat(_this6.$t("general.Error")),
-          text: "".concat(_this6.$t("general.Thereisanerrorinthesystem"))
+          title: "".concat(_this7.$t("general.Error")),
+          text: "".concat(_this7.$t("general.Thereisanerrorinthesystem"))
         });
       })["finally"](function () {
-        _this6.isLoader = false;
+        _this7.isLoader = false;
       });
     },
     getDataCurrentPage: function getDataCurrentPage() {
-      var _this7 = this;
+      var _this8 = this;
       var page = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
       if (this.current_page <= this.transactionsPagination.last_page && this.current_page != this.transactionsPagination.current_page && this.current_page) {
         this.isLoader = true;
@@ -2047,37 +2065,37 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         }
         _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/club-members/transactions?document_id=38&module_type=club&sponsor=0&page=".concat(this.current_page, "&per_page=").concat(this.per_page, "&search=").concat(this.search, "&").concat(filter)).then(function (res) {
           var l = res.data;
-          _this7.transactions = l.data;
-          _this7.transactionsPagination = l.pagination;
-          _this7.current_page = l.pagination.current_page;
+          _this8.transactions = l.data;
+          _this8.transactionsPagination = l.pagination;
+          _this8.current_page = l.pagination.current_page;
         })["catch"](function (err) {
           sweetalert2__WEBPACK_IMPORTED_MODULE_4___default().fire({
             icon: "error",
-            title: "".concat(_this7.$t("general.Error")),
-            text: "".concat(_this7.$t("general.Thereisanerrorinthesystem"))
+            title: "".concat(_this8.$t("general.Error")),
+            text: "".concat(_this8.$t("general.Thereisanerrorinthesystem"))
           });
         })["finally"](function () {
-          _this7.isLoader = false;
+          _this8.isLoader = false;
         });
       }
     },
     getBranches: function getBranches() {
-      var _this8 = this;
+      var _this9 = this;
       return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
         return _regeneratorRuntime().wrap(function _callee2$(_context2) {
           while (1) switch (_context2.prev = _context2.next) {
             case 0:
-              _this8.isLoader = true;
+              _this9.isLoader = true;
               _context2.next = 3;
-              return _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/branches?document_id=".concat(_this8.create.document_id)).then(function (res) {
-                _this8.isLoader = false;
+              return _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/branches?document_id=".concat(_this9.create.document_id)).then(function (res) {
+                _this9.isLoader = false;
                 var l = res.data.data;
-                _this8.branches = l;
+                _this9.branches = l;
               })["catch"](function (err) {
                 sweetalert2__WEBPACK_IMPORTED_MODULE_4___default().fire({
                   icon: "error",
-                  title: "".concat(_this8.$t("general.Error")),
-                  text: "".concat(_this8.$t("general.Thereisanerrorinthesystem"))
+                  title: "".concat(_this9.$t("general.Error")),
+                  text: "".concat(_this9.$t("general.Thereisanerrorinthesystem"))
                 });
               });
             case 3:
@@ -2088,22 +2106,22 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }))();
     },
     getSerials: function getSerials() {
-      var _this9 = this;
+      var _this10 = this;
       return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3() {
         return _regeneratorRuntime().wrap(function _callee3$(_context3) {
           while (1) switch (_context3.prev = _context3.next) {
             case 0:
-              _this9.isLoader = true;
+              _this10.isLoader = true;
               _context3.next = 3;
-              return _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/serials?branch_id=".concat(_this9.create.branch_id, "&document_id=38")).then(function (res) {
-                _this9.isLoader = false;
+              return _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/serials?branch_id=".concat(_this10.create.branch_id, "&document_id=38")).then(function (res) {
+                _this10.isLoader = false;
                 var l = res.data.data;
-                _this9.serials = l;
+                _this10.serials = l;
               })["catch"](function (err) {
                 sweetalert2__WEBPACK_IMPORTED_MODULE_4___default().fire({
                   icon: "error",
-                  title: "".concat(_this9.$t("general.Error")),
-                  text: "".concat(_this9.$t("general.Thereisanerrorinthesystem"))
+                  title: "".concat(_this10.$t("general.Error")),
+                  text: "".concat(_this10.$t("general.Thereisanerrorinthesystem"))
                 });
               });
             case 3:
@@ -2120,7 +2138,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
      *  start delete
      */
     deleteBranch: function deleteBranch(id, index) {
-      var _this10 = this;
+      var _this11 = this;
       if (Array.isArray(id)) {
         sweetalert2__WEBPACK_IMPORTED_MODULE_4___default().fire({
           title: "".concat(this.$t("general.Areyousure")),
@@ -2134,36 +2152,36 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           buttonsStyling: false
         }).then(function (result) {
           if (result.value) {
-            _this10.isLoader = true;
+            _this11.isLoader = true;
             _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].post("/club-members/transactions/bulk-delete", {
               ids: id
             }).then(function (res) {
-              _this10.checkAll = [];
-              _this10.getData();
+              _this11.checkAll = [];
+              _this11.getData();
               sweetalert2__WEBPACK_IMPORTED_MODULE_4___default().fire({
                 icon: "success",
-                title: "".concat(_this10.$t("general.Deleted")),
-                text: "".concat(_this10.$t("general.Yourrowhasbeendeleted")),
+                title: "".concat(_this11.$t("general.Deleted")),
+                text: "".concat(_this11.$t("general.Yourrowhasbeendeleted")),
                 showConfirmButton: false,
                 timer: 1500
               });
             })["catch"](function (err) {
               if (err.response.status == 400) {
-                var text = '';
+                var text = "";
                 err.response.data.message.forEach(function (el) {
                   return text += "<div>".concat(el.message, "</div> <br/>");
                 });
-                _this10.errorFunChildren('Error', text);
-                _this10.getData();
+                _this11.errorFunChildren("Error", text);
+                _this11.getData();
               } else {
                 sweetalert2__WEBPACK_IMPORTED_MODULE_4___default().fire({
                   icon: "error",
-                  title: "".concat(_this10.$t("general.Error")),
-                  text: "".concat(_this10.$t("general.Thereisanerrorinthesystem"))
+                  title: "".concat(_this11.$t("general.Error")),
+                  text: "".concat(_this11.$t("general.Thereisanerrorinthesystem"))
                 });
               }
             })["finally"](function () {
-              _this10.isLoader = false;
+              _this11.isLoader = false;
             });
           }
         });
@@ -2180,33 +2198,33 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           buttonsStyling: false
         }).then(function (result) {
           if (result.value) {
-            _this10.isLoader = true;
+            _this11.isLoader = true;
             _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"]["delete"]("/club-members/transactions/".concat(id)).then(function (res) {
-              _this10.checkAll = [];
-              _this10.getData();
+              _this11.checkAll = [];
+              _this11.getData();
               sweetalert2__WEBPACK_IMPORTED_MODULE_4___default().fire({
                 icon: "success",
-                title: "".concat(_this10.$t("general.Deleted")),
-                text: "".concat(_this10.$t("general.Yourrowhasbeendeleted")),
+                title: "".concat(_this11.$t("general.Deleted")),
+                text: "".concat(_this11.$t("general.Yourrowhasbeendeleted")),
                 showConfirmButton: false,
                 timer: 1500
               });
             })["catch"](function (err) {
               if (err.response.status == 400) {
-                var text = '';
+                var text = "";
                 err.response.data.message.forEach(function (el) {
                   return text += "<div>".concat(el.message, "</div> <br/>");
                 });
-                _this10.errorFunChildren('Error', text);
+                _this11.errorFunChildren("Error", text);
               } else {
                 sweetalert2__WEBPACK_IMPORTED_MODULE_4___default().fire({
                   icon: "error",
-                  title: "".concat(_this10.$t("general.Error")),
-                  text: "".concat(_this10.$t("general.Thereisanerrorinthesystem"))
+                  title: "".concat(_this11.$t("general.Error")),
+                  text: "".concat(_this11.$t("general.Thereisanerrorinthesystem"))
                 });
               }
             })["finally"](function () {
-              _this10.isLoader = false;
+              _this11.isLoader = false;
             });
           }
         });
@@ -2219,15 +2237,15 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
      *  reset Modal (create)
      */
     resetModalHidden: function resetModalHidden() {
-      var _this11 = this;
+      var _this12 = this;
       this.financial_years_validate = true;
       this.create = {
         branch_id: null,
         serial_id: null,
         member_request_id: null,
-        date_from: '',
-        date_to: '',
-        year: '',
+        date_from: "",
+        date_to: "",
+        year: "",
         type: "subscribe",
         document_id: 38,
         amount: "",
@@ -2235,7 +2253,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         module_type: "club"
       };
       this.$nextTick(function () {
-        _this11.$v.$reset();
+        _this12.$v.$reset();
       });
       this.errors = {};
       this.is_disabled = false;
@@ -2245,33 +2263,33 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
      *  hidden Modal (create)
      */
     resetModal: function resetModal() {
-      var _this12 = this;
+      var _this13 = this;
       return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee4() {
         return _regeneratorRuntime().wrap(function _callee4$(_context4) {
           while (1) switch (_context4.prev = _context4.next) {
             case 0:
-              if (!_this12.isVisible('member_request_id')) {
+              if (!_this13.isVisible("member_request_id")) {
                 _context4.next = 3;
                 break;
               }
               _context4.next = 3;
-              return _this12.getMember();
+              return _this13.getMember();
             case 3:
-              if (!_this12.isVisible('branch_id')) {
+              if (!_this13.isVisible("branch_id")) {
                 _context4.next = 6;
                 break;
               }
               _context4.next = 6;
-              return _this12.getBranches();
+              return _this13.getBranches();
             case 6:
-              _this12.financial_years_validate = true;
-              _this12.create = {
+              _this13.financial_years_validate = true;
+              _this13.create = {
                 branch_id: null,
                 serial_id: null,
                 member_request_id: null,
-                date_from: '',
-                date_to: '',
-                year: '',
+                date_from: "",
+                date_to: "",
+                year: "",
                 type: "subscribe",
                 document_id: 38,
                 amount: "",
@@ -2279,13 +2297,13 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 module_type: "club"
               };
               _context4.next = 10;
-              return _this12.handelDateCheck();
+              return _this13.handelDateCheck();
             case 10:
-              _this12.$nextTick(function () {
-                _this12.$v.$reset();
+              _this13.$nextTick(function () {
+                _this13.$v.$reset();
               });
-              _this12.is_disabled = false;
-              _this12.errors = {};
+              _this13.is_disabled = false;
+              _this13.errors = {};
             case 13:
             case "end":
               return _context4.stop();
@@ -2297,7 +2315,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
      *  create countrie
      */
     AddSubmit: function AddSubmit() {
-      var _this13 = this;
+      var _this14 = this;
       this.create.year_from = new Date(this.create.date_from).getFullYear();
       this.create.year_to = new Date(this.create.date_to).getFullYear();
       this.$v.create.$touch();
@@ -2312,54 +2330,17 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           transactions: transactions,
           company_id: this.company_id
         }).then(function (res) {
-          _this13.getData();
-          _this13.is_disabled = true;
-          setTimeout(function () {
-            sweetalert2__WEBPACK_IMPORTED_MODULE_4___default().fire({
-              icon: "success",
-              text: "".concat(_this13.$t("general.Addedsuccessfully")),
-              showConfirmButton: false,
-              timer: 1500
-            });
-          }, 500);
-          _this13.printInv(res.data.data[0]);
-        })["catch"](function (err) {
-          if (err.response.data) {
-            _this13.errors = err.response.data.errors;
-          } else {
-            sweetalert2__WEBPACK_IMPORTED_MODULE_4___default().fire({
-              icon: "error",
-              title: "".concat(_this13.$t("general.Error")),
-              text: "".concat(_this13.$t("general.Thereisanerrorinthesystem"))
-            });
-          }
-        })["finally"](function () {
-          _this13.isLoader = false;
-        });
-      }
-    },
-    /**
-     *  edit countrie
-     */
-    editSubmit: function editSubmit(id) {
-      var _this14 = this;
-      this.$v.edit.$touch();
-      if (this.$v.edit.$invalid || !this.financial_years_validate) {
-        return;
-      } else {
-        this.isLoader = true;
-        this.errors = {};
-        _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].put("/club-members/transactions/".concat(id), this.edit).then(function (res) {
-          _this14.$bvModal.hide("modal-edit-".concat(id));
           _this14.getData();
+          _this14.is_disabled = true;
           setTimeout(function () {
             sweetalert2__WEBPACK_IMPORTED_MODULE_4___default().fire({
               icon: "success",
-              text: "".concat(_this14.$t("general.Editsuccessfully")),
+              text: "".concat(_this14.$t("general.Addedsuccessfully")),
               showConfirmButton: false,
               timer: 1500
             });
           }, 500);
+          _this14.printInv(res.data.data[0]);
         })["catch"](function (err) {
           if (err.response.data) {
             _this14.errors = err.response.data.errors;
@@ -2376,53 +2357,90 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }
     },
     /**
+     *  edit countrie
+     */
+    editSubmit: function editSubmit(id) {
+      var _this15 = this;
+      this.$v.edit.$touch();
+      if (this.$v.edit.$invalid || !this.financial_years_validate) {
+        return;
+      } else {
+        this.isLoader = true;
+        this.errors = {};
+        _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].put("/club-members/transactions/".concat(id), this.edit).then(function (res) {
+          _this15.$bvModal.hide("modal-edit-".concat(id));
+          _this15.getData();
+          setTimeout(function () {
+            sweetalert2__WEBPACK_IMPORTED_MODULE_4___default().fire({
+              icon: "success",
+              text: "".concat(_this15.$t("general.Editsuccessfully")),
+              showConfirmButton: false,
+              timer: 1500
+            });
+          }, 500);
+        })["catch"](function (err) {
+          if (err.response.data) {
+            _this15.errors = err.response.data.errors;
+          } else {
+            sweetalert2__WEBPACK_IMPORTED_MODULE_4___default().fire({
+              icon: "error",
+              title: "".concat(_this15.$t("general.Error")),
+              text: "".concat(_this15.$t("general.Thereisanerrorinthesystem"))
+            });
+          }
+        })["finally"](function () {
+          _this15.isLoader = false;
+        });
+      }
+    },
+    /**
      *   show Modal (edit)
      */
     resetModalEdit: function resetModalEdit(id) {
-      var _this15 = this;
+      var _this16 = this;
       return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee5() {
         var setting;
         return _regeneratorRuntime().wrap(function _callee5$(_context5) {
           while (1) switch (_context5.prev = _context5.next) {
             case 0:
-              if (!_this15.isVisible('member_request_id')) {
+              if (!_this16.isVisible("member_request_id")) {
                 _context5.next = 3;
                 break;
               }
               _context5.next = 3;
-              return _this15.getMember();
+              return _this16.getMember();
             case 3:
-              if (!_this15.isVisible('branch_id')) {
+              if (!_this16.isVisible("branch_id")) {
                 _context5.next = 6;
                 break;
               }
               _context5.next = 6;
-              return _this15.getBranches();
+              return _this16.getBranches();
             case 6:
-              setting = _this15.transactions.find(function (e) {
+              setting = _this16.transactions.find(function (e) {
                 return id == e.id;
               });
-              _this15.edit.member_request_id = setting.member.id;
-              _this15.edit.branch_id = setting.branch.id;
-              _this15.edit.date_from = setting.date_from;
-              _this15.edit.date_to = setting.date_to;
-              _this15.edit.year = setting.year;
-              _this15.edit.year_from = setting.year_from;
-              _this15.edit.type = setting.type;
-              _this15.edit.document_id = setting.document_id;
-              _this15.edit.year_to = setting.year_to;
-              _this15.edit.amount = setting.amount;
-              _this15.edit.module_type = "club";
-              _this15.edit.date = new Date().toISOString().slice(0, 10);
-              if (!_this15.isVisible('serial_id')) {
+              _this16.edit.member_request_id = setting.member.id;
+              _this16.edit.branch_id = setting.branch.id;
+              _this16.edit.date_from = setting.date_from;
+              _this16.edit.date_to = setting.date_to;
+              _this16.edit.year = setting.year;
+              _this16.edit.year_from = setting.year_from;
+              _this16.edit.type = setting.type;
+              _this16.edit.document_id = setting.document_id;
+              _this16.edit.year_to = setting.year_to;
+              _this16.edit.amount = setting.amount;
+              _this16.edit.module_type = "club";
+              _this16.edit.date = new Date().toISOString().slice(0, 10);
+              if (!_this16.isVisible("serial_id")) {
                 _context5.next = 22;
                 break;
               }
               _context5.next = 22;
-              return _this15.getSerials();
+              return _this16.getSerials();
             case 22:
-              _this15.errors = {};
-              _this15.financial_years_validate = true;
+              _this16.errors = {};
+              _this16.financial_years_validate = true;
             case 24:
             case "end":
               return _context5.stop();
@@ -2438,9 +2456,9 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       this.edit = {
         branch_id: null,
         member_request_id: null,
-        date_from: '',
-        date_to: '',
-        year: '',
+        date_from: "",
+        date_to: "",
+        year: "",
         type: "subscribe",
         document_id: 38,
         amount: "",
@@ -2474,16 +2492,16 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
      *  end  ckeckRow
      */
     searchMember: function searchMember(e) {
-      var _this16 = this;
+      var _this17 = this;
       return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee6() {
         var search;
         return _regeneratorRuntime().wrap(function _callee6$(_context6) {
           while (1) switch (_context6.prev = _context6.next) {
             case 0:
-              search = e !== null && e !== void 0 ? e : '';
-              clearTimeout(_this16.debounce);
-              _this16.debounce = setTimeout(function () {
-                _this16.getMember(search);
+              search = e !== null && e !== void 0 ? e : "";
+              clearTimeout(_this17.debounce);
+              _this17.debounce = setTimeout(function () {
+                _this17.getMember(search);
               }, 500);
             case 3:
             case "end":
@@ -2494,26 +2512,26 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     },
     getMember: function getMember() {
       var _arguments = arguments,
-        _this17 = this;
+        _this18 = this;
       return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee7() {
         var search;
         return _regeneratorRuntime().wrap(function _callee7$(_context7) {
           while (1) switch (_context7.prev = _context7.next) {
             case 0:
-              search = _arguments.length > 0 && _arguments[0] !== undefined ? _arguments[0] : '';
-              _this17.isLoader = true;
+              search = _arguments.length > 0 && _arguments[0] !== undefined ? _arguments[0] : "";
+              _this18.isLoader = true;
               _context7.next = 4;
-              return _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/club-members/member-requests?doesNotHaveTransaction=1&limet=10&company_id=".concat(_this17.company_id, "&search=").concat(search, "&columns[0]=national_id&columns[1]=membership_number&columns[2]=full_name")).then(function (res) {
+              return _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/club-members/member-requests?doesNotHaveTransaction=1&limet=10&company_id=".concat(_this18.company_id, "&search=").concat(search, "&columns[0]=national_id&columns[1]=membership_number&columns[2]=full_name")).then(function (res) {
                 var l = res.data.data;
-                _this17.members = l;
+                _this18.members = l;
               })["catch"](function (err) {
                 sweetalert2__WEBPACK_IMPORTED_MODULE_4___default().fire({
                   icon: "error",
-                  title: "".concat(_this17.$t("general.Error")),
-                  text: "".concat(_this17.$t("general.Thereisanerrorinthesystem"))
+                  title: "".concat(_this18.$t("general.Error")),
+                  text: "".concat(_this18.$t("general.Thereisanerrorinthesystem"))
                 });
               })["finally"](function () {
-                _this17.isLoader = false;
+                _this18.isLoader = false;
               });
             case 4:
             case "end":
@@ -2526,47 +2544,47 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       return (0,_helper_startDate__WEBPACK_IMPORTED_MODULE_9__.formatDateOnly)(value);
     },
     log: function log(id) {
-      var _this18 = this;
+      var _this19 = this;
       if (this.mouseEnter != id) {
         this.Tooltip = "";
         this.mouseEnter = id;
         _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/club-members/transactions/logs/".concat(id)).then(function (res) {
           var l = res.data.data;
           l.forEach(function (e) {
-            _this18.Tooltip += "Created By: ".concat(e.causer_type, "; Event: ").concat(e.event, "; Description: ").concat(e.description, " ;Created At: ").concat(_this18.formatDate(e.created_at), " \n");
+            _this19.Tooltip += "Created By: ".concat(e.causer_type, "; Event: ").concat(e.event, "; Description: ").concat(e.description, " ;Created At: ").concat(_this19.formatDate(e.created_at), " \n");
           });
           $("#tooltip-".concat(id)).tooltip();
         })["catch"](function (err) {
           sweetalert2__WEBPACK_IMPORTED_MODULE_4___default().fire({
             icon: "error",
-            title: "".concat(_this18.$t("general.Error")),
-            text: "".concat(_this18.$t("general.Thereisanerrorinthesystem"))
+            title: "".concat(_this19.$t("general.Error")),
+            text: "".concat(_this19.$t("general.Thereisanerrorinthesystem"))
           });
         });
       }
     },
     getRenewal: function getRenewal() {
-      var _this19 = this;
+      var _this20 = this;
       return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee8() {
         return _regeneratorRuntime().wrap(function _callee8$(_context8) {
           while (1) switch (_context8.prev = _context8.next) {
             case 0:
-              _this19.isLoader = true;
+              _this20.isLoader = true;
               _context8.next = 3;
-              return _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/club-members/memberships-renewals?date_search=".concat(_this19.create.date)).then(function (res) {
+              return _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/club-members/memberships-renewals?date_search=".concat(_this20.create.date)).then(function (res) {
                 var l = res.data.data;
-                _this19.renewal = l;
-                if (_this19.create.type) {
-                  _this19.renewalAmount();
+                _this20.renewal = l;
+                if (_this20.create.type) {
+                  _this20.renewalAmount();
                 }
               })["catch"](function (err) {
                 sweetalert2__WEBPACK_IMPORTED_MODULE_4___default().fire({
                   icon: "error",
-                  title: "".concat(_this19.$t("general.Error")),
-                  text: "".concat(_this19.$t("general.PleaseSelectAMember"))
+                  title: "".concat(_this20.$t("general.Error")),
+                  text: "".concat(_this20.$t("general.PleaseSelectAMember"))
                 });
               })["finally"](function () {
-                _this19.isLoader = false;
+                _this20.isLoader = false;
               });
             case 3:
             case "end":
@@ -2588,10 +2606,10 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
      *   Export Excel
      */
     ExportExcel: function ExportExcel(type, fn, dl) {
-      var _this20 = this;
+      var _this21 = this;
       this.enabled3 = false;
       setTimeout(function () {
-        var elt = _this20.$refs.exportable_table;
+        var elt = _this21.$refs.exportable_table;
         var wb = XLSX.utils.table_to_book(elt, {
           sheet: "Sheet JS"
         });
@@ -2599,65 +2617,34 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           XLSX.write(wb, {
             bookType: type,
             bookSST: true,
-            type: 'base64'
+            type: "base64"
           });
         } else {
-          XLSX.writeFile(wb, fn || ('subscription' + '.' || 0) + (type || 'xlsx'));
+          XLSX.writeFile(wb, fn || ("subscription" + "." || 0) + (type || "xlsx"));
         }
-        _this20.enabled3 = true;
+        _this21.enabled3 = true;
       }, 100);
     },
     checkFinancialYears: function checkFinancialYears() {
-      var _this21 = this;
+      var _this22 = this;
       return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee9() {
         return _regeneratorRuntime().wrap(function _callee9$(_context9) {
           while (1) switch (_context9.prev = _context9.next) {
             case 0:
-              _this21.isLoader = true;
+              _this22.isLoader = true;
               _context9.next = 3;
-              return _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/document-headers/check-date?date=".concat(_this21.create.date)).then(function (res) {
+              return _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/document-headers/check-date?date=".concat(_this22.create.date)).then(function (res) {
                 var l = res.data;
                 if (!l) {
-                  _this21.financial_years_validate = false;
+                  _this22.financial_years_validate = false;
                   sweetalert2__WEBPACK_IMPORTED_MODULE_4___default().fire({
                     icon: "error",
-                    title: "".concat(_this21.$t("general.Error")),
-                    text: "".concat(_this21.$t("general.The date is outside the permitted fiscal year"))
+                    title: "".concat(_this22.$t("general.Error")),
+                    text: "".concat(_this22.$t("general.The date is outside the permitted fiscal year"))
                   });
                 } else {
-                  _this21.financial_years_validate = true;
-                  _this21.DataOfModelFinancialYear();
-                }
-              })["catch"](function (err) {
-                sweetalert2__WEBPACK_IMPORTED_MODULE_4___default().fire({
-                  icon: "error",
-                  title: "".concat(_this21.$t("general.Error")),
-                  text: "".concat(_this21.$t("general.Thereisanerrorinthesystem"))
-                });
-              })["finally"](function () {
-                _this21.isLoader = false;
-              });
-            case 3:
-            case "end":
-              return _context9.stop();
-          }
-        }, _callee9);
-      }))();
-    },
-    DataOfModelFinancialYear: function DataOfModelFinancialYear() {
-      var _this22 = this;
-      return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee10() {
-        return _regeneratorRuntime().wrap(function _callee10$(_context10) {
-          while (1) switch (_context10.prev = _context10.next) {
-            case 0:
-              _this22.isLoader = true;
-              _context10.next = 3;
-              return _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/financial-years/DataOfModelFinancialYear?date=".concat(_this22.create.date)).then(function (res) {
-                var l = res.data;
-                if (l) {
-                  _this22.create.year = l.data.year + '';
-                  _this22.create.date_from = l.data.start_date;
-                  _this22.create.date_to = l.data.end_date;
+                  _this22.financial_years_validate = true;
+                  _this22.DataOfModelFinancialYear();
                 }
               })["catch"](function (err) {
                 sweetalert2__WEBPACK_IMPORTED_MODULE_4___default().fire({
@@ -2670,22 +2657,53 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               });
             case 3:
             case "end":
+              return _context9.stop();
+          }
+        }, _callee9);
+      }))();
+    },
+    DataOfModelFinancialYear: function DataOfModelFinancialYear() {
+      var _this23 = this;
+      return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee10() {
+        return _regeneratorRuntime().wrap(function _callee10$(_context10) {
+          while (1) switch (_context10.prev = _context10.next) {
+            case 0:
+              _this23.isLoader = true;
+              _context10.next = 3;
+              return _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/financial-years/DataOfModelFinancialYear?date=".concat(_this23.create.date)).then(function (res) {
+                var l = res.data;
+                if (l) {
+                  _this23.create.year = l.data.year + "";
+                  _this23.create.date_from = l.data.start_date;
+                  _this23.create.date_to = l.data.end_date;
+                }
+              })["catch"](function (err) {
+                sweetalert2__WEBPACK_IMPORTED_MODULE_4___default().fire({
+                  icon: "error",
+                  title: "".concat(_this23.$t("general.Error")),
+                  text: "".concat(_this23.$t("general.Thereisanerrorinthesystem"))
+                });
+              })["finally"](function () {
+                _this23.isLoader = false;
+              });
+            case 3:
+            case "end":
               return _context10.stop();
           }
         }, _callee10);
       }))();
     },
     handelDateCheck: function handelDateCheck() {
-      var _this23 = this;
+      var _this24 = this;
       return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee11() {
         return _regeneratorRuntime().wrap(function _callee11$(_context11) {
           while (1) switch (_context11.prev = _context11.next) {
             case 0:
               _context11.next = 2;
-              return _this23.checkFinancialYears();
+              return _this24.checkFinancialYears();
             case 2:
               _context11.next = 4;
-              return _this23.getRenewal();
+              return _this24.getRenewal();
             case 4:
             case "end":
               return _context11.stop();
@@ -5857,7 +5875,7 @@ var render = function render() {
     staticClass: "row justify-content-between align-items-center mb-2"
   }, [_c("h4", {
     staticClass: "header-title"
-  }, [_vm._v(_vm._s(_vm.$t("general.SubscriptionTable")))]), _vm._v(" "), _c("div", {
+  }, [_vm._v("\n                            " + _vm._s(_vm.$t("general.SubscriptionTable")) + "\n                        ")]), _vm._v(" "), _c("div", {
     staticClass: "col-xs-10 col-md-9 col-lg-7",
     staticStyle: {
       "font-weight": "500"
@@ -5886,7 +5904,7 @@ var render = function render() {
       },
       expression: "filterSetting"
     }
-  }, [_vm._v(_vm._s(_vm.getCompanyKey("new_subscription_member")) + "\n                                        ")]) : _vm._e(), _vm._v(" "), _vm.isVisible("document_no") ? _c("b-form-checkbox", {
+  }, [_vm._v(_vm._s(_vm.getCompanyKey("new_subscription_member")) + "\n                                    ")]) : _vm._e(), _vm._v(" "), _vm.isVisible("document_no") ? _c("b-form-checkbox", {
     staticClass: "mb-1",
     attrs: {
       value: "document_no"
@@ -5898,7 +5916,7 @@ var render = function render() {
       },
       expression: "filterSetting"
     }
-  }, [_vm._v(_vm._s(_vm.$t("general.SubscriptionNumber")) + "\n                                        ")]) : _vm._e(), _vm._v(" "), _vm.isVisible("serial_id") ? _c("b-form-checkbox", {
+  }, [_vm._v(_vm._s(_vm.$t("general.SubscriptionNumber")) + "\n                                    ")]) : _vm._e(), _vm._v(" "), _vm.isVisible("serial_id") ? _c("b-form-checkbox", {
     staticClass: "mb-1",
     attrs: {
       value: "serial_id"
@@ -5910,7 +5928,7 @@ var render = function render() {
       },
       expression: "filterSetting"
     }
-  }, [_vm._v(_vm._s(_vm.$t("general.serialName")) + "\n                                        ")]) : _vm._e(), _vm._v(" "), _vm.isVisible("date") ? _c("b-form-checkbox", {
+  }, [_vm._v(_vm._s(_vm.$t("general.serialName")) + "\n                                    ")]) : _vm._e(), _vm._v(" "), _vm.isVisible("date") ? _c("b-form-checkbox", {
     staticClass: "mb-1",
     attrs: {
       value: "date"
@@ -5922,7 +5940,7 @@ var render = function render() {
       },
       expression: "filterSetting"
     }
-  }, [_vm._v(_vm._s(_vm.$t("general.date")) + "\n                                        ")]) : _vm._e(), _vm._v(" "), _vm.isVisible("amount") ? _c("b-form-checkbox", {
+  }, [_vm._v(_vm._s(_vm.$t("general.date")) + "\n                                    ")]) : _vm._e(), _vm._v(" "), _vm.isVisible("amount") ? _c("b-form-checkbox", {
     staticClass: "mb-1",
     attrs: {
       value: "amount"
@@ -5934,7 +5952,7 @@ var render = function render() {
       },
       expression: "filterSetting"
     }
-  }, [_vm._v(_vm._s(_vm.getCompanyKey("new_subscription_amount")) + "\n                                        ")]) : _vm._e(), _vm._v(" "), _vm.isVisible("year") ? _c("b-form-checkbox", {
+  }, [_vm._v(_vm._s(_vm.getCompanyKey("new_subscription_amount")) + "\n                                    ")]) : _vm._e(), _vm._v(" "), _vm.isVisible("year") ? _c("b-form-checkbox", {
     staticClass: "mb-1",
     attrs: {
       value: "year"
@@ -5946,7 +5964,7 @@ var render = function render() {
       },
       expression: "filterSetting"
     }
-  }, [_vm._v(_vm._s(_vm.$t("general.ForAYear")) + "\n                                        ")]) : _vm._e()], 1)], 1), _vm._v(" "), _c("div", {
+  }, [_vm._v(_vm._s(_vm.$t("general.ForAYear")) + "\n                                    ")]) : _vm._e()], 1)], 1), _vm._v(" "), _c("div", {
     staticClass: "d-inline-block position-relative",
     staticStyle: {
       width: "77%"
@@ -5959,8 +5977,8 @@ var render = function render() {
     directives: [{
       name: "model",
       rawName: "v-model.trim",
-      value: _vm.search,
-      expression: "search",
+      value: _vm.serachInput,
+      expression: "serachInput",
       modifiers: {
         trim: true
       }
@@ -5976,13 +5994,13 @@ var render = function render() {
       placeholder: "".concat(_vm.$t("general.Search"), "...")
     },
     domProps: {
-      value: _vm.search
+      value: _vm.serachInput
     },
     on: {
-      input: function input($event) {
+      input: [function ($event) {
         if ($event.target.composing) return;
-        _vm.search = $event.target.value.trim();
-      },
+        _vm.serachInput = $event.target.value.trim();
+      }, _vm.handelSerach],
       blur: function blur($event) {
         return _vm.$forceUpdate();
       }
@@ -6003,7 +6021,7 @@ var render = function render() {
     attrs: {
       variant: "primary"
     }
-  }, [_vm._v("\n                                    " + _vm._s(_vm.$t("general.Create")) + "\n                                    "), _c("i", {
+  }, [_vm._v("\n                                " + _vm._s(_vm.$t("general.Create")) + "\n                                "), _c("i", {
     staticClass: "fas fa-plus"
   })]) : _vm._e(), _vm._v(" "), _c("div", {
     staticClass: "d-inline-flex"
@@ -6054,11 +6072,11 @@ var render = function render() {
     staticClass: "d-inline-block"
   }, [_c("b-button", {
     staticClass: "mx-1 custom-btn-background"
-  }, [_vm._v("\n                                            " + _vm._s(_vm.$t("general.filter")) + "\n                                            "), _c("i", {
+  }, [_vm._v("\n                                        " + _vm._s(_vm.$t("general.filter")) + "\n                                        "), _c("i", {
     staticClass: "fas fa-filter"
   })]), _vm._v(" "), _c("b-button", {
     staticClass: "mx-1 custom-btn-background"
-  }, [_vm._v("\n                                            " + _vm._s(_vm.$t("general.group")) + "\n                                            "), _c("i", {
+  }, [_vm._v("\n                                        " + _vm._s(_vm.$t("general.group")) + "\n                                        "), _c("i", {
     staticClass: "fe-menu"
   })]), _vm._v(" "), _c("b-dropdown", {
     ref: "dropdown",
@@ -6074,9 +6092,9 @@ var render = function render() {
       callback: function callback($$v) {
         _vm.$set(_vm.setting, "member_request_id", $$v);
       },
-      expression: "setting.member_request_id"
+      expression: "\n                                                setting.member_request_id\n                                            "
     }
-  }, [_vm._v(_vm._s(_vm.getCompanyKey("new_subscription_member")) + "\n                                            ")]) : _vm._e(), _vm._v(" "), _vm.isVisible("serial_number") ? _c("b-form-checkbox", {
+  }, [_vm._v(_vm._s(_vm.getCompanyKey("new_subscription_member")) + "\n                                        ")]) : _vm._e(), _vm._v(" "), _vm.isVisible("serial_number") ? _c("b-form-checkbox", {
     staticClass: "mb-1",
     model: {
       value: _vm.setting.serial_number,
@@ -6085,7 +6103,7 @@ var render = function render() {
       },
       expression: "setting.serial_number"
     }
-  }, [_vm._v("\n                                                " + _vm._s(_vm.$t("general.serial_number")) + "\n                                            ")]) : _vm._e(), _vm._v(" "), _vm.isVisible("document_no") ? _c("b-form-checkbox", {
+  }, [_vm._v("\n                                            " + _vm._s(_vm.$t("general.serial_number")) + "\n                                        ")]) : _vm._e(), _vm._v(" "), _vm.isVisible("document_no") ? _c("b-form-checkbox", {
     staticClass: "mb-1",
     model: {
       value: _vm.setting.document_no,
@@ -6094,7 +6112,7 @@ var render = function render() {
       },
       expression: "setting.document_no"
     }
-  }, [_vm._v("\n                                                " + _vm._s(_vm.$t("general.SubscriptionNumber")) + "\n                                            ")]) : _vm._e(), _vm._v(" "), _vm.isVisible("serial_id") ? _c("b-form-checkbox", {
+  }, [_vm._v("\n                                            " + _vm._s(_vm.$t("general.SubscriptionNumber")) + "\n                                        ")]) : _vm._e(), _vm._v(" "), _vm.isVisible("serial_id") ? _c("b-form-checkbox", {
     staticClass: "mb-1",
     model: {
       value: _vm.setting.serial_id,
@@ -6103,7 +6121,7 @@ var render = function render() {
       },
       expression: "setting.serial_id"
     }
-  }, [_vm._v("\n                                                " + _vm._s(_vm.$t("general.serialName")) + "\n                                            ")]) : _vm._e(), _vm._v(" "), _vm.isVisible("date") ? _c("b-form-checkbox", {
+  }, [_vm._v("\n                                            " + _vm._s(_vm.$t("general.serialName")) + "\n                                        ")]) : _vm._e(), _vm._v(" "), _vm.isVisible("date") ? _c("b-form-checkbox", {
     staticClass: "mb-1",
     model: {
       value: _vm.setting.date,
@@ -6112,7 +6130,7 @@ var render = function render() {
       },
       expression: "setting.date"
     }
-  }, [_vm._v("\n                                                " + _vm._s(_vm.$t("general.date")) + "\n                                            ")]) : _vm._e(), _vm._v(" "), _vm.isVisible("amount") ? _c("b-form-checkbox", {
+  }, [_vm._v("\n                                            " + _vm._s(_vm.$t("general.date")) + "\n                                        ")]) : _vm._e(), _vm._v(" "), _vm.isVisible("amount") ? _c("b-form-checkbox", {
     staticClass: "mb-1",
     model: {
       value: _vm.setting.amount,
@@ -6121,7 +6139,7 @@ var render = function render() {
       },
       expression: "setting.amount"
     }
-  }, [_vm._v("\n                                                " + _vm._s(_vm.getCompanyKey("new_subscription_amount")) + "\n                                            ")]) : _vm._e(), _vm._v(" "), _vm.isVisible("year") ? _c("b-form-checkbox", {
+  }, [_vm._v("\n                                            " + _vm._s(_vm.getCompanyKey("new_subscription_amount")) + "\n                                        ")]) : _vm._e(), _vm._v(" "), _vm.isVisible("year") ? _c("b-form-checkbox", {
     staticClass: "mb-1",
     model: {
       value: _vm.setting.year,
@@ -6130,7 +6148,7 @@ var render = function render() {
       },
       expression: "setting.year"
     }
-  }, [_vm._v("\n                                                " + _vm._s(_vm.$t("general.ForAYear")) + "\n                                            ")]) : _vm._e(), _vm._v(" "), _vm.isVisible("date_from") ? _c("b-form-checkbox", {
+  }, [_vm._v("\n                                            " + _vm._s(_vm.$t("general.ForAYear")) + "\n                                        ")]) : _vm._e(), _vm._v(" "), _vm.isVisible("date_from") ? _c("b-form-checkbox", {
     staticClass: "mb-1",
     model: {
       value: _vm.setting.date_from,
@@ -6139,7 +6157,7 @@ var render = function render() {
       },
       expression: "setting.date_from"
     }
-  }, [_vm._v("\n                                                " + _vm._s(_vm.getCompanyKey("new_subscription_year_from")) + "\n                                            ")]) : _vm._e(), _vm._v(" "), _vm.isVisible("date_to") ? _c("b-form-checkbox", {
+  }, [_vm._v("\n                                            " + _vm._s(_vm.getCompanyKey("new_subscription_year_from")) + "\n                                        ")]) : _vm._e(), _vm._v(" "), _vm.isVisible("date_to") ? _c("b-form-checkbox", {
     staticClass: "mb-1",
     model: {
       value: _vm.setting.date_to,
@@ -6148,7 +6166,7 @@ var render = function render() {
       },
       expression: "setting.date_to"
     }
-  }, [_vm._v("\n                                                " + _vm._s(_vm.getCompanyKey("new_subscription_year_to")) + "\n                                            ")]) : _vm._e(), _vm._v(" "), _c("div", {
+  }, [_vm._v("\n                                            " + _vm._s(_vm.getCompanyKey("new_subscription_year_to")) + "\n                                        ")]) : _vm._e(), _vm._v(" "), _c("div", {
     staticClass: "d-flex justify-content-end"
   }, [_c("a", {
     staticClass: "btn btn-primary btn-sm",
@@ -6156,13 +6174,52 @@ var render = function render() {
       href: "javascript:void(0)"
     }
   }, [_vm._v(_vm._s(_vm.$t("general.Apply")))])])], 1)], 1), _vm._v(" "), _c("div", {
+    staticClass: "d-inline-flex align-items-center"
+  }, [_c("label", {
+    staticClass: "control-label mb-0",
+    attrs: {
+      "for": "rows"
+    }
+  }, [_vm._v("\n                                        " + _vm._s(_vm.$t("general.chooseRows")) + "\n                                    ")]), _vm._v(" "), _c("span", {
+    staticClass: "mx-1"
+  }, [_vm._v(":")]), _vm._v(" "), _c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model.number",
+      value: _vm.inputPerPage,
+      expression: "inputPerPage",
+      modifiers: {
+        number: true
+      }
+    }],
+    staticClass: "form-control-sm mb-0",
+    staticStyle: {
+      width: "70px"
+    },
+    attrs: {
+      type: "number",
+      id: "rows"
+    },
+    domProps: {
+      value: _vm.inputPerPage
+    },
+    on: {
+      input: [function ($event) {
+        if ($event.target.composing) return;
+        _vm.inputPerPage = _vm._n($event.target.value);
+      }, _vm.handelPerPageInput],
+      blur: function blur($event) {
+        return _vm.$forceUpdate();
+      }
+    }
+  })]), _vm._v(" "), _c("div", {
     staticClass: "d-inline-flex align-items-center pagination-custom"
   }, [_c("div", {
     staticClass: "d-inline-block",
     staticStyle: {
       "font-size": "13px"
     }
-  }, [_vm._v("\n                                            " + _vm._s(_vm.transactionsPagination.from) + "-" + _vm._s(_vm.transactionsPagination.to) + " /\n                                            " + _vm._s(_vm.transactionsPagination.total) + "\n                                        ")]), _vm._v(" "), _c("div", {
+  }, [_vm._v("\n                                        " + _vm._s(_vm.transactionsPagination.from) + "-" + _vm._s(_vm.transactionsPagination.to) + "\n                                        /\n                                        " + _vm._s(_vm.transactionsPagination.total) + "\n                                    ")]), _vm._v(" "), _c("div", {
     staticClass: "d-inline-block"
   }, [_c("a", {
     style: {
@@ -6242,7 +6299,7 @@ var render = function render() {
         return _vm.resetForm.apply(null, arguments);
       }
     }
-  }, [_vm._v("\n                                        " + _vm._s(_vm.$t("general.AddNewRecord")) + "\n                                    ")]), _vm._v(" "), _c("b-button", {
+  }, [_vm._v("\n                                    " + _vm._s(_vm.$t("general.AddNewRecord")) + "\n                                ")]), _vm._v(" "), _c("b-button", {
     directives: [{
       name: "print",
       rawName: "v-print",
@@ -6255,7 +6312,7 @@ var render = function render() {
       disabled: !_vm.is_disabled,
       type: "button"
     }
-  }, [_vm._v("\n                                        " + _vm._s(_vm.$t("general.print")) + "\n                                        "), _c("i", {
+  }, [_vm._v("\n                                    " + _vm._s(_vm.$t("general.print")) + "\n                                    "), _c("i", {
     staticClass: "fe-printer"
   })]), _vm._v(" "), !_vm.is_disabled ? [!_vm.isLoader ? _c("b-button", {
     staticClass: "mx-1",
@@ -6269,7 +6326,7 @@ var render = function render() {
         return _vm.AddSubmit.apply(null, arguments);
       }
     }
-  }, [_vm._v("\n                                            " + _vm._s(_vm.$t("general.Add")) + "\n                                        ")]) : _c("b-button", {
+  }, [_vm._v("\n                                        " + _vm._s(_vm.$t("general.Add")) + "\n                                    ")]) : _c("b-button", {
     staticClass: "mx-1",
     attrs: {
       variant: "success",
@@ -6292,7 +6349,7 @@ var render = function render() {
         return _vm.$bvModal.hide("create");
       }
     }
-  }, [_vm._v("\n                                        " + _vm._s(_vm.$t("general.Cancel")) + "\n                                    ")])], 2), _vm._v(" "), _c("div", {
+  }, [_vm._v("\n                                    " + _vm._s(_vm.$t("general.Cancel")) + "\n                                ")])], 2), _vm._v(" "), _c("div", {
     staticClass: "row"
   }, [_vm.isVisible("date") ? _c("div", {
     staticClass: "col-md-6"
@@ -6300,7 +6357,7 @@ var render = function render() {
     staticClass: "form-group"
   }, [_c("label", {
     staticClass: "control-label"
-  }, [_vm._v("\n                                                " + _vm._s(_vm.$t("general.date")) + "\n                                            ")]), _vm._v(" "), _c("date-picker", {
+  }, [_vm._v("\n                                            " + _vm._s(_vm.$t("general.date")) + "\n                                        ")]), _vm._v(" "), _c("date-picker", {
     attrs: {
       type: "date",
       format: "YYYY-MM-DD",
@@ -6320,7 +6377,7 @@ var render = function render() {
   }), _vm._v(" "), _vm.errors.date ? _vm._l(_vm.errors.date, function (errorMessage, index) {
     return _c("ErrorMessage", {
       key: index
-    }, [_vm._v("\n                                                    " + _vm._s(errorMessage) + "\n                                                ")]);
+    }, [_vm._v("\n                                                " + _vm._s(errorMessage) + "\n                                            ")]);
   }) : _vm._e()], 2)]) : _vm._e(), _vm._v(" "), _vm.isVisible("branch_id") ? _c("div", {
     staticClass: "col-md-6"
   }, [_c("div", {
@@ -6353,10 +6410,10 @@ var render = function render() {
     }
   }), _vm._v(" "), !_vm.$v.create.branch_id.required ? _c("div", {
     staticClass: "invalid-feedback"
-  }, [_vm._v("\n                                                " + _vm._s(_vm.$t("general.fieldIsRequired")) + "\n                                            ")]) : _vm._e(), _vm._v(" "), _vm.errors.branch_id ? _vm._l(_vm.errors.branch_id, function (errorMessage, index) {
+  }, [_vm._v("\n                                            " + _vm._s(_vm.$t("general.fieldIsRequired")) + "\n                                        ")]) : _vm._e(), _vm._v(" "), _vm.errors.branch_id ? _vm._l(_vm.errors.branch_id, function (errorMessage, index) {
     return _c("ErrorMessage", {
       key: index
-    }, [_vm._v(_vm._s(errorMessage) + "\n                                                ")]);
+    }, [_vm._v(_vm._s(errorMessage) + "\n                                            ")]);
   }) : _vm._e()], 2)]) : _vm._e(), _vm._v(" "), _vm.isVisible("serial_id") ? _c("div", {
     staticClass: "col-md-6"
   }, [_c("div", {
@@ -6389,17 +6446,17 @@ var render = function render() {
     }
   }), _vm._v(" "), !_vm.$v.create.serial_id.required ? _c("div", {
     staticClass: "invalid-feedback"
-  }, [_vm._v("\n                                                " + _vm._s(_vm.$t("general.fieldIsRequired")) + "\n                                            ")]) : _vm._e(), _vm._v(" "), _vm.errors.serial_id ? _vm._l(_vm.errors.serial_id, function (errorMessage, index) {
+  }, [_vm._v("\n                                            " + _vm._s(_vm.$t("general.fieldIsRequired")) + "\n                                        ")]) : _vm._e(), _vm._v(" "), _vm.errors.serial_id ? _vm._l(_vm.errors.serial_id, function (errorMessage, index) {
     return _c("ErrorMessage", {
       key: index
-    }, [_vm._v(_vm._s(errorMessage) + "\n                                                ")]);
+    }, [_vm._v(_vm._s(errorMessage) + "\n                                            ")]);
   }) : _vm._e()], 2)]) : _vm._e(), _vm._v(" "), _vm.isVisible("member_request_id") ? _c("div", {
     staticClass: "col-md-6"
   }, [_c("div", {
     staticClass: "form-group position-relative"
   }, [_c("label", {
     staticClass: "control-label"
-  }, [_vm._v("\n                                                " + _vm._s(_vm.getCompanyKey("new_subscription_member")) + "\n                                                "), _vm.isRequired("member_request_id") ? _c("span", {
+  }, [_vm._v("\n                                            " + _vm._s(_vm.getCompanyKey("new_subscription_member")) + "\n                                            "), _vm.isRequired("member_request_id") ? _c("span", {
     staticClass: "text-danger"
   }, [_vm._v("*")]) : _vm._e()]), _vm._v(" "), _c("multiselect", {
     attrs: {
@@ -6421,21 +6478,21 @@ var render = function render() {
       callback: function callback($$v) {
         _vm.$set(_vm.create, "member_request_id", $$v);
       },
-      expression: "create.member_request_id"
+      expression: "\n                                                create.member_request_id\n                                            "
     }
   }), _vm._v(" "), _vm.$v.create.member_request_id.$error || _vm.errors.member_request_id ? _c("div", {
     staticClass: "text-danger"
-  }, [_vm._v("\n                                                " + _vm._s(_vm.$t("general.fieldIsRequired")) + "\n                                            ")]) : _vm._e(), _vm._v(" "), _vm.errors.member_request_id ? _vm._l(_vm.errors.member_request_id, function (errorMessage, index) {
+  }, [_vm._v("\n                                            " + _vm._s(_vm.$t("general.fieldIsRequired")) + "\n                                        ")]) : _vm._e(), _vm._v(" "), _vm.errors.member_request_id ? _vm._l(_vm.errors.member_request_id, function (errorMessage, index) {
     return _c("ErrorMessage", {
       key: index
-    }, [_vm._v(_vm._s(errorMessage) + "\n                                                ")]);
+    }, [_vm._v(_vm._s(errorMessage) + "\n                                            ")]);
   }) : _vm._e()], 2)]) : _vm._e(), _vm._v(" "), _vm.isVisible("type") ? _c("div", {
     staticClass: "col-md-6"
   }, [_c("div", {
     staticClass: "form-group"
   }, [_c("label", {
     staticClass: "control-label"
-  }, [_vm._v("\n                                                " + _vm._s(_vm.getCompanyKey("new_subscription_type")) + "\n                                                "), _vm.isRequired("type") ? _c("span", {
+  }, [_vm._v("\n                                            " + _vm._s(_vm.getCompanyKey("new_subscription_type")) + "\n                                            "), _vm.isRequired("type") ? _c("span", {
     staticClass: "text-danger"
   }, [_vm._v("*")]) : _vm._e()]), _vm._v(" "), _c("select", {
     directives: [{
@@ -6467,21 +6524,21 @@ var render = function render() {
     attrs: {
       value: "subscribe"
     }
-  }, [_vm._v(_vm._s(_vm.$t("general.subscribe")))]), _vm._v(" "), _c("option", {
+  }, [_vm._v("\n                                                " + _vm._s(_vm.$t("general.subscribe")) + "\n                                            ")]), _vm._v(" "), _c("option", {
     attrs: {
       value: "renew"
     }
-  }, [_vm._v(_vm._s(_vm.$t("general.renew")))])]), _vm._v(" "), _vm.errors.type ? _vm._l(_vm.errors.type, function (errorMessage, index) {
+  }, [_vm._v("\n                                                " + _vm._s(_vm.$t("general.renew")) + "\n                                            ")])]), _vm._v(" "), _vm.errors.type ? _vm._l(_vm.errors.type, function (errorMessage, index) {
     return _c("ErrorMessage", {
       key: index
-    }, [_vm._v(_vm._s(errorMessage) + "\n                                                ")]);
+    }, [_vm._v(_vm._s(errorMessage) + "\n                                            ")]);
   }) : _vm._e()], 2)]) : _vm._e(), _vm._v(" "), _vm.isVisible("year") && _vm.create.member_request_id ? _c("div", {
     staticClass: "col-md-6"
   }, [_c("div", {
     staticClass: "form-group"
   }, [_c("label", {
     staticClass: "control-label"
-  }, [_vm._v("\n                                                " + _vm._s(_vm.$t("general.ForAYear")) + "\n                                                "), _vm.isRequired("year") ? _c("span", {
+  }, [_vm._v("\n                                            " + _vm._s(_vm.$t("general.ForAYear")) + "\n                                            "), _vm.isRequired("year") ? _c("span", {
     staticClass: "text-danger"
   }, [_vm._v("*")]) : _vm._e()]), _vm._v(" "), _c("input", {
     directives: [{
@@ -6512,21 +6569,21 @@ var render = function render() {
   }), _vm._v(" "), _vm.errors.year ? _vm._l(_vm.errors.year, function (errorMessage, index) {
     return _c("ErrorMessage", {
       key: index
-    }, [_vm._v("\n                                                    " + _vm._s(errorMessage) + "\n                                                ")]);
+    }, [_vm._v("\n                                                " + _vm._s(errorMessage) + "\n                                            ")]);
   }) : _vm._e()], 2)]) : _vm._e(), _vm._v(" "), _vm.isVisible("date_from") && _vm.create.member_request_id ? _c("div", {
     staticClass: "col-md-6"
   }, [_c("div", {
     staticClass: "form-group"
   }, [_c("label", {
     staticClass: "control-label"
-  }, [_vm._v("\n                                                " + _vm._s(_vm.$t("general.from_date")) + "\n                                                "), _vm.isRequired("date_from") ? _c("span", {
+  }, [_vm._v("\n                                            " + _vm._s(_vm.$t("general.from_date")) + "\n                                            "), _vm.isRequired("date_from") ? _c("span", {
     staticClass: "text-danger"
   }, [_vm._v("*")]) : _vm._e()]), _vm._v(" "), _c("input", {
     directives: [{
       name: "model",
       rawName: "v-model",
       value: _vm.$v.create.date_from.$model,
-      expression: "$v.create.date_from.$model"
+      expression: "\n                                                $v.create.date_from.$model\n                                            "
     }],
     staticClass: "form-control",
     "class": {
@@ -6550,21 +6607,21 @@ var render = function render() {
   }), _vm._v(" "), _vm.errors.date_from ? _vm._l(_vm.errors.date_from, function (errorMessage, index) {
     return _c("ErrorMessage", {
       key: index
-    }, [_vm._v("\n                                                    " + _vm._s(errorMessage) + "\n                                                ")]);
+    }, [_vm._v("\n                                                " + _vm._s(errorMessage) + "\n                                            ")]);
   }) : _vm._e()], 2)]) : _vm._e(), _vm._v(" "), _vm.isVisible("date_to") && _vm.create.member_request_id ? _c("div", {
     staticClass: "col-md-6"
   }, [_c("div", {
     staticClass: "form-group"
   }, [_c("label", {
     staticClass: "control-label"
-  }, [_vm._v("\n                                                " + _vm._s(_vm.$t("general.to_date")) + "\n                                                "), _vm.isRequired("date_to") ? _c("span", {
+  }, [_vm._v("\n                                            " + _vm._s(_vm.$t("general.to_date")) + "\n                                            "), _vm.isRequired("date_to") ? _c("span", {
     staticClass: "text-danger"
   }, [_vm._v("*")]) : _vm._e()]), _vm._v(" "), _c("input", {
     directives: [{
       name: "model",
       rawName: "v-model",
       value: _vm.$v.create.date_to.$model,
-      expression: "$v.create.date_to.$model"
+      expression: "\n                                                $v.create.date_to.$model\n                                            "
     }],
     staticClass: "form-control",
     "class": {
@@ -6588,21 +6645,21 @@ var render = function render() {
   }), _vm._v(" "), _vm.errors.date_to ? _vm._l(_vm.errors.date_to, function (errorMessage, index) {
     return _c("ErrorMessage", {
       key: index
-    }, [_vm._v("\n                                                    " + _vm._s(errorMessage) + "\n                                                ")]);
+    }, [_vm._v("\n                                                " + _vm._s(errorMessage) + "\n                                            ")]);
   }) : _vm._e()], 2)]) : _vm._e(), _vm._v(" "), _vm.isVisible("amount") && _vm.create.member_request_id ? _c("div", {
     staticClass: "col-md-6"
   }, [_c("div", {
     staticClass: "form-group"
   }, [_c("label", {
     staticClass: "control-label"
-  }, [_vm._v("\n                                                " + _vm._s(_vm.getCompanyKey("new_subscription_amount")) + "\n                                                "), _vm.isRequired("amount") ? _c("span", {
+  }, [_vm._v("\n                                            " + _vm._s(_vm.getCompanyKey("new_subscription_amount")) + "\n                                            "), _vm.isRequired("amount") ? _c("span", {
     staticClass: "text-danger"
   }, [_vm._v("*")]) : _vm._e()]), _vm._v(" "), _c("input", {
     directives: [{
       name: "model",
       rawName: "v-model",
       value: _vm.$v.create.amount.$model,
-      expression: "$v.create.amount.$model"
+      expression: "\n                                                $v.create.amount.$model\n                                            "
     }],
     staticClass: "form-control",
     "class": {
@@ -6626,7 +6683,7 @@ var render = function render() {
   }), _vm._v(" "), _vm.errors.amount ? _vm._l(_vm.errors.amount, function (errorMessage, index) {
     return _c("ErrorMessage", {
       key: index
-    }, [_vm._v(_vm._s(errorMessage) + "\n                                                ")]);
+    }, [_vm._v(_vm._s(errorMessage) + "\n                                            ")]);
   }) : _vm._e()], 2)]) : _vm._e()])])]), _vm._v(" "), _c("div", {
     ref: "exportable_table",
     staticClass: "table-responsive mb-3 custom-table-theme position-relative",
@@ -6669,11 +6726,11 @@ var render = function render() {
     staticStyle: {
       "font-weight": "bold"
     }
-  }, [_vm._v(_vm._s(_vm.$t("general.SulaibikhatClub")))]), _vm._v(" "), _c("h2", {
+  }, [_vm._v("\n                                        " + _vm._s(_vm.$t("general.SulaibikhatClub")) + "\n                                    ")]), _vm._v(" "), _c("h2", {
     staticStyle: {
       "font-weight": "bold"
     }
-  }, [_vm._v(" " + _vm._s(_vm.$t("general.SubscriptionPaymentStatement")) + " ")])])]), _vm._v(" "), _c("div", {
+  }, [_vm._v("\n                                        " + _vm._s(_vm.$t("general.SubscriptionPaymentStatement")) + "\n                                    ")])])]), _vm._v(" "), _c("div", {
     staticClass: "text-center",
     staticStyle: {
       width: "15%",
@@ -6684,12 +6741,12 @@ var render = function render() {
       "font-size": "18px !important",
       "font-weight": "bold !important"
     }
-  }, [_vm._v(_vm._s(_vm.$t("general.totalCount")) + " : " + _vm._s(_vm.transactions.length))]), _vm._v(" "), _c("h5", {
+  }, [_vm._v("\n                                    " + _vm._s(_vm.$t("general.totalCount")) + " :\n                                    " + _vm._s(_vm.transactions.length) + "\n                                ")]), _vm._v(" "), _c("h5", {
     staticStyle: {
       "font-size": "18px !important",
       "font-weight": "bold !important"
     }
-  }, [_vm._v(_vm._s(_vm.$t("general.totalAmount")) + " : " + _vm._s(_vm.total_amount()))])])]), _vm._v(" "), _c("table", {
+  }, [_vm._v("\n                                    " + _vm._s(_vm.$t("general.totalAmount")) + " :\n                                    " + _vm._s(_vm.total_amount()) + "\n                                ")])])]), _vm._v(" "), _c("table", {
     staticClass: "table table-borderless table-hover table-centered m-0",
     "class": [_vm.$i18n.locale == "ar" ? "dir-print-rtl" : "dir-print-ltr"]
   }, [_c("thead", [_c("tr", [_vm.enabled3 ? _c("th", {
@@ -6961,7 +7018,7 @@ var render = function render() {
           }
         }
       }
-    })])]) : _vm._e(), _vm._v(" "), _c("td", [_vm._v(" " + _vm._s(index + 1))]), _vm._v(" "), _vm.setting.member_request_id && _vm.isVisible("member_request_id") ? _c("td", [data.member_request ? _c("h5", {
+    })])]) : _vm._e(), _vm._v(" "), _c("td", [_vm._v(_vm._s(index + 1))]), _vm._v(" "), _vm.setting.member_request_id && _vm.isVisible("member_request_id") ? _c("td", [data.member_request ? _c("h5", {
       staticClass: "m-0"
     }, [_vm._v("\n                                            " + _vm._s(data.member_request ? data.member_request.full_name : "---") + "\n                                        ")]) : _c("h5", {
       staticClass: "m-0"
@@ -6969,19 +7026,19 @@ var render = function render() {
       staticClass: "m-0"
     }, [_vm._v("\n                                            " + _vm._s(data.serial.perfix) + "-" + _vm._s(data.document_no) + "\n                                        ")])]) : _vm._e(), _vm._v(" "), _vm.setting.document_no && _vm.isVisible("document_no") ? _c("td", [_c("h5", {
       staticClass: "m-0"
-    }, [_vm._v(_vm._s(data.document_no))])]) : _vm._e(), _vm._v(" "), _vm.setting.serial_id && _vm.isVisible("serial_id") ? _c("td", [_c("h5", {
+    }, [_vm._v("\n                                            " + _vm._s(data.document_no) + "\n                                        ")])]) : _vm._e(), _vm._v(" "), _vm.setting.serial_id && _vm.isVisible("serial_id") ? _c("td", [_c("h5", {
       staticClass: "m-0"
     }, [_vm._v("\n                                            " + _vm._s(data.serial ? _vm.$i18n.locale == "ar" ? data.serial.name : data.serial.name : "---") + "\n                                        ")])]) : _vm._e(), _vm._v(" "), _vm.setting.date && _vm.isVisible("date") ? _c("td", [_c("h5", {
       staticClass: "m-0"
-    }, [_vm._v(_vm._s(_vm.formatDate(data.date)))])]) : _vm._e(), _vm._v(" "), _vm.setting.amount && _vm.isVisible("amount") ? _c("td", [_c("h5", {
+    }, [_vm._v("\n                                            " + _vm._s(_vm.formatDate(data.date)) + "\n                                        ")])]) : _vm._e(), _vm._v(" "), _vm.setting.amount && _vm.isVisible("amount") ? _c("td", [_c("h5", {
       staticClass: "m-0"
-    }, [_vm._v(_vm._s(data.amount))])]) : _vm._e(), _vm._v(" "), _vm.setting.year && _vm.isVisible("year") ? _c("td", [_c("h5", {
+    }, [_vm._v("\n                                            " + _vm._s(data.amount) + "\n                                        ")])]) : _vm._e(), _vm._v(" "), _vm.setting.year && _vm.isVisible("year") ? _c("td", [_c("h5", {
       staticClass: "m-0"
     }, [_vm._v(_vm._s(data.year))])]) : _vm._e(), _vm._v(" "), _vm.setting.date_from && _vm.isVisible("date_from") ? _c("td", [_c("h5", {
       staticClass: "m-0"
-    }, [_vm._v(_vm._s(data.date_from))])]) : _vm._e(), _vm._v(" "), _vm.setting.date_to && _vm.isVisible("date_to") ? _c("td", [_c("h5", {
+    }, [_vm._v("\n                                            " + _vm._s(data.date_from) + "\n                                        ")])]) : _vm._e(), _vm._v(" "), _vm.setting.date_to && _vm.isVisible("date_to") ? _c("td", [_c("h5", {
       staticClass: "m-0"
-    }, [_vm._v(_vm._s(data.date_to))])]) : _vm._e(), _vm._v(" "), _vm.enabled3 ? _c("td", {
+    }, [_vm._v("\n                                            " + _vm._s(data.date_to) + "\n                                        ")])]) : _vm._e(), _vm._v(" "), _vm.enabled3 ? _c("td", {
       staticClass: "do-not-print"
     }, [_c("div", {
       staticClass: "btn-group"
@@ -7977,7 +8034,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.data-header-print {\n    display: none;\n}\n@media print {\n.do-not-print {\n        display: none;\n}\n.arrow-sort {\n        display: none;\n}\n.text-success {\n        background-color: unset;\n        color: #6c757d !important;\n        border: unset;\n}\n.text-danger {\n        background-color: unset;\n        color: #6c757d !important;\n        border: unset;\n}\ntd{\n        border: 1px solid black !important;\n        font-size: 19px !important;\n        font-weight: bold !important\n}\ntd h5{\n        font-size: 19px !important;\n        font-weight: bold !important\n}\nth{\n        border: 1px solid black !important;\n        color: black;\n        text-align: center;\n        font-size: 19px !important;\n        font-weight: bold !important\n}\nthead{\n        border: 1px solid black !important;\n}\ntbody{\n        border: 1px solid black !important;\n}\ntable {\n        border: 1px solid black !important;\n}\n.data-header-print {\n        width: 100%;\n        display: inline-block;\n}\n.dir-print-rtl {\n        direction: rtl !important;\n}\n.dir-print-ltr {\n        direction: ltr !important;\n}\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.data-header-print {\n    display: none;\n}\n@media print {\n.do-not-print {\n        display: none;\n}\n.arrow-sort {\n        display: none;\n}\n.text-success {\n        background-color: unset;\n        color: #6c757d !important;\n        border: unset;\n}\n.text-danger {\n        background-color: unset;\n        color: #6c757d !important;\n        border: unset;\n}\ntd {\n        border: 1px solid black !important;\n        font-size: 19px !important;\n        font-weight: bold !important;\n}\ntd h5 {\n        font-size: 19px !important;\n        font-weight: bold !important;\n}\nth {\n        border: 1px solid black !important;\n        color: black;\n        text-align: center;\n        font-size: 19px !important;\n        font-weight: bold !important;\n}\nthead {\n        border: 1px solid black !important;\n}\ntbody {\n        border: 1px solid black !important;\n}\ntable {\n        border: 1px solid black !important;\n}\n.data-header-print {\n        width: 100%;\n        display: inline-block;\n}\n.dir-print-rtl {\n        direction: rtl !important;\n}\n.dir-print-ltr {\n        direction: ltr !important;\n}\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 

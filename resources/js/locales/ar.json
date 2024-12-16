@@ -1869,7 +1869,7 @@
         "PrintDay": "يوم الطباعة",
         "DueDay": "يوم الاستحقاق",
         "RentContractTable": "جدول عقد الإيجار",
-        "Can be increased" : "قابل للزيادة",
+        "Can be increased": "قابل للزيادة",
         "RentContractTable": "جدول عقد الإيجار",
         "ActualTime": "الوقت الفعلي",
         "ExpectedTime": "الوقت المتوقع",
@@ -1930,6 +1930,7 @@
         "updated_at": "تاريخ التعديل",
         "printDocuments": "طباعة السندات",
         "showSponsorPrint": "عرض الراعى فى الطباعة",
-        "application_number": "رقم الاستماره"
+        "application_number": "رقم الاستماره",
+        "filterMembers": "فلتر الأعضاء"
     }
 }

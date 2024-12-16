@@ -90,6 +90,7 @@ Route::prefix('club-members')->group(function () {
         Route::get('/checkNationalId', 'CmMemberRequestController@checkNationalId')->name('cm-members.checkNationalId');
 
         Route::get('/', 'CmMemberRequestController@all')->name('cm-members.all');
+        Route::get('/member-names', 'CmMemberRequestController@getNamesMembers');
         Route::get('/logs/{id}', 'CmMemberRequestController@logs')->name('cm-member-requests.logs');
         Route::get('/{id}', 'CmMemberRequestController@find')->name('cm-member-requests.find');
         Route::post('/', 'CmMemberRequestController@create')->name('cm-member-requests.create');

@@ -24,8 +24,8 @@ import {
 } from "../../../helper/tableSort";
 import translation from "../../../helper/mixin/translation-mixin";
 import Multiselect from "vue-multiselect";
-import {formatDateOnly} from "../../../helper/startDate";
-import {arabicValue, englishValue} from "../../../helper/langTransform";
+import { formatDateOnly } from "../../../helper/startDate";
+import { arabicValue, englishValue } from "../../../helper/langTransform";
 import permissionGuard from "../../../helper/permission";
 
 /**
@@ -34,7 +34,7 @@ import permissionGuard from "../../../helper/permission";
 export default {
     page: {
         title: "Members",
-        meta: [{name: "description", content: "Members"}],
+        meta: [{ name: "description", content: "Members" }],
     },
     mixins: [translation],
     components: {
@@ -48,12 +48,22 @@ export default {
     },
     beforeRouteEnter(to, from, next) {
         next((vm) => {
-            return permissionGuard(vm, "Accept or reject members", "all acceptOrReject club");
+            return permissionGuard(
+                vm,
+                "Accept or reject members",
+                "all acceptOrReject club"
+            );
         });
     },
     data() {
         return {
-            per_page: 50,
+            selectedNameMember: [],
+            membersNames: [],
+
+            inputPerPage: null,
+            debounceTimer: null,
+            serachInput: "",
+            per_page: 35,
             search: "",
             debounce: {},
             enabled3: true,
@@ -111,7 +121,7 @@ export default {
                 "job",
                 "degree",
             ],
-            reject: {notes: ""},
+            reject: { notes: "" },
             printLoading: true,
             printObj: {
                 id: "printData",
@@ -120,13 +130,13 @@ export default {
     },
     validations: {
         approve: {
-            session_number: {required},
-            session_date: {required},
+            session_number: { required },
+            session_date: { required },
             "accept-members": {
                 required,
                 $each: {
-                    id: {required},
-                    membership_date: {required},
+                    id: { required },
+                    membership_date: { required },
                 },
             },
             executive_office_date: {},
@@ -135,25 +145,25 @@ export default {
             board_of_directors_number: {},
         },
         reject: {
-            notes: {required},
+            notes: { required },
         },
     },
     watch: {
         /**
          * watch per_page
          */
-        per_page(after, befour) {
-            this.getData();
-        },
+        // per_page(after, befour) {
+        //     this.getData();
+        // },
         /**
          * watch search
          */
-        search(after, befour) {
-            clearTimeout(this.debounce);
-            this.debounce = setTimeout(() => {
-                this.getData();
-            }, 400);
-        },
+        // search(after, befour) {
+        //     clearTimeout(this.debounce);
+        //     this.debounce = setTimeout(() => {
+        //         this.getData();
+        //     }, 400);
+        // },
         /**
          * watch check All table
          */
@@ -172,8 +182,130 @@ export default {
     mounted() {
         this.company_id = this.$store.getters["auth/company_id"];
         this.getData();
+        this.getMemberNames();
     },
     methods: {
+        updateMembers() {
+            this.members = this.members.filter((member) =>
+                this.selectedNameMember.includes(member.id)
+            );
+        },
+        getOriginalMembers() {
+            this.getData();
+        },
+        getMemberLabel(opt) {
+            const member = this.membersNames.find((x) => x.id === opt);
+            if (!member) return null;
+            return this.$i18n.locale === "ar"
+                ? member.full_name
+                : member.full_name;
+        },
+        getMemberNames() {
+            this.isLoader = true;
+            adminApi
+                .get(`/club-members/member-requests/member-names`)
+                .then((res) => {
+                    const response = res.data;
+                    this.membersNames = response.data;
+                })
+                .catch((err) => {
+                    Swal.fire({
+                        icon: "error",
+                        title: `${this.$t("general.Error")}`,
+                        text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                    });
+                })
+                .finally(() => {
+                    this.isLoader = false;
+                });
+        },
+        printElement(selector) {
+            const elementTest = document.querySelector(selector);
+
+            if (elementTest) {
+                const rowsPerPage = 30; // Maximum rows per page
+                const members = this.members;
+                const totalPages = Math.ceil(members.length / rowsPerPage);
+
+                // Temporarily show the header
+                const headerElement =
+                    document.querySelector(".data-header-print");
+                headerElement.style.display = "flex"; // Make it visible temporarily
+                const header = headerElement.outerHTML; // Get header HTML
+                headerElement.style.display = "none"; // Restore original style
+
+                // Get the rendered <tbody> from the DOM
+                const originalTbody = document
+                    .querySelector(selector)
+                    .querySelector("tbody");
+                const allRows = Array.from(
+                    originalTbody.querySelectorAll("tr")
+                ); // Get all rendered rows
+
+                let printableContent = "";
+
+                for (let page = 0; page < totalPages; page++) {
+                    const startIndex = page * rowsPerPage;
+                    const pageRows = allRows.slice(
+                        startIndex,
+                        startIndex + rowsPerPage
+                    ); // Get rows for this page
+
+                    // Create a new <tbody> for the current page
+                    const tbodyClone = document.createElement("tbody");
+                    pageRows.forEach((row) =>
+                        tbodyClone.appendChild(row.cloneNode(true))
+                    ); // Clone rows for this page
+
+                    // Clone the entire table
+                    const tableClone = document
+                        .querySelector(selector)
+                        .querySelector("table")
+                        .cloneNode(true);
+
+                    // Replace the table's <tbody> with the cloned, paginated <tbody>
+                    tableClone.querySelector("tbody").replaceWith(tbodyClone);
+
+                    // Add header and table for this page
+                    printableContent += `
+                <div style="page-break-after: always;">
+                    ${header}
+                    ${tableClone.outerHTML}
+                </div>
+            `;
+                }
+
+                const container = document.createElement("div");
+                container.innerHTML = printableContent;
+                document.body.appendChild(container);
+
+                $(container).printThis({
+                    header: null, // Header is already included in the content
+                    pageTitle: "Members Apply",
+                    importCSS: true,
+                    afterPrint: () => {
+                        console.log("Print completed");
+                        container.remove();
+                    },
+                });
+            } else {
+                console.log("Element to print not found", selector);
+            }
+        },
+        handelSerach() {
+            clearTimeout(this.debounce);
+            this.debounce = setTimeout(() => {
+                this.search = this.serachInput;
+                this.getData();
+            }, 1000);
+        },
+        handelPerPageInput() {
+            clearTimeout(this.debounceTimer);
+            this.debounceTimer = setTimeout(() => {
+                this.per_page = this.inputPerPage;
+                this.getData();
+            }, 1000);
+        },
         isPermission(item) {
             if (this.$store.state.auth.type == "user") {
                 return this.$store.state.auth.permissions.includes(item);
@@ -246,7 +378,9 @@ export default {
                         Swal.fire({
                             icon: "error",
                             title: `${this.$t("general.Error")}`,
-                            text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                            text: `${this.$t(
+                                "general.Thereisanerrorinthesystem"
+                            )}`,
                         });
                     })
                     .finally(() => {
@@ -265,12 +399,15 @@ export default {
                     this.approve.session_number;
                 this.approve["accept-members"][index]["executive_office_date"] =
                     this.approve.executive_office_date;
-                this.approve["accept-members"][index]["executive_office_number"] =
-                    this.approve.executive_office_number;
-                this.approve["accept-members"][index]["board_of_directors_date"] =
-                    this.approve.board_of_directors_date;
-                this.approve["accept-members"][index]["board_of_directors_number"] =
-                    this.approve.board_of_directors_number;
+                this.approve["accept-members"][index][
+                    "executive_office_number"
+                ] = this.approve.executive_office_number;
+                this.approve["accept-members"][index][
+                    "board_of_directors_date"
+                ] = this.approve.board_of_directors_date;
+                this.approve["accept-members"][index][
+                    "board_of_directors_number"
+                ] = this.approve.board_of_directors_number;
             });
             this.$v.approve.$touch();
             if (this.$v.approve.$invalid) {
@@ -301,7 +438,9 @@ export default {
                             Swal.fire({
                                 icon: "error",
                                 title: `${this.$t("general.Error")}`,
-                                text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                                text: `${this.$t(
+                                    "general.Thereisanerrorinthesystem"
+                                )}`,
                             });
                         }
                     })
@@ -318,9 +457,12 @@ export default {
                 this.isLoader = true;
                 this.errors = {};
                 adminApi
-                    .put(`/club-members/members/decline-member/${this.checkAll[0]}`, {
-                        notes: this.reject.notes,
-                    })
+                    .put(
+                        `/club-members/members/decline-member/${this.checkAll[0]}`,
+                        {
+                            notes: this.reject.notes,
+                        }
+                    )
                     .then((res) => {
                         this.$bvModal.hide(`modal_rejected`);
                         this.getData();
@@ -340,7 +482,9 @@ export default {
                             Swal.fire({
                                 icon: "error",
                                 title: `${this.$t("general.Error")}`,
-                                text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                                text: `${this.$t(
+                                    "general.Thereisanerrorinthesystem"
+                                )}`,
                             });
                         }
                     })
@@ -374,9 +518,11 @@ export default {
 
                 this.date.push({
                     membership_date: this.formatDate(member.transaction.date),
-                    name: `${member.first_name ?? ""} ${member.second_name ?? ""} ${
-                        member.third_name ?? ""
-                    } ${member.last_name ?? ""} ${member.family_name ?? ""}`,
+                    name: `${member.first_name ?? ""} ${
+                        member.second_name ?? ""
+                    } ${member.third_name ?? ""} ${member.last_name ?? ""} ${
+                        member.family_name ?? ""
+                    }`,
                 });
             });
 
@@ -439,13 +585,19 @@ export default {
             this.enabled3 = false;
             setTimeout(() => {
                 let elt = this.$refs.exportable_table;
-                let wb = XLSX.utils.table_to_book(elt, {sheet: "Sheet JS"});
+                let wb = XLSX.utils.table_to_book(elt, { sheet: "Sheet JS" });
                 if (dl) {
-                    XLSX.write(wb, {bookType: type, bookSST: true, type: "base64"});
+                    XLSX.write(wb, {
+                        bookType: type,
+                        bookSST: true,
+                        type: "base64",
+                    });
                 } else {
                     XLSX.writeFile(
                         wb,
-                        fn || ("Stores" + "." || "SheetJSTableExport.") + (type || "xlsx")
+                        fn ||
+                            ("Stores" + "." || "SheetJSTableExport.") +
+                                (type || "xlsx")
                     );
                 }
                 this.enabled3 = true;
@@ -474,18 +626,26 @@ export default {
 
 <template>
     <Layout>
-        <PageHeader/>
+        <PageHeader />
         <div class="row">
             <div class="col-12">
                 <div class="card">
                     <div class="card-body">
                         <!-- start search -->
-                        <div class="row justify-content-between align-items-center mb-2">
+                        <div
+                            class="row justify-content-between align-items-center mb-2"
+                        >
                             <h4 class="header-title">
                                 {{ $t("general.accept-reject-member-table") }}
                             </h4>
-                            <div class="col-xs-10 col-md-9 col-lg-7" style="font-weight: 500">
-                                <div class="d-inline-block" style="width: 22.2%">
+                            <div
+                                class="col-xs-10 col-md-9 col-lg-7"
+                                style="font-weight: 500"
+                            >
+                                <div
+                                    class="d-inline-block"
+                                    style="width: 22.2%"
+                                >
                                     <!-- Basic dropdown -->
                                     <b-dropdown
                                         variant="primary"
@@ -493,64 +653,156 @@ export default {
                                         ref="dropdown"
                                         class="btn-block setting-search"
                                     >
-                                        <b-form-checkbox v-model="filterSetting" value="full_name" class="mb-1">
-                                            {{ $t("general.NameMembershipApplicant") }}
+                                        <b-form-checkbox
+                                            v-model="filterSetting"
+                                            value="full_name"
+                                            class="mb-1"
+                                        >
+                                            {{
+                                                $t(
+                                                    "general.NameMembershipApplicant"
+                                                )
+                                            }}
                                         </b-form-checkbox>
-                                        <b-form-checkbox v-model="filterSetting" value="document_no" class="mb-1">
-                                            {{ $t("general.SubscriptionNumber") }}
+                                        <b-form-checkbox
+                                            v-model="filterSetting"
+                                            value="document_no"
+                                            class="mb-1"
+                                        >
+                                            {{
+                                                $t("general.SubscriptionNumber")
+                                            }}
                                         </b-form-checkbox>
-                                        <b-form-checkbox v-model="filterSetting" value="date" class="mb-1">
+                                        <b-form-checkbox
+                                            v-model="filterSetting"
+                                            value="date"
+                                            class="mb-1"
+                                        >
                                             {{ $t("general.subscriptionDate") }}
                                         </b-form-checkbox>
-                                        <b-form-checkbox v-model="filterSetting" value="national_id" class="mb-1">
-                                            {{ getCompanyKey("member_national_id") }}
+                                        <b-form-checkbox
+                                            v-model="filterSetting"
+                                            value="national_id"
+                                            class="mb-1"
+                                        >
+                                            {{
+                                                getCompanyKey(
+                                                    "member_national_id"
+                                                )
+                                            }}
                                         </b-form-checkbox>
-                                        <b-form-checkbox v-model="filterSetting" value="home_phone" class="mb-1">
-                                            {{ getCompanyKey("member_home_phone") }}
+                                        <b-form-checkbox
+                                            v-model="filterSetting"
+                                            value="home_phone"
+                                            class="mb-1"
+                                        >
+                                            {{
+                                                getCompanyKey(
+                                                    "member_home_phone"
+                                                )
+                                            }}
                                         </b-form-checkbox>
-                                        <b-form-checkbox v-model="filterSetting" value="work_phone" class="mb-1">
-                                            {{ getCompanyKey("member_work_phone") }}
+                                        <b-form-checkbox
+                                            v-model="filterSetting"
+                                            value="work_phone"
+                                            class="mb-1"
+                                        >
+                                            {{
+                                                getCompanyKey(
+                                                    "member_work_phone"
+                                                )
+                                            }}
                                         </b-form-checkbox>
-                                        <b-form-checkbox v-model="filterSetting" value="home_address" class="mb-1">
-                                            {{ getCompanyKey("member_home_address") }}
+                                        <b-form-checkbox
+                                            v-model="filterSetting"
+                                            value="home_address"
+                                            class="mb-1"
+                                        >
+                                            {{
+                                                getCompanyKey(
+                                                    "member_home_address"
+                                                )
+                                            }}
                                         </b-form-checkbox>
-                                        <b-form-checkbox v-model="filterSetting" value="work_address" class="mb-1">
-                                            {{ getCompanyKey("member_work_address") }}
+                                        <b-form-checkbox
+                                            v-model="filterSetting"
+                                            value="work_address"
+                                            class="mb-1"
+                                        >
+                                            {{
+                                                getCompanyKey(
+                                                    "member_work_address"
+                                                )
+                                            }}
                                         </b-form-checkbox>
-                                        <b-form-checkbox v-model="filterSetting" value="job" class="mb-1">
+                                        <b-form-checkbox
+                                            v-model="filterSetting"
+                                            value="job"
+                                            class="mb-1"
+                                        >
                                             {{ getCompanyKey("member_job") }}
                                         </b-form-checkbox>
-                                        <b-form-checkbox v-model="filterSetting" value="degree" class="mb-1">
+                                        <b-form-checkbox
+                                            v-model="filterSetting"
+                                            value="degree"
+                                            class="mb-1"
+                                        >
                                             {{ getCompanyKey("member_degree") }}
                                         </b-form-checkbox>
                                     </b-dropdown>
                                     <!-- Basic dropdown -->
                                 </div>
 
-                                <div class="d-inline-block position-relative" style="width: 77%">
-                                  <span :class="['search-custom position-absolute', $i18n.locale == 'ar' ? 'search-custom-ar' : '',]">
-                                    <i class="fe-search"></i>
-                                  </span>
+                                <div
+                                    class="d-inline-block position-relative"
+                                    style="width: 77%"
+                                >
+                                    <span
+                                        :class="[
+                                            'search-custom position-absolute',
+                                            $i18n.locale == 'ar'
+                                                ? 'search-custom-ar'
+                                                : '',
+                                        ]"
+                                    >
+                                        <i class="fe-search"></i>
+                                    </span>
                                     <input
                                         class="form-control"
-                                        style="display: block; width: 93%; padding-top: 3px"
+                                        style="
+                                            display: block;
+                                            width: 93%;
+                                            padding-top: 3px;
+                                        "
                                         type="text"
-                                        v-model.trim="search"
-                                        :placeholder="`${$t('general.Search')}...`"
+                                        v-model.trim="serachInput"
+                                        @input="handelSerach"
+                                        :placeholder="`${$t(
+                                            'general.Search'
+                                        )}...`"
                                     />
                                 </div>
                             </div>
                         </div>
                         <!-- end search -->
 
-                        <div class="row justify-content-between align-items-center mb-2 px-1">
-                            <div class="col-md-3 d-flex align-items-center mb-1 mb-xl-0">
+                        <div
+                            class="row justify-content-between align-items-center mb-2 px-1"
+                        >
+                            <div
+                                class="col-md-3 d-flex align-items-center mb-1 mb-xl-0"
+                            >
                                 <!-- start create and printer -->
                                 <b-button
                                     v-b-modal.modal_accept
                                     variant="primary"
                                     class="btn-sm mx-1 font-11 font-weight-bold"
-                                    v-if=" checkAll.length > 0 && isPermission('accept acceptOrReject club')"
+                                    v-if="
+                                        checkAll.length > 0 &&
+                                        isPermission(
+                                            'accept acceptOrReject club'
+                                        )
+                                    "
                                 >
                                     {{ $t("general.Approve") }}
                                 </b-button>
@@ -558,7 +810,12 @@ export default {
                                     v-b-modal.modal_rejected
                                     variant="danger"
                                     class="btn-sm mx-1 font-11 font-weight-bold"
-                                    v-if=" checkAll.length == 1 && isPermission('reject acceptOrReject club')"
+                                    v-if="
+                                        checkAll.length == 1 &&
+                                        isPermission(
+                                            'reject acceptOrReject club'
+                                        )
+                                    "
                                 >
                                     {{ $t("general.non-Approve") }}
                                 </b-button>
@@ -569,74 +826,244 @@ export default {
                                     >
                                         <i class="fas fa-file-download"></i>
                                     </button>
-                                    <button v-print="'#printData'" class="custom-btn-dowonload">
+                                    <button
+                                        @click="printElement('#printData')"
+                                        class="custom-btn-dowonload"
+                                    >
                                         <i class="fe-printer"></i>
                                     </button>
                                 </div>
                                 <!-- end create and printer -->
                             </div>
-                            <div class="col-xs-10 col-md-9 col-lg-7 d-flex align-items-center justify-content-end">
+                            <div
+                                class="col-xs-10 col-md-9 col-lg-7 d-flex align-items-center justify-content-end"
+                            >
                                 <div class="d-fex">
                                     <!-- start filter and setting -->
                                     <div class="d-inline-block">
-                                        <b-button class="mx-1 custom-btn-background">
+                                        <b-button
+                                            v-b-modal.memberFilter
+                                            class="mx-1 custom-btn-background"
+                                        >
                                             {{ $t("general.filter") }}
                                             <i class="fas fa-filter"></i>
                                         </b-button>
-                                        <b-button class="mx-1 custom-btn-background">
+                                        <b-button
+                                            class="mx-1 custom-btn-background"
+                                        >
                                             {{ $t("general.group") }}
                                             <i class="fe-menu"></i>
                                         </b-button>
                                         <!-- Basic dropdown -->
                                         <b-dropdown
                                             variant="primary"
-                                            :html="`${$t('general.setting')} <i class='fe-settings'></i>`"
+                                            :html="`${$t(
+                                                'general.setting'
+                                            )} <i class='fe-settings'></i>`"
                                             ref="dropdown"
                                             class="dropdown-custom-ali"
                                         >
-                                            <b-form-checkbox v-model="setting.full_name" class="mb-1">{{ $t("general.NameMembershipApplicant") }}</b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.document_no" class="mb-1">{{ $t("general.SubscriptionNumber") }}</b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.date" class="mb-1"> {{ $t("general.subscriptionDate") }}</b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.birth_date" class="mb-1">{{ getCompanyKey("member_birth_date") }}</b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.gender" class="mb-1">{{ getCompanyKey("member_type") }}</b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.member_type_id" class="mb-1">{{ $t("general.status") }}</b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.national_id" class="mb-1">{{ getCompanyKey("member_national_id") }}</b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.home_phone" class="mb-1">{{ getCompanyKey("member_home_phone") }}</b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.work_phone" class="mb-1">{{ getCompanyKey("member_work_phone") }}</b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.home_address" class="mb-1">{{ getCompanyKey("member_home_address") }}</b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.work_address" class="mb-1">{{ getCompanyKey("member_work_address") }}</b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.job" class="mb-1">{{ getCompanyKey("member_job") }}</b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.degree" class="mb-1">{{ getCompanyKey("member_degree") }}</b-form-checkbox>
-                                            <div class="d-flex justify-content-end">
-                                                <a href="javascript:void(0)" class="btn btn-primary btn-sm">Apply</a>
+                                            <b-form-checkbox
+                                                v-model="setting.full_name"
+                                                class="mb-1"
+                                                >{{
+                                                    $t(
+                                                        "general.NameMembershipApplicant"
+                                                    )
+                                                }}</b-form-checkbox
+                                            >
+                                            <b-form-checkbox
+                                                v-model="setting.document_no"
+                                                class="mb-1"
+                                                >{{
+                                                    $t(
+                                                        "general.SubscriptionNumber"
+                                                    )
+                                                }}</b-form-checkbox
+                                            >
+                                            <b-form-checkbox
+                                                v-model="setting.date"
+                                                class="mb-1"
+                                            >
+                                                {{
+                                                    $t(
+                                                        "general.subscriptionDate"
+                                                    )
+                                                }}</b-form-checkbox
+                                            >
+                                            <b-form-checkbox
+                                                v-model="setting.birth_date"
+                                                class="mb-1"
+                                                >{{
+                                                    getCompanyKey(
+                                                        "member_birth_date"
+                                                    )
+                                                }}</b-form-checkbox
+                                            >
+                                            <b-form-checkbox
+                                                v-model="setting.gender"
+                                                class="mb-1"
+                                                >{{
+                                                    getCompanyKey("member_type")
+                                                }}</b-form-checkbox
+                                            >
+                                            <b-form-checkbox
+                                                v-model="setting.member_type_id"
+                                                class="mb-1"
+                                                >{{
+                                                    $t("general.status")
+                                                }}</b-form-checkbox
+                                            >
+                                            <b-form-checkbox
+                                                v-model="setting.national_id"
+                                                class="mb-1"
+                                                >{{
+                                                    getCompanyKey(
+                                                        "member_national_id"
+                                                    )
+                                                }}</b-form-checkbox
+                                            >
+                                            <b-form-checkbox
+                                                v-model="setting.home_phone"
+                                                class="mb-1"
+                                                >{{
+                                                    getCompanyKey(
+                                                        "member_home_phone"
+                                                    )
+                                                }}</b-form-checkbox
+                                            >
+                                            <b-form-checkbox
+                                                v-model="setting.work_phone"
+                                                class="mb-1"
+                                                >{{
+                                                    getCompanyKey(
+                                                        "member_work_phone"
+                                                    )
+                                                }}</b-form-checkbox
+                                            >
+                                            <b-form-checkbox
+                                                v-model="setting.home_address"
+                                                class="mb-1"
+                                                >{{
+                                                    getCompanyKey(
+                                                        "member_home_address"
+                                                    )
+                                                }}</b-form-checkbox
+                                            >
+                                            <b-form-checkbox
+                                                v-model="setting.work_address"
+                                                class="mb-1"
+                                                >{{
+                                                    getCompanyKey(
+                                                        "member_work_address"
+                                                    )
+                                                }}</b-form-checkbox
+                                            >
+                                            <b-form-checkbox
+                                                v-model="setting.job"
+                                                class="mb-1"
+                                                >{{
+                                                    getCompanyKey("member_job")
+                                                }}</b-form-checkbox
+                                            >
+                                            <b-form-checkbox
+                                                v-model="setting.degree"
+                                                class="mb-1"
+                                                >{{
+                                                    getCompanyKey(
+                                                        "member_degree"
+                                                    )
+                                                }}</b-form-checkbox
+                                            >
+                                            <div
+                                                class="d-flex justify-content-end"
+                                            >
+                                                <a
+                                                    href="javascript:void(0)"
+                                                    class="btn btn-primary btn-sm"
+                                                    >Apply</a
+                                                >
                                             </div>
                                         </b-dropdown>
                                         <!-- Basic dropdown -->
                                     </div>
                                     <!-- end filter and setting -->
+                                    <div
+                                        class="d-inline-flex align-items-center"
+                                    >
+                                        <label
+                                            for="rows"
+                                            class="control-label mb-0"
+                                        >
+                                            {{ $t("general.chooseRows") }}
+                                        </label>
+                                        <span class="mx-1">:</span>
+                                        <input
+                                            type="number"
+                                            id="rows"
+                                            v-model.number="inputPerPage"
+                                            @input="handelPerPageInput"
+                                            class="form-control-sm mb-0"
+                                            style="width: 70px"
+                                        />
+                                    </div>
 
                                     <!-- start Pagination -->
-                                    <div class="d-inline-flex align-items-center pagination-custom">
-                                        <div class="d-inline-block" style="font-size: 13px">
-                                            {{ membersPagination.from }}-{{ membersPagination.to }} /
+                                    <div
+                                        class="d-inline-flex align-items-center pagination-custom"
+                                    >
+                                        <div
+                                            class="d-inline-block"
+                                            style="font-size: 13px"
+                                        >
+                                            {{ membersPagination.from }}-{{
+                                                membersPagination.to
+                                            }}
+                                            /
                                             {{ membersPagination.total }}
                                         </div>
                                         <div class="d-inline-block">
-                                            <a href="javascript:void(0)"
-                                                :style="{'pointer-events':membersPagination.current_page == 1 ? 'none' : '',}"
-                                                @click.prevent="getData(membersPagination.current_page - 1)"
+                                            <a
+                                                href="javascript:void(0)"
+                                                :style="{
+                                                    'pointer-events':
+                                                        membersPagination.current_page ==
+                                                        1
+                                                            ? 'none'
+                                                            : '',
+                                                }"
+                                                @click.prevent="
+                                                    getData(
+                                                        membersPagination.current_page -
+                                                            1
+                                                    )
+                                                "
                                             >
                                                 <span>&lt;</span>
                                             </a>
                                             <input
                                                 type="text"
-                                                @keyup.enter="getDataCurrentPage()"
+                                                @keyup.enter="
+                                                    getDataCurrentPage()
+                                                "
                                                 v-model="current_page"
                                                 class="pagination-current-page"
                                             />
-                                            <a href="javascript:void(0)"
-                                                :style="{'pointer-events': membersPagination.last_page == membersPagination.current_page ? 'none': '',}"
-                                                @click.prevent=" getData(membersPagination.current_page + 1)"
+                                            <a
+                                                href="javascript:void(0)"
+                                                :style="{
+                                                    'pointer-events':
+                                                        membersPagination.last_page ==
+                                                        membersPagination.current_page
+                                                            ? 'none'
+                                                            : '',
+                                                }"
+                                                @click.prevent="
+                                                    getData(
+                                                        membersPagination.current_page +
+                                                            1
+                                                    )
+                                                "
                                             >
                                                 <span>&gt;</span>
                                             </a>
@@ -646,11 +1073,36 @@ export default {
                                 </div>
                             </div>
                         </div>
+                        <b-modal
+                            id="memberFilter"
+                            title="Filter Members"
+                            @ok="updateMembers"
+                            @cancel="getOriginalMembers"
+                            ok-title="Apply"
+                            cancel-title="Cancel"
+                        >
+                            <div class="form-group md-6">
+                                <label class="control-label">
+                                    {{ $t("general.filterMembers") }}
+                                </label>
+                                <multiselect
+                                    v-model="selectedNameMember"
+                                    :options="
+                                        membersNames.map((type) => type.id)
+                                    "
+                                    :custom-label="getMemberLabel"
+                                    :multiple="true"
+                                >
+                                </multiselect>
+                            </div>
+                        </b-modal>
 
                         <!--  accept   -->
                         <b-modal
                             id="modal_accept"
-                            :title="getCompanyKey('member_request_create_accept')"
+                            :title="
+                                getCompanyKey('member_request_create_accept')
+                            "
                             title-class="font-18"
                             size="lg"
                             body-class="p-4 "
@@ -670,13 +1122,24 @@ export default {
                                         >
                                             {{ $t("general.Add") }}
                                         </b-button>
-                                        <b-button variant="success" class="mx-1" disabled v-else>
+                                        <b-button
+                                            variant="success"
+                                            class="mx-1"
+                                            disabled
+                                            v-else
+                                        >
                                             <b-spinner small></b-spinner>
-                                            <span class="sr-only">{{ $t("login.Loading") }}...</span>
+                                            <span class="sr-only"
+                                                >{{
+                                                    $t("login.Loading")
+                                                }}...</span
+                                            >
                                         </b-button>
                                     </template>
                                     <b-button
-                                        @click.prevent="$bvModal.hide(`modal_accept`)"
+                                        @click.prevent="
+                                            $bvModal.hide(`modal_accept`)
+                                        "
                                         variant="danger"
                                         type="button"
                                     >
@@ -687,48 +1150,81 @@ export default {
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label class="control-label">
-                                                {{ getCompanyKey("member_session_date") }}
+                                                {{
+                                                    getCompanyKey(
+                                                        "member_session_date"
+                                                    )
+                                                }}
                                             </label>
                                             <date-picker
                                                 type="date"
-                                                v-model="$v.approve.session_date.$model"
+                                                v-model="
+                                                    $v.approve.session_date
+                                                        .$model
+                                                "
                                                 format="YYYY-MM-DD"
                                                 valueType="format"
                                                 :confirm="false"
-                                                :class="{ 'is-invalid':  $v.approve.session_date.$error || errors.session_date,
-                                                 'is-valid':!$v.approve.session_date.$invalid &&!errors.session_date,
+                                                :class="{
+                                                    'is-invalid':
+                                                        $v.approve.session_date
+                                                            .$error ||
+                                                        errors.session_date,
+                                                    'is-valid':
+                                                        !$v.approve.session_date
+                                                            .$invalid &&
+                                                        !errors.session_date,
                                                 }"
                                             ></date-picker>
-                                            <template v-if="errors.session_date">
+                                            <template
+                                                v-if="errors.session_date"
+                                            >
                                                 <ErrorMessage
-                                                    v-for="(errorMessage, index) in errors.session_date"
+                                                    v-for="(
+                                                        errorMessage, index
+                                                    ) in errors.session_date"
                                                     :key="index"
-                                                >{{ errorMessage }}
+                                                    >{{ errorMessage }}
                                                 </ErrorMessage>
                                             </template>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label>{{ getCompanyKey("member_session_number")}}</label>
+                                            <label>{{
+                                                getCompanyKey(
+                                                    "member_session_number"
+                                                )
+                                            }}</label>
                                             <input
-                                                v-model="$v.approve.session_number.$model"
+                                                v-model="
+                                                    $v.approve.session_number
+                                                        .$model
+                                                "
                                                 class="form-control"
                                                 type="number"
                                                 :class="{
-                                                  'is-invalid':
-                                                    $v.approve.session_number.$error ||
-                                                    errors.session_number,
-                                                  'is-valid':
-                                                    !$v.approve.session_number.$invalid &&
-                                                    !errors.session_number,
+                                                    'is-invalid':
+                                                        $v.approve
+                                                            .session_number
+                                                            .$error ||
+                                                        errors.session_number,
+                                                    'is-valid':
+                                                        !$v.approve
+                                                            .session_number
+                                                            .$invalid &&
+                                                        !errors.session_number,
                                                 }"
                                             />
-                                            <template v-if="errors.session_number">
+                                            <template
+                                                v-if="errors.session_number"
+                                            >
                                                 <ErrorMessage
-                                                    v-for="(errorMessage, index) in errors.session_number"
+                                                    v-for="(
+                                                        errorMessage, index
+                                                    ) in errors.session_number"
                                                     :key="index"
-                                                >{{ errorMessage }}
+                                                    >{{ errorMessage }}
                                                 </ErrorMessage>
                                             </template>
                                         </div>
@@ -738,48 +1234,89 @@ export default {
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label class="control-label">
-                                                {{ getCompanyKey("member_executive_office_history") }}
+                                                {{
+                                                    getCompanyKey(
+                                                        "member_executive_office_history"
+                                                    )
+                                                }}
                                             </label>
                                             <date-picker
                                                 type="date"
-                                                v-model="$v.approve.executive_office_date.$model"
+                                                v-model="
+                                                    $v.approve
+                                                        .executive_office_date
+                                                        .$model
+                                                "
                                                 format="YYYY-MM-DD"
                                                 valueType="format"
                                                 :confirm="false"
-                                                :class="{ 'is-invalid':  $v.approve.executive_office_date.$error || errors.executive_office_date,
-                                                 'is-valid':!$v.approve.executive_office_date.$invalid &&!errors.executive_office_date,
+                                                :class="{
+                                                    'is-invalid':
+                                                        $v.approve
+                                                            .executive_office_date
+                                                            .$error ||
+                                                        errors.executive_office_date,
+                                                    'is-valid':
+                                                        !$v.approve
+                                                            .executive_office_date
+                                                            .$invalid &&
+                                                        !errors.executive_office_date,
                                                 }"
                                             ></date-picker>
-                                            <template v-if="errors.executive_office_date">
+                                            <template
+                                                v-if="
+                                                    errors.executive_office_date
+                                                "
+                                            >
                                                 <ErrorMessage
-                                                    v-for="(errorMessage, index) in errors.executive_office_date"
+                                                    v-for="(
+                                                        errorMessage, index
+                                                    ) in errors.executive_office_date"
                                                     :key="index"
-                                                >{{ errorMessage }}
+                                                    >{{ errorMessage }}
                                                 </ErrorMessage>
                                             </template>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label>{{ getCompanyKey("member_executive_office_number")}}</label>
+                                            <label>{{
+                                                getCompanyKey(
+                                                    "member_executive_office_number"
+                                                )
+                                            }}</label>
                                             <input
-                                                v-model="$v.approve.executive_office_number.$model"
+                                                v-model="
+                                                    $v.approve
+                                                        .executive_office_number
+                                                        .$model
+                                                "
                                                 class="form-control"
                                                 type="number"
                                                 :class="{
-                                                  'is-invalid':
-                                                    $v.approve.executive_office_number.$error ||
-                                                    errors.executive_office_number,
-                                                  'is-valid':
-                                                    !$v.approve.executive_office_number.$invalid &&
-                                                    !errors.executive_office_number,
+                                                    'is-invalid':
+                                                        $v.approve
+                                                            .executive_office_number
+                                                            .$error ||
+                                                        errors.executive_office_number,
+                                                    'is-valid':
+                                                        !$v.approve
+                                                            .executive_office_number
+                                                            .$invalid &&
+                                                        !errors.executive_office_number,
                                                 }"
                                             />
-                                            <template v-if="errors.executive_office_number">
+                                            <template
+                                                v-if="
+                                                    errors.executive_office_number
+                                                "
+                                            >
                                                 <ErrorMessage
-                                                    v-for="(errorMessage, index) in errors.executive_office_number"
+                                                    v-for="(
+                                                        errorMessage, index
+                                                    ) in errors.executive_office_number"
                                                     :key="index"
-                                                >{{ errorMessage }}
+                                                    >{{ errorMessage }}
                                                 </ErrorMessage>
                                             </template>
                                         </div>
@@ -789,58 +1326,105 @@ export default {
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label class="control-label">
-                                                {{ getCompanyKey("member_Board_of_Directors_history") }}
+                                                {{
+                                                    getCompanyKey(
+                                                        "member_Board_of_Directors_history"
+                                                    )
+                                                }}
                                             </label>
                                             <date-picker
                                                 type="date"
-                                                v-model="$v.approve.board_of_directors_date.$model"
+                                                v-model="
+                                                    $v.approve
+                                                        .board_of_directors_date
+                                                        .$model
+                                                "
                                                 format="YYYY-MM-DD"
                                                 valueType="format"
                                                 :confirm="false"
-                                                :class="{ 'is-invalid':  $v.approve.board_of_directors_date.$error || errors.board_of_directors_date,
-                                                 'is-valid':!$v.approve.board_of_directors_date.$invalid &&!errors.board_of_directors_date,
+                                                :class="{
+                                                    'is-invalid':
+                                                        $v.approve
+                                                            .board_of_directors_date
+                                                            .$error ||
+                                                        errors.board_of_directors_date,
+                                                    'is-valid':
+                                                        !$v.approve
+                                                            .board_of_directors_date
+                                                            .$invalid &&
+                                                        !errors.board_of_directors_date,
                                                 }"
                                             ></date-picker>
-                                            <template v-if="errors.board_of_directors_date">
+                                            <template
+                                                v-if="
+                                                    errors.board_of_directors_date
+                                                "
+                                            >
                                                 <ErrorMessage
-                                                    v-for="(errorMessage, index) in errors.board_of_directors_date"
+                                                    v-for="(
+                                                        errorMessage, index
+                                                    ) in errors.board_of_directors_date"
                                                     :key="index"
-                                                >{{ errorMessage }}
+                                                    >{{ errorMessage }}
                                                 </ErrorMessage>
                                             </template>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label>{{ getCompanyKey("member_Board_of_Directors_number")}}</label>
+                                            <label>{{
+                                                getCompanyKey(
+                                                    "member_Board_of_Directors_number"
+                                                )
+                                            }}</label>
                                             <input
-                                                v-model="$v.approve.board_of_directors_number.$model"
+                                                v-model="
+                                                    $v.approve
+                                                        .board_of_directors_number
+                                                        .$model
+                                                "
                                                 class="form-control"
                                                 type="number"
                                                 :class="{
-                                                  'is-invalid':
-                                                    $v.approve.board_of_directors_number.$error ||
-                                                    errors.board_of_directors_number,
-                                                  'is-valid':
-                                                    !$v.approve.board_of_directors_number.$invalid &&
-                                                    !errors.board_of_directors_number,
+                                                    'is-invalid':
+                                                        $v.approve
+                                                            .board_of_directors_number
+                                                            .$error ||
+                                                        errors.board_of_directors_number,
+                                                    'is-valid':
+                                                        !$v.approve
+                                                            .board_of_directors_number
+                                                            .$invalid &&
+                                                        !errors.board_of_directors_number,
                                                 }"
                                             />
-                                            <template v-if="errors.board_of_directors_number">
+                                            <template
+                                                v-if="
+                                                    errors.board_of_directors_number
+                                                "
+                                            >
                                                 <ErrorMessage
-                                                    v-for="(errorMessage, index) in errors.board_of_directors_number"
+                                                    v-for="(
+                                                        errorMessage, index
+                                                    ) in errors.board_of_directors_number"
                                                     :key="index"
-                                                >{{ errorMessage }}
+                                                    >{{ errorMessage }}
                                                 </ErrorMessage>
                                             </template>
                                         </div>
                                     </div>
                                 </div>
-                                <template v-for="(item, index) in approve['accept-members']">
+                                <template
+                                    v-for="(item, index) in approve[
+                                        'accept-members'
+                                    ]"
+                                >
                                     <div class="row">
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label>{{ $t("general.name") }}</label>
+                                                <label>{{
+                                                    $t("general.name")
+                                                }}</label>
                                                 <input
                                                     v-model="date[index].name"
                                                     class="form-control"
@@ -852,16 +1436,32 @@ export default {
                                         <div class="col-md-4 position-relative">
                                             <div class="form-group">
                                                 <label class="control-label">
-                                                    {{ $t('general.Dateofreceipt') }}
+                                                    {{
+                                                        $t(
+                                                            "general.Dateofreceipt"
+                                                        )
+                                                    }}
                                                 </label>
                                                 <input
                                                     type="text"
                                                     class="form-control"
                                                     placeholder="yyyy-mm-dd"
-                                                    v-model="date[index].membership_date"
+                                                    v-model="
+                                                        date[index]
+                                                            .membership_date
+                                                    "
+                                                />
+                                                <template
+                                                    v-if="
+                                                        errors.membership_date
+                                                    "
                                                 >
-                                                <template v-if="errors.membership_date">
-                                                    <ErrorMessage v-for="( errorMessage, index ) in errors.membership_date" :key="index">
+                                                    <ErrorMessage
+                                                        v-for="(
+                                                            errorMessage, index
+                                                        ) in errors.membership_date"
+                                                        :key="index"
+                                                    >
                                                         {{ errorMessage }}
                                                     </ErrorMessage>
                                                 </template>
@@ -876,7 +1476,9 @@ export default {
                         <!--  accept   -->
                         <b-modal
                             id="modal_rejected"
-                            :title="getCompanyKey('member_request_create_reject')"
+                            :title="
+                                getCompanyKey('member_request_create_reject')
+                            "
                             title-class="font-18"
                             body-class="p-4 "
                             :hide-footer="true"
@@ -894,13 +1496,24 @@ export default {
                                         >
                                             {{ $t("general.Add") }}
                                         </b-button>
-                                        <b-button variant="success" class="mx-1" disabled v-else>
+                                        <b-button
+                                            variant="success"
+                                            class="mx-1"
+                                            disabled
+                                            v-else
+                                        >
                                             <b-spinner small></b-spinner>
-                                            <span class="sr-only">{{ $t("login.Loading") }}...</span>
+                                            <span class="sr-only"
+                                                >{{
+                                                    $t("login.Loading")
+                                                }}...</span
+                                            >
                                         </b-button>
                                     </template>
                                     <b-button
-                                        @click.prevent="$bvModal.hide(`modal_rejected`)"
+                                        @click.prevent="
+                                            $bvModal.hide(`modal_rejected`)
+                                        "
                                         variant="danger"
                                         type="button"
                                     >
@@ -910,22 +1523,33 @@ export default {
                                 <div class="row">
                                     <div class="col-md-12">
                                         <div class="form-group">
-                                            <label>{{ getCompanyKey("boardRent_panel_note") }}</label>
+                                            <label>{{
+                                                getCompanyKey(
+                                                    "boardRent_panel_note"
+                                                )
+                                            }}</label>
                                             <input
                                                 v-model="$v.reject.notes.$model"
                                                 class="form-control"
                                                 type="text"
                                                 :class="{
-                                                  'is-invalid': $v.reject.notes.$error || errors.notes,
-                                                  'is-valid':
-                                                    !$v.reject.notes.$invalid && !errors.notes,
+                                                    'is-invalid':
+                                                        $v.reject.notes
+                                                            .$error ||
+                                                        errors.notes,
+                                                    'is-valid':
+                                                        !$v.reject.notes
+                                                            .$invalid &&
+                                                        !errors.notes,
                                                 }"
                                             />
                                             <template v-if="errors.notes">
                                                 <ErrorMessage
-                                                    v-for="(errorMessage, index) in errors.notes"
+                                                    v-for="(
+                                                        errorMessage, index
+                                                    ) in errors.notes"
                                                     :key="index"
-                                                >{{ errorMessage }}
+                                                    >{{ errorMessage }}
                                                 </ErrorMessage>
                                             </template>
                                         </div>
@@ -936,268 +1560,543 @@ export default {
                         <!--  /create   -->
 
                         <!-- start .table-responsive-->
-                        <div class="table-responsive mb-3 custom-table-theme position-relative" ref="exportable_table" id="printData">
+                        <div
+                            class="table-responsive mb-3 custom-table-theme position-relative"
+                            ref="exportable_table"
+                            id="printData"
+                        >
                             <!--       start loader       -->
-                            <loader size="large" v-if="isLoader"/>
+                            <loader size="large" v-if="isLoader" />
                             <!--       end loader       -->
-                            <div class="row data-header-print" :class="[$i18n.locale == 'ar' ? 'dir-print-rtl' :'dir-print-ltr']">
-                                <div class="col-md-4" style="width: 15%; padding: 0 0 10px 20px; display: inline-block;">
-                                    <img style="width: 70%; " :src="'/images/sulib.png'">
+                            <div
+                                class="row data-header-print"
+                                :class="[
+                                    $i18n.locale == 'ar'
+                                        ? 'dir-print-rtl'
+                                        : 'dir-print-ltr',
+                                ]"
+                            >
+                                <div
+                                    class="col-md-4"
+                                    style="
+                                        width: 15%;
+                                        padding: 0 0 10px 20px;
+                                        display: inline-block;
+                                    "
+                                >
+                                    <img
+                                        style="width: 70%"
+                                        :src="'/images/sulib.png'"
+                                    />
                                 </div>
-                                <div class="text-center" style="width: 69%; padding-top: 5px; display: inline-block;">
-                                    <div style="width:100%; display: inline-block;">
-                                        <h2 style="font-weight: bold">{{ $t('general.SulaibikhatClub') }}</h2>
-                                        <h2 style="font-weight: bold"> {{ $t("general.StatementOfParticipantsAwaitingAcceptance") }} </h2>
+                                <div
+                                    class="text-center"
+                                    style="
+                                        width: 69%;
+                                        padding-top: 5px;
+                                        display: inline-block;
+                                    "
+                                >
+                                    <div
+                                        style="
+                                            width: 100%;
+                                            display: inline-block;
+                                        "
+                                    >
+                                        <h2 style="font-weight: bold">
+                                            {{ $t("general.SulaibikhatClub") }}
+                                        </h2>
+                                        <h2 style="font-weight: bold">
+                                            {{
+                                                $t(
+                                                    "general.StatementOfParticipantsAwaitingAcceptance"
+                                                )
+                                            }}
+                                        </h2>
                                     </div>
                                 </div>
-                                <div class="text-center" style="width: 15%; display: inline-block;">
-                                </div>
-
+                                <div
+                                    class="text-center"
+                                    style="width: 15%; display: inline-block"
+                                ></div>
                             </div>
-                            <table class="table table-borderless table-hover table-centered m-0" :class="[$i18n.locale == 'ar' ? 'dir-print-rtl' :'dir-print-ltr']">
+                            <table
+                                class="table table-borderless table-hover table-centered m-0"
+                                :class="[
+                                    $i18n.locale == 'ar'
+                                        ? 'dir-print-rtl'
+                                        : 'dir-print-ltr',
+                                ]"
+                            >
                                 <thead>
-                                <tr>
-                                    <th
-                                        v-if="enabled3"
-                                        class="do-not-print"
-                                        scope="col"
-                                        style="width: 0"
-                                    >
-                                        <div class="form-check custom-control">
-                                            <input
-                                                class="form-check-input"
-                                                type="checkbox"
-                                                v-model="isCheckAll"
-                                                style="width: 17px; height: 17px"
-                                            />
-                                        </div>
-                                    </th>
-                                    <th>
-                                        <div class="d-flex justify-content-center">
-                                            <span>{{ $t("general.M") }}</span>
-                                        </div>
-                                    </th>
-                                    <th v-if="setting.full_name">
-                                        <div class="d-flex justify-content-center">
-                                            <span>{{ $t("general.NameMembershipApplicant") }}</span>
-                                            <div class="arrow-sort">
-                                                <i
-                                                    class="fas fa-arrow-up"
-                                                    @click="members.sort(sortString('full_name'))"
-                                                ></i>
-                                                <i
-                                                    class="fas fa-arrow-down"
-                                                    @click="members.sort(sortString('-full_name'))"
-                                                ></i>
+                                    <tr>
+                                        <th
+                                            v-if="enabled3"
+                                            class="do-not-print"
+                                            scope="col"
+                                            style="width: 0"
+                                        >
+                                            <div
+                                                class="form-check custom-control"
+                                            >
+                                                <input
+                                                    class="form-check-input"
+                                                    type="checkbox"
+                                                    v-model="isCheckAll"
+                                                    style="
+                                                        width: 17px;
+                                                        height: 17px;
+                                                    "
+                                                />
                                             </div>
-                                        </div>
-                                    </th>
-                                    <th v-if="setting.document_no">
-                                        <div class="d-flex justify-content-center">
-                                            <span>{{ $t("general.SubscriptionNumber") }}</span>
-                                        </div>
-                                    </th>
-                                    <th v-if="setting.date">
-                                        <div class="d-flex justify-content-center">
-                                            <span>{{ $t("general.subscriptionDate") }}</span>
-                                        </div>
-                                    </th>
-                                    <th v-if="setting.birth_date">
-                                        <div class="d-flex justify-content-center">
-                                            <span>{{ getCompanyKey("member_birth_date") }}</span>
-                                            <div class="arrow-sort">
-                                                <i class="fas fa-arrow-up"
-                                                    @click="members.sort(sortString('birth_date'))"
-                                                ></i>
-                                                <i class="fas fa-arrow-down"
-                                                    @click="members.sort(sortString('-birth_date'))"
-                                                ></i>
+                                        </th>
+                                        <th>
+                                            <div
+                                                class="d-flex justify-content-center"
+                                            >
+                                                <span>{{
+                                                    $t("general.M")
+                                                }}</span>
                                             </div>
-                                        </div>
-                                    </th>
-                                    <th v-if="setting.gender">
-                                        <div class="d-flex justify-content-center">
-                                            <span>{{ getCompanyKey("member_gender") }}</span>
-                                        </div>
-                                    </th>
-                                    <th v-if="setting.member_type_id">
-                                        <div class="d-flex justify-content-center">
-                                            <span>{{ $t("general.status") }}</span>
-                                        </div>
-                                    </th>
-                                    <th v-if="setting.national_id">
-                                        <div class="d-flex justify-content-center">
-                                            <span>{{ getCompanyKey("member_national_id") }}</span>
-                                            <div class="arrow-sort">
-                                                <i
-                                                    class="fas fa-arrow-up"
-                                                    @click="members.sort(sortString('national_id'))"
-                                                ></i>
-                                                <i
-                                                    class="fas fa-arrow-down"
-                                                    @click="members.sort(sortString('-national_id'))"
-                                                ></i>
+                                        </th>
+                                        <th v-if="setting.full_name">
+                                            <div
+                                                class="d-flex justify-content-center"
+                                            >
+                                                <span>{{
+                                                    $t(
+                                                        "general.NameMembershipApplicant"
+                                                    )
+                                                }}</span>
+                                                <div class="arrow-sort">
+                                                    <i
+                                                        class="fas fa-arrow-up"
+                                                        @click="
+                                                            members.sort(
+                                                                sortString(
+                                                                    'full_name'
+                                                                )
+                                                            )
+                                                        "
+                                                    ></i>
+                                                    <i
+                                                        class="fas fa-arrow-down"
+                                                        @click="
+                                                            members.sort(
+                                                                sortString(
+                                                                    '-full_name'
+                                                                )
+                                                            )
+                                                        "
+                                                    ></i>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </th>
-                                    <th v-if="setting.home_phone">
-                                        <div class="d-flex justify-content-center">
-                                            <span>{{ getCompanyKey("member_home_phone") }}</span>
-                                            <div class="arrow-sort">
-                                                <i
-                                                    class="fas fa-arrow-up"
-                                                    @click="members.sort(sortString('home_phone'))"
-                                                ></i>
-                                                <i
-                                                    class="fas fa-arrow-down"
-                                                    @click="members.sort(sortString('-home_phone'))"
-                                                ></i>
+                                        </th>
+                                        <th v-if="setting.document_no">
+                                            <div
+                                                class="d-flex justify-content-center"
+                                            >
+                                                <span>{{
+                                                    $t(
+                                                        "general.SubscriptionNumber"
+                                                    )
+                                                }}</span>
                                             </div>
-                                        </div>
-                                    </th>
-                                    <th v-if="setting.work_phone">
-                                        <div class="d-flex justify-content-center">
-                                            <span>{{ getCompanyKey("member_work_phone") }}</span>
-                                            <div class="arrow-sort">
-                                                <i
-                                                    class="fas fa-arrow-up"
-                                                    @click="members.sort(sortString('work_phone'))"
-                                                ></i>
-                                                <i
-                                                    class="fas fa-arrow-down"
-                                                    @click="members.sort(sortString('-work_phone'))"
-                                                ></i>
+                                        </th>
+                                        <th v-if="setting.date">
+                                            <div
+                                                class="d-flex justify-content-center"
+                                            >
+                                                <span>{{
+                                                    $t(
+                                                        "general.subscriptionDate"
+                                                    )
+                                                }}</span>
                                             </div>
-                                        </div>
-                                    </th>
-                                    <th v-if="setting.home_address">
-                                        <div class="d-flex justify-content-center">
-                                            <span>{{ getCompanyKey("member_home_address") }}</span>
-                                            <div class="arrow-sort">
-                                                <i
-                                                    class="fas fa-arrow-up"
-                                                    @click="members.sort(sortString('home_address'))"
-                                                ></i>
-                                                <i
-                                                    class="fas fa-arrow-down"
-                                                    @click="members.sort(sortString('-home_address'))"
-                                                ></i>
+                                        </th>
+                                        <th v-if="setting.birth_date">
+                                            <div
+                                                class="d-flex justify-content-center"
+                                            >
+                                                <span>{{
+                                                    getCompanyKey(
+                                                        "member_birth_date"
+                                                    )
+                                                }}</span>
+                                                <div class="arrow-sort">
+                                                    <i
+                                                        class="fas fa-arrow-up"
+                                                        @click="
+                                                            members.sort(
+                                                                sortString(
+                                                                    'birth_date'
+                                                                )
+                                                            )
+                                                        "
+                                                    ></i>
+                                                    <i
+                                                        class="fas fa-arrow-down"
+                                                        @click="
+                                                            members.sort(
+                                                                sortString(
+                                                                    '-birth_date'
+                                                                )
+                                                            )
+                                                        "
+                                                    ></i>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </th>
-                                    <th v-if="setting.work_address">
-                                        <div class="d-flex justify-content-center">
-                                            <span>{{ getCompanyKey("member_work_address") }}</span>
-                                            <div class="arrow-sort">
-                                                <i
-                                                    class="fas fa-arrow-up"
-                                                    @click="members.sort(sortString('work_address'))"
-                                                ></i>
-                                                <i
-                                                    class="fas fa-arrow-down"
-                                                    @click="members.sort(sortString('-work_address'))"
-                                                ></i>
+                                        </th>
+                                        <th v-if="setting.gender">
+                                            <div
+                                                class="d-flex justify-content-center"
+                                            >
+                                                <span>{{
+                                                    getCompanyKey(
+                                                        "member_gender"
+                                                    )
+                                                }}</span>
                                             </div>
-                                        </div>
-                                    </th>
-                                    <th v-if="setting.job">
-                                        <div class="d-flex justify-content-center">
-                                            <span>{{ getCompanyKey("member_job") }}</span>
-                                            <div class="arrow-sort">
-                                                <i
-                                                    class="fas fa-arrow-up"
-                                                    @click="members.sort(sortString('job'))"
-                                                ></i>
-                                                <i
-                                                    class="fas fa-arrow-down"
-                                                    @click="members.sort(sortString('-job'))"
-                                                ></i>
+                                        </th>
+                                        <th v-if="setting.member_type_id">
+                                            <div
+                                                class="d-flex justify-content-center"
+                                            >
+                                                <span>{{
+                                                    $t("general.status")
+                                                }}</span>
                                             </div>
-                                        </div>
-                                    </th>
-                                    <th v-if="setting.degree">
-                                        <div class="d-flex justify-content-center">
-                                            <span>{{ getCompanyKey("member_degree") }}</span>
-                                            <div class="arrow-sort">
-                                                <i
-                                                    class="fas fa-arrow-up"
-                                                    @click="members.sort(sortString('degree'))"
-                                                ></i>
-                                                <i
-                                                    class="fas fa-arrow-down"
-                                                    @click="members.sort(sortString('-degree'))"
-                                                ></i>
+                                        </th>
+                                        <th v-if="setting.national_id">
+                                            <div
+                                                class="d-flex justify-content-center"
+                                            >
+                                                <span>{{
+                                                    getCompanyKey(
+                                                        "member_national_id"
+                                                    )
+                                                }}</span>
+                                                <div class="arrow-sort">
+                                                    <i
+                                                        class="fas fa-arrow-up"
+                                                        @click="
+                                                            members.sort(
+                                                                sortString(
+                                                                    'national_id'
+                                                                )
+                                                            )
+                                                        "
+                                                    ></i>
+                                                    <i
+                                                        class="fas fa-arrow-down"
+                                                        @click="
+                                                            members.sort(
+                                                                sortString(
+                                                                    '-national_id'
+                                                                )
+                                                            )
+                                                        "
+                                                    ></i>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </th>
-                                </tr>
+                                        </th>
+                                        <th v-if="setting.home_phone">
+                                            <div
+                                                class="d-flex justify-content-center"
+                                            >
+                                                <span>{{
+                                                    getCompanyKey(
+                                                        "member_home_phone"
+                                                    )
+                                                }}</span>
+                                                <div class="arrow-sort">
+                                                    <i
+                                                        class="fas fa-arrow-up"
+                                                        @click="
+                                                            members.sort(
+                                                                sortString(
+                                                                    'home_phone'
+                                                                )
+                                                            )
+                                                        "
+                                                    ></i>
+                                                    <i
+                                                        class="fas fa-arrow-down"
+                                                        @click="
+                                                            members.sort(
+                                                                sortString(
+                                                                    '-home_phone'
+                                                                )
+                                                            )
+                                                        "
+                                                    ></i>
+                                                </div>
+                                            </div>
+                                        </th>
+                                        <th v-if="setting.work_phone">
+                                            <div
+                                                class="d-flex justify-content-center"
+                                            >
+                                                <span>{{
+                                                    getCompanyKey(
+                                                        "member_work_phone"
+                                                    )
+                                                }}</span>
+                                                <div class="arrow-sort">
+                                                    <i
+                                                        class="fas fa-arrow-up"
+                                                        @click="
+                                                            members.sort(
+                                                                sortString(
+                                                                    'work_phone'
+                                                                )
+                                                            )
+                                                        "
+                                                    ></i>
+                                                    <i
+                                                        class="fas fa-arrow-down"
+                                                        @click="
+                                                            members.sort(
+                                                                sortString(
+                                                                    '-work_phone'
+                                                                )
+                                                            )
+                                                        "
+                                                    ></i>
+                                                </div>
+                                            </div>
+                                        </th>
+                                        <th v-if="setting.home_address">
+                                            <div
+                                                class="d-flex justify-content-center"
+                                            >
+                                                <span>{{
+                                                    getCompanyKey(
+                                                        "member_home_address"
+                                                    )
+                                                }}</span>
+                                                <div class="arrow-sort">
+                                                    <i
+                                                        class="fas fa-arrow-up"
+                                                        @click="
+                                                            members.sort(
+                                                                sortString(
+                                                                    'home_address'
+                                                                )
+                                                            )
+                                                        "
+                                                    ></i>
+                                                    <i
+                                                        class="fas fa-arrow-down"
+                                                        @click="
+                                                            members.sort(
+                                                                sortString(
+                                                                    '-home_address'
+                                                                )
+                                                            )
+                                                        "
+                                                    ></i>
+                                                </div>
+                                            </div>
+                                        </th>
+                                        <th v-if="setting.work_address">
+                                            <div
+                                                class="d-flex justify-content-center"
+                                            >
+                                                <span>{{
+                                                    getCompanyKey(
+                                                        "member_work_address"
+                                                    )
+                                                }}</span>
+                                                <div class="arrow-sort">
+                                                    <i
+                                                        class="fas fa-arrow-up"
+                                                        @click="
+                                                            members.sort(
+                                                                sortString(
+                                                                    'work_address'
+                                                                )
+                                                            )
+                                                        "
+                                                    ></i>
+                                                    <i
+                                                        class="fas fa-arrow-down"
+                                                        @click="
+                                                            members.sort(
+                                                                sortString(
+                                                                    '-work_address'
+                                                                )
+                                                            )
+                                                        "
+                                                    ></i>
+                                                </div>
+                                            </div>
+                                        </th>
+                                        <th v-if="setting.job">
+                                            <div
+                                                class="d-flex justify-content-center"
+                                            >
+                                                <span>{{
+                                                    getCompanyKey("member_job")
+                                                }}</span>
+                                                <div class="arrow-sort">
+                                                    <i
+                                                        class="fas fa-arrow-up"
+                                                        @click="
+                                                            members.sort(
+                                                                sortString(
+                                                                    'job'
+                                                                )
+                                                            )
+                                                        "
+                                                    ></i>
+                                                    <i
+                                                        class="fas fa-arrow-down"
+                                                        @click="
+                                                            members.sort(
+                                                                sortString(
+                                                                    '-job'
+                                                                )
+                                                            )
+                                                        "
+                                                    ></i>
+                                                </div>
+                                            </div>
+                                        </th>
+                                        <th v-if="setting.degree">
+                                            <div
+                                                class="d-flex justify-content-center"
+                                            >
+                                                <span>{{
+                                                    getCompanyKey(
+                                                        "member_degree"
+                                                    )
+                                                }}</span>
+                                                <div class="arrow-sort">
+                                                    <i
+                                                        class="fas fa-arrow-up"
+                                                        @click="
+                                                            members.sort(
+                                                                sortString(
+                                                                    'degree'
+                                                                )
+                                                            )
+                                                        "
+                                                    ></i>
+                                                    <i
+                                                        class="fas fa-arrow-down"
+                                                        @click="
+                                                            members.sort(
+                                                                sortString(
+                                                                    '-degree'
+                                                                )
+                                                            )
+                                                        "
+                                                    ></i>
+                                                </div>
+                                            </div>
+                                        </th>
+                                    </tr>
                                 </thead>
                                 <tbody v-if="members.length > 0">
-                                <tr
-                                    @click.capture="checkRow(data.id)"
-                                    v-for="(data, index) in members"
-                                    :key="data.id"
-                                    class="body-tr-custom"
-                                >
-                                    <td v-if="enabled3" class="do-not-print">
-                                        <div class="form-check custom-control" style="min-height: 1.9em">
-                                            <input
-                                                style="width: 17px; height: 17px"
-                                                class="form-check-input"
-                                                type="checkbox"
-                                                :value="data.id"
-                                                v-model="checkAll"
-                                            />
-                                        </div>
-                                    </td>
-                                    <td> {{index + 1}}</td>
-                                    <td v-if="setting.full_name">
-                                        {{ data.full_name }}
-                                    </td>
-                                    <td v-if="setting.document_no">
-                                        <h5 class="m-0 font-weight-normal">{{ data.transaction ? data.transaction.document_no: "---" }}</h5>
-                                    </td>
-                                    <td v-if="setting.date">
-                                        <h5 class="m-0 font-weight-normal">{{ formatDate(data.transaction.date) }}</h5>
-                                    </td>
-                                    <td v-if="setting.birth_date">
-                                        {{ data.birth_date }}
-                                    </td>
-                                    <td v-if="setting.gender">
-                                        {{ data.gender == 1 ? $t("general.male") : $t("general.female")}}
-                                    </td>
-                                    <td v-if="setting.member_type_id">
-                                        {{parseInt(data.member_type_id) == 1 ? $t('general.pendingMember') : $t('general.unacceptable')}}
-                                    </td>
-                                    <td v-if="setting.national_id">
-                                        {{ data.national_id }}
-                                    </td>
-                                    <td v-if="setting.home_phone">
-                                        {{ data.home_phone }}
-                                    </td>
-                                    <td v-if="setting.work_phone">
-                                        {{ data.work_phone }}
-                                    </td>
-                                    <td v-if="setting.home_address">
-                                        {{ data.home_address }}
-                                    </td>
-                                    <td v-if="setting.work_address">
-                                        {{ data.work_address }}
-                                    </td>
-                                    <td v-if="setting.job">
-                                        {{ data.job }}
-                                    </td>
-                                    <td v-if="setting.degree">
-                                        {{ data.degree }}
-                                    </td>
-                                </tr>
+                                    <tr
+                                        @click.capture="checkRow(data.id)"
+                                        v-for="(data, index) in members"
+                                        :key="data.id"
+                                        class="body-tr-custom"
+                                    >
+                                        <td
+                                            v-if="enabled3"
+                                            class="do-not-print"
+                                        >
+                                            <div
+                                                class="form-check custom-control"
+                                                style="min-height: 1.9em"
+                                            >
+                                                <input
+                                                    style="
+                                                        width: 17px;
+                                                        height: 17px;
+                                                    "
+                                                    class="form-check-input"
+                                                    type="checkbox"
+                                                    :value="data.id"
+                                                    v-model="checkAll"
+                                                />
+                                            </div>
+                                        </td>
+                                        <td>{{ index + 1 }}</td>
+                                        <td v-if="setting.full_name">
+                                            {{ data.full_name }}
+                                        </td>
+                                        <td v-if="setting.document_no">
+                                            <h5 class="m-0 font-weight-normal">
+                                                {{
+                                                    data.transaction
+                                                        ? data.transaction
+                                                              .document_no
+                                                        : "---"
+                                                }}
+                                            </h5>
+                                        </td>
+                                        <td v-if="setting.date">
+                                            <h5 class="m-0 font-weight-normal">
+                                                {{
+                                                    formatDate(
+                                                        data.transaction.date
+                                                    )
+                                                }}
+                                            </h5>
+                                        </td>
+                                        <td v-if="setting.birth_date">
+                                            {{ data.birth_date }}
+                                        </td>
+                                        <td v-if="setting.gender">
+                                            {{
+                                                data.gender == 1
+                                                    ? $t("general.male")
+                                                    : $t("general.female")
+                                            }}
+                                        </td>
+                                        <td v-if="setting.member_type_id">
+                                            {{
+                                                parseInt(data.member_type_id) ==
+                                                1
+                                                    ? $t(
+                                                          "general.pendingMember"
+                                                      )
+                                                    : $t("general.unacceptable")
+                                            }}
+                                        </td>
+                                        <td v-if="setting.national_id">
+                                            {{ data.national_id }}
+                                        </td>
+                                        <td v-if="setting.home_phone">
+                                            {{ data.home_phone }}
+                                        </td>
+                                        <td v-if="setting.work_phone">
+                                            {{ data.work_phone }}
+                                        </td>
+                                        <td v-if="setting.home_address">
+                                            {{ data.home_address }}
+                                        </td>
+                                        <td v-if="setting.work_address">
+                                            {{ data.work_address }}
+                                        </td>
+                                        <td v-if="setting.job">
+                                            {{ data.job }}
+                                        </td>
+                                        <td v-if="setting.degree">
+                                            {{ data.degree }}
+                                        </td>
+                                    </tr>
                                 </tbody>
                                 <tbody v-else>
-                                <tr>
-                                    <th class="text-center" colspan="30">
-                                        {{ $t("general.notDataFound") }}
-                                    </th>
-                                </tr>
+                                    <tr>
+                                        <th class="text-center" colspan="30">
+                                            {{ $t("general.notDataFound") }}
+                                        </th>
+                                    </tr>
                                 </tbody>
                             </table>
                         </div>
@@ -1214,55 +2113,80 @@ export default {
     display: none;
 }
 @media print {
-    .do-not-print {
-        display: none;
+    /* General Table Styling */
+    table.table {
+        width: 100%; /* Ensure the table spans the full width */
+        border-collapse: collapse; /* Remove gaps between cells */
+        border: 1px solid black; /* Add a visible border */
+        font-size: 12px; /* Adjust font size for printing */
     }
 
-    .arrow-sort {
-        display: none;
+    /* Table Header (thead) Styling */
+    table.table thead {
+        display: table-header-group; /* Ensure the header repeats on each page */
+        background-color: #f5f5f5; /* Light gray background for headers */
+        color: black; /* Text color for headers */
+        text-align: center; /* Center align text in headers */
+        font-weight: bold; /* Make header text bold */
+        border-bottom: 2px solid black; /* Add a distinct bottom border */
     }
 
-    .text-success {
-        background-color: unset;
-        color: #6c757d !important;
-        border: unset;
+    /* Table Rows (tr) and Cells (td) Styling */
+    table.table tbody tr {
+        page-break-inside: avoid; /* Prevent rows from breaking across pages */
     }
 
-    .text-danger {
-        background-color: unset;
-        color: #6c757d !important;
-        border: unset;
+    table.table th,
+    table.table td {
+        border: 1px solid black; /* Add borders for all cells */
+        padding: 8px; /* Add padding for better readability */
+        text-align: left; /* Align text to the left */
     }
-    td{
-        border: 1px solid black !important;
-        font-size: 16px !important;
-        font-weight: bold !important
+
+    /* Remove Hover Effects for Printing */
+    table.table-hover tbody tr:hover {
+        background-color: transparent; /* Disable hover background */
     }
-    th{
-        border: 1px solid black !important;
-        color: black;
-        text-align: center;
-        font-size: 16px !important;
-        font-weight: bold !important
+
+    /* Centering Table Content */
+    table.table-centered td,
+    table.table-centered th {
+        text-align: center; /* Center all text */
+        vertical-align: middle; /* Vertically center text */
     }
-    thead{
-        border: 1px solid black !important;
+
+    /* Remove Borderless Appearance */
+    table.table-borderless td,
+    table.table-borderless th {
+        border: 1px solid black; /* Force borders for printing */
     }
-    tbody{
-        border: 1px solid black !important;
+
+    body {
+        margin: 0;
+        padding: 0;
     }
-    table {
-        border: 1px solid black !important;
-    }
+
+    /* Header Styling for Print */
     .data-header-print {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
         width: 100%;
-        display: inline-block;
+        margin-bottom: 10px;
+        background-color: white;
+        /* border-bottom: 2px solid black; /* Add bottom border for header */
+        padding: 10px 0;
     }
+
+    /* Additional Styling for RTL */
     .dir-print-rtl {
-        direction: rtl !important;
+        direction: rtl;
+        text-align: right;
     }
+
     .dir-print-ltr {
-        direction: ltr !important;
+        direction: ltr;
+        text-align: left;
     }
 }
 </style>

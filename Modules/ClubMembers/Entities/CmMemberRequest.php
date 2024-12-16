@@ -51,17 +51,7 @@ class CmMemberRequest extends Model
             }
 
             if ($request->search && $request->columns) {
-                foreach ($request->columns as $column) {
-                    if (strpos($column, ".") > 0) {
-                        $column = explode(".", $column);
-                        $q->orWhereRelation($column[0], $column[1], 'like', '%' . $request->search . '%');
-                        $q->orWhereHas($column[0], function ($q) use ($column, $request) {
-                            $q->where($column[1], 'like', '%' . $request->search . '%');
-                        });
-                    } else {
-                        $q->orWhere($column, 'like', '%' . $request->search . '%');
-                    }
-                }
+                $q->orWhere('full_name', 'like', "%{$request->search}%");
             }
 
             if ($request->last_days) {
@@ -98,5 +88,12 @@ class CmMemberRequest extends Model
 
 
         return $relationsWithChildren;
+    }
+
+    public function lastCmTransaction()
+    {
+        return $this->cmTransaction()
+                    ->latest('created_at')
+                    ->select(['id', 'date', 'document_no', 'year', 'amount', 'member_request_id']);
     }
 }

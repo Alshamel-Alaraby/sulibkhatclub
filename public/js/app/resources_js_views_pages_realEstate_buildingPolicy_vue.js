@@ -2632,6 +2632,465 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
 /***/ }),
 
+/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/create/realEstate/BuildingPolicy.vue?vue&type=script&lang=js&":
+/*!***************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/create/realEstate/BuildingPolicy.vue?vue&type=script&lang=js& ***!
+  \***************************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _api_adminAxios__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../api/adminAxios */ "./resources/js/api/adminAxios.js");
+/* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! sweetalert2 */ "./node_modules/sweetalert2/dist/sweetalert2.all.js");
+/* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(sweetalert2__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _components_widgets_errorMessage__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../components/widgets/errorMessage */ "./resources/js/components/widgets/errorMessage.vue");
+/* harmony import */ var _components_general_loader__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../components/general/loader */ "./resources/js/components/general/loader.vue");
+/* harmony import */ var _building__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./building */ "./resources/js/components/create/realEstate/building.vue");
+/* harmony import */ var vue_multiselect__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! vue-multiselect */ "./node_modules/vue-multiselect/dist/vue-multiselect.min.js");
+/* harmony import */ var vue_multiselect__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(vue_multiselect__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var _helper_mixin_translation_comp_mixin__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../../helper/mixin/translation-comp-mixin */ "./resources/js/helper/mixin/translation-comp-mixin.js");
+/* harmony import */ var _helper_mixin_success_error__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../../helper/mixin/success&error */ "./resources/js/helper/mixin/success&error.js");
+function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
+function _regeneratorRuntime() { "use strict"; /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */ _regeneratorRuntime = function _regeneratorRuntime() { return exports; }; var exports = {}, Op = Object.prototype, hasOwn = Op.hasOwnProperty, defineProperty = Object.defineProperty || function (obj, key, desc) { obj[key] = desc.value; }, $Symbol = "function" == typeof Symbol ? Symbol : {}, iteratorSymbol = $Symbol.iterator || "@@iterator", asyncIteratorSymbol = $Symbol.asyncIterator || "@@asyncIterator", toStringTagSymbol = $Symbol.toStringTag || "@@toStringTag"; function define(obj, key, value) { return Object.defineProperty(obj, key, { value: value, enumerable: !0, configurable: !0, writable: !0 }), obj[key]; } try { define({}, ""); } catch (err) { define = function define(obj, key, value) { return obj[key] = value; }; } function wrap(innerFn, outerFn, self, tryLocsList) { var protoGenerator = outerFn && outerFn.prototype instanceof Generator ? outerFn : Generator, generator = Object.create(protoGenerator.prototype), context = new Context(tryLocsList || []); return defineProperty(generator, "_invoke", { value: makeInvokeMethod(innerFn, self, context) }), generator; } function tryCatch(fn, obj, arg) { try { return { type: "normal", arg: fn.call(obj, arg) }; } catch (err) { return { type: "throw", arg: err }; } } exports.wrap = wrap; var ContinueSentinel = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} var IteratorPrototype = {}; define(IteratorPrototype, iteratorSymbol, function () { return this; }); var getProto = Object.getPrototypeOf, NativeIteratorPrototype = getProto && getProto(getProto(values([]))); NativeIteratorPrototype && NativeIteratorPrototype !== Op && hasOwn.call(NativeIteratorPrototype, iteratorSymbol) && (IteratorPrototype = NativeIteratorPrototype); var Gp = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(IteratorPrototype); function defineIteratorMethods(prototype) { ["next", "throw", "return"].forEach(function (method) { define(prototype, method, function (arg) { return this._invoke(method, arg); }); }); } function AsyncIterator(generator, PromiseImpl) { function invoke(method, arg, resolve, reject) { var record = tryCatch(generator[method], generator, arg); if ("throw" !== record.type) { var result = record.arg, value = result.value; return value && "object" == _typeof(value) && hasOwn.call(value, "__await") ? PromiseImpl.resolve(value.__await).then(function (value) { invoke("next", value, resolve, reject); }, function (err) { invoke("throw", err, resolve, reject); }) : PromiseImpl.resolve(value).then(function (unwrapped) { result.value = unwrapped, resolve(result); }, function (error) { return invoke("throw", error, resolve, reject); }); } reject(record.arg); } var previousPromise; defineProperty(this, "_invoke", { value: function value(method, arg) { function callInvokeWithMethodAndArg() { return new PromiseImpl(function (resolve, reject) { invoke(method, arg, resolve, reject); }); } return previousPromise = previousPromise ? previousPromise.then(callInvokeWithMethodAndArg, callInvokeWithMethodAndArg) : callInvokeWithMethodAndArg(); } }); } function makeInvokeMethod(innerFn, self, context) { var state = "suspendedStart"; return function (method, arg) { if ("executing" === state) throw new Error("Generator is already running"); if ("completed" === state) { if ("throw" === method) throw arg; return doneResult(); } for (context.method = method, context.arg = arg;;) { var delegate = context.delegate; if (delegate) { var delegateResult = maybeInvokeDelegate(delegate, context); if (delegateResult) { if (delegateResult === ContinueSentinel) continue; return delegateResult; } } if ("next" === context.method) context.sent = context._sent = context.arg;else if ("throw" === context.method) { if ("suspendedStart" === state) throw state = "completed", context.arg; context.dispatchException(context.arg); } else "return" === context.method && context.abrupt("return", context.arg); state = "executing"; var record = tryCatch(innerFn, self, context); if ("normal" === record.type) { if (state = context.done ? "completed" : "suspendedYield", record.arg === ContinueSentinel) continue; return { value: record.arg, done: context.done }; } "throw" === record.type && (state = "completed", context.method = "throw", context.arg = record.arg); } }; } function maybeInvokeDelegate(delegate, context) { var methodName = context.method, method = delegate.iterator[methodName]; if (undefined === method) return context.delegate = null, "throw" === methodName && delegate.iterator["return"] && (context.method = "return", context.arg = undefined, maybeInvokeDelegate(delegate, context), "throw" === context.method) || "return" !== methodName && (context.method = "throw", context.arg = new TypeError("The iterator does not provide a '" + methodName + "' method")), ContinueSentinel; var record = tryCatch(method, delegate.iterator, context.arg); if ("throw" === record.type) return context.method = "throw", context.arg = record.arg, context.delegate = null, ContinueSentinel; var info = record.arg; return info ? info.done ? (context[delegate.resultName] = info.value, context.next = delegate.nextLoc, "return" !== context.method && (context.method = "next", context.arg = undefined), context.delegate = null, ContinueSentinel) : info : (context.method = "throw", context.arg = new TypeError("iterator result is not an object"), context.delegate = null, ContinueSentinel); } function pushTryEntry(locs) { var entry = { tryLoc: locs[0] }; 1 in locs && (entry.catchLoc = locs[1]), 2 in locs && (entry.finallyLoc = locs[2], entry.afterLoc = locs[3]), this.tryEntries.push(entry); } function resetTryEntry(entry) { var record = entry.completion || {}; record.type = "normal", delete record.arg, entry.completion = record; } function Context(tryLocsList) { this.tryEntries = [{ tryLoc: "root" }], tryLocsList.forEach(pushTryEntry, this), this.reset(!0); } function values(iterable) { if (iterable) { var iteratorMethod = iterable[iteratorSymbol]; if (iteratorMethod) return iteratorMethod.call(iterable); if ("function" == typeof iterable.next) return iterable; if (!isNaN(iterable.length)) { var i = -1, next = function next() { for (; ++i < iterable.length;) if (hasOwn.call(iterable, i)) return next.value = iterable[i], next.done = !1, next; return next.value = undefined, next.done = !0, next; }; return next.next = next; } } return { next: doneResult }; } function doneResult() { return { value: undefined, done: !0 }; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, defineProperty(Gp, "constructor", { value: GeneratorFunctionPrototype, configurable: !0 }), defineProperty(GeneratorFunctionPrototype, "constructor", { value: GeneratorFunction, configurable: !0 }), GeneratorFunction.displayName = define(GeneratorFunctionPrototype, toStringTagSymbol, "GeneratorFunction"), exports.isGeneratorFunction = function (genFun) { var ctor = "function" == typeof genFun && genFun.constructor; return !!ctor && (ctor === GeneratorFunction || "GeneratorFunction" === (ctor.displayName || ctor.name)); }, exports.mark = function (genFun) { return Object.setPrototypeOf ? Object.setPrototypeOf(genFun, GeneratorFunctionPrototype) : (genFun.__proto__ = GeneratorFunctionPrototype, define(genFun, toStringTagSymbol, "GeneratorFunction")), genFun.prototype = Object.create(Gp), genFun; }, exports.awrap = function (arg) { return { __await: arg }; }, defineIteratorMethods(AsyncIterator.prototype), define(AsyncIterator.prototype, asyncIteratorSymbol, function () { return this; }), exports.AsyncIterator = AsyncIterator, exports.async = function (innerFn, outerFn, self, tryLocsList, PromiseImpl) { void 0 === PromiseImpl && (PromiseImpl = Promise); var iter = new AsyncIterator(wrap(innerFn, outerFn, self, tryLocsList), PromiseImpl); return exports.isGeneratorFunction(outerFn) ? iter : iter.next().then(function (result) { return result.done ? result.value : iter.next(); }); }, defineIteratorMethods(Gp), define(Gp, toStringTagSymbol, "Generator"), define(Gp, iteratorSymbol, function () { return this; }), define(Gp, "toString", function () { return "[object Generator]"; }), exports.keys = function (val) { var object = Object(val), keys = []; for (var key in object) keys.push(key); return keys.reverse(), function next() { for (; keys.length;) { var key = keys.pop(); if (key in object) return next.value = key, next.done = !1, next; } return next.done = !0, next; }; }, exports.values = values, Context.prototype = { constructor: Context, reset: function reset(skipTempReset) { if (this.prev = 0, this.next = 0, this.sent = this._sent = undefined, this.done = !1, this.delegate = null, this.method = "next", this.arg = undefined, this.tryEntries.forEach(resetTryEntry), !skipTempReset) for (var name in this) "t" === name.charAt(0) && hasOwn.call(this, name) && !isNaN(+name.slice(1)) && (this[name] = undefined); }, stop: function stop() { this.done = !0; var rootRecord = this.tryEntries[0].completion; if ("throw" === rootRecord.type) throw rootRecord.arg; return this.rval; }, dispatchException: function dispatchException(exception) { if (this.done) throw exception; var context = this; function handle(loc, caught) { return record.type = "throw", record.arg = exception, context.next = loc, caught && (context.method = "next", context.arg = undefined), !!caught; } for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i], record = entry.completion; if ("root" === entry.tryLoc) return handle("end"); if (entry.tryLoc <= this.prev) { var hasCatch = hasOwn.call(entry, "catchLoc"), hasFinally = hasOwn.call(entry, "finallyLoc"); if (hasCatch && hasFinally) { if (this.prev < entry.catchLoc) return handle(entry.catchLoc, !0); if (this.prev < entry.finallyLoc) return handle(entry.finallyLoc); } else if (hasCatch) { if (this.prev < entry.catchLoc) return handle(entry.catchLoc, !0); } else { if (!hasFinally) throw new Error("try statement without catch or finally"); if (this.prev < entry.finallyLoc) return handle(entry.finallyLoc); } } } }, abrupt: function abrupt(type, arg) { for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i]; if (entry.tryLoc <= this.prev && hasOwn.call(entry, "finallyLoc") && this.prev < entry.finallyLoc) { var finallyEntry = entry; break; } } finallyEntry && ("break" === type || "continue" === type) && finallyEntry.tryLoc <= arg && arg <= finallyEntry.finallyLoc && (finallyEntry = null); var record = finallyEntry ? finallyEntry.completion : {}; return record.type = type, record.arg = arg, finallyEntry ? (this.method = "next", this.next = finallyEntry.finallyLoc, ContinueSentinel) : this.complete(record); }, complete: function complete(record, afterLoc) { if ("throw" === record.type) throw record.arg; return "break" === record.type || "continue" === record.type ? this.next = record.arg : "return" === record.type ? (this.rval = this.arg = record.arg, this.method = "return", this.next = "end") : "normal" === record.type && afterLoc && (this.next = afterLoc), ContinueSentinel; }, finish: function finish(finallyLoc) { for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i]; if (entry.finallyLoc === finallyLoc) return this.complete(entry.completion, entry.afterLoc), resetTryEntry(entry), ContinueSentinel; } }, "catch": function _catch(tryLoc) { for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i]; if (entry.tryLoc === tryLoc) { var record = entry.completion; if ("throw" === record.type) { var thrown = record.arg; resetTryEntry(entry); } return thrown; } } throw new Error("illegal catch attempt"); }, delegateYield: function delegateYield(iterable, resultName, nextLoc) { return this.delegate = { iterator: values(iterable), resultName: resultName, nextLoc: nextLoc }, "next" === this.method && (this.arg = undefined), ContinueSentinel; } }, exports; }
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
+
+
+
+
+
+// import policy from "./policy";
+
+
+
+
+/**
+ * Advanced Table component
+ */
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  mixins: [_helper_mixin_translation_comp_mixin__WEBPACK_IMPORTED_MODULE_6__["default"], _helper_mixin_success_error__WEBPACK_IMPORTED_MODULE_7__["default"]],
+  props: {
+    id: {
+      "default": "create"
+    },
+    companyKeys: {
+      "default": []
+    },
+    defaultsKeys: {
+      "default": []
+    },
+    isPage: {
+      "default": true
+    },
+    isVisiblePage: {
+      "default": null
+    },
+    isRequiredPage: {
+      "default": null
+    },
+    type: {
+      "default": "create"
+    },
+    idObjEdit: {
+      "default": null
+    },
+    isPermission: {},
+    url: {
+      "default": "/real-estate/building-policy"
+    }
+  },
+  components: {
+    ErrorMessage: _components_widgets_errorMessage__WEBPACK_IMPORTED_MODULE_2__["default"],
+    loader: _components_general_loader__WEBPACK_IMPORTED_MODULE_3__["default"],
+    Multiselect: (vue_multiselect__WEBPACK_IMPORTED_MODULE_5___default()),
+    Building: _building__WEBPACK_IMPORTED_MODULE_4__["default"]
+    // policy,
+  },
+  data: function data() {
+    return {
+      showAmountInput: false,
+      showPercentInput: false,
+      showPercentAmountInput: false,
+      showCompanyPaysInput: false,
+      showOwnerPaysInput: false,
+      policies: [],
+      buildings: [],
+      isLoader: false,
+      isCustom: false,
+      create: {
+        policy_id: null,
+        building_id: null,
+        year: null,
+        month: null,
+        amount: null,
+        percent: null,
+        percent_amount: "",
+        after_expenses: "",
+        plus_extra_revenues: "",
+        collected_rent_type: "",
+        company_pays_rest: "",
+        owner_pays_rest: ""
+      },
+      errors: {},
+      is_disabled: false,
+      current_page: 1,
+      company_id: 48
+    };
+  },
+  validations: {
+    create: {
+      building_id: {
+        required: true
+      },
+      policy_id: {
+        required: true
+      },
+      year: {
+        required: true
+      },
+      month: {
+        required: true
+      },
+      amount: {
+        numeric: true
+      },
+      percent: {
+        numeric: true
+      },
+      percent_amount: {
+        numeric: true
+      },
+      after_expenses: {
+        required: true
+      },
+      plus_extra_revenues: {
+        required: true
+      },
+      collected_rent_type: {
+        required: true
+      },
+      company_pays_rest: {
+        string: true
+      },
+      owner_pays_rest: {
+        string: true
+      }
+    }
+  },
+  computed: {
+    selectedPolicyId: function selectedPolicyId() {
+      return this.create.policy_id;
+    }
+  },
+  watch: {
+    selectedPolicyId: function selectedPolicyId(newPolicyId) {
+      this.showAmountInput = [1, 2, 4, 5].includes(newPolicyId);
+      this.showPercentInput = [2, 3, 5].includes(newPolicyId);
+      this.showPercentAmountInput = [5].includes(newPolicyId);
+      if (newPolicyId === 1 || newPolicyId === 4) {
+        this.create.after_expenses = "no";
+        this.create.plus_extra_revenues = "no";
+        this.create.collected_rent_type = "accrued";
+      } else {
+        this.create.after_expenses = "yes";
+        this.create.plus_extra_revenues = "yes";
+        this.create.collected_rent_type = "actual";
+      }
+      this.showCompanyPaysInput = [1].includes(newPolicyId);
+      this.showOwnerPaysInput = [2, 4, 5].includes(newPolicyId);
+    }
+  },
+  methods: {
+    getCustomTableFields: function getCustomTableFields() {
+      var _this = this;
+      return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
+        return _regeneratorRuntime().wrap(function _callee$(_context) {
+          while (1) switch (_context.prev = _context.next) {
+            case 0:
+              _this.isCustom = true;
+              _context.next = 3;
+              return _api_adminAxios__WEBPACK_IMPORTED_MODULE_0__["default"].get("/customTable/table-columns/rlst_building_policies").then(function (res) {
+                _this.fields = res.data;
+              })["catch"](function (err) {
+                _this.errorFun("Error", "Thereisanerrorinthesystem");
+              })["finally"](function () {
+                _this.isCustom = false;
+              });
+            case 3:
+            case "end":
+              return _context.stop();
+          }
+        }, _callee);
+      }))();
+    },
+    isVisible: function isVisible(fieldName) {
+      if (!this.isPage) {
+        var res = this.fields.filter(function (field) {
+          return field.column_name == fieldName;
+        });
+        return res.length > 0 && res[0].is_visible == 1 ? true : false;
+      } else {
+        return this.isVisiblePage(fieldName);
+      }
+    },
+    isRequired: function isRequired(fieldName) {
+      if (!this.isPage) {
+        var res = this.fields.filter(function (field) {
+          return field.column_name == fieldName;
+        });
+        return res.length > 0 && res[0].is_required == 1 ? true : false;
+      } else {
+        return this.isRequiredPage(fieldName);
+      }
+    },
+    showBuildingModal: function showBuildingModal() {
+      if (this.create.building_id == 0) {
+        this.$bvModal.show("building-create");
+        this.create.building_id = null;
+      }
+    },
+    showPolicyModal: function showPolicyModal() {
+      if (this.create.policy_id == 0) {
+        this.$bvModal.show("policy-create");
+        this.create.policy_id = null;
+      }
+    },
+    defaultData: function defaultData() {
+      var _this2 = this;
+      var edit = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+      this.create = {
+        building_id: null,
+        policy_id: null,
+        year: null,
+        month: null,
+        amount: null,
+        percent: null,
+        percent_amount: null,
+        after_expenses: "",
+        plus_extra_revenues: "",
+        collected_rent_type: "",
+        company_pays_rest: "",
+        owner_pays_rest: ""
+      };
+      this.$nextTick(function () {
+        _this2.$v.$reset();
+      });
+      this.is_disabled = false;
+      this.errors = {};
+    },
+    resetModalHidden: function resetModalHidden() {
+      this.defaultData();
+      this.$bvModal.hide(this.id);
+    },
+    resetModal: function resetModal() {
+      var _this3 = this;
+      this.defaultData();
+      setTimeout( /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
+        var buildingPolicy;
+        return _regeneratorRuntime().wrap(function _callee2$(_context2) {
+          while (1) switch (_context2.prev = _context2.next) {
+            case 0:
+              if (!(_this3.type != "edit")) {
+                _context2.next = 9;
+                break;
+              }
+              if (_this3.isPage) {
+                _context2.next = 4;
+                break;
+              }
+              _context2.next = 4;
+              return _this3.getCustomTableFields();
+            case 4:
+              _this3.$nextTick(function () {
+                _this3.$v.$reset();
+              });
+              _this3.getBuildings();
+              _this3.getPolicies();
+              _context2.next = 10;
+              break;
+            case 9:
+              if (_this3.idObjEdit.dataObj) {
+                buildingPolicy = _this3.idObjEdit.dataObj;
+                _this3.errors = {};
+                _this3.create.building_id = buildingPolicy.building.id;
+                _this3.create.policy_id = buildingPolicy.policy.id;
+                _this3.create.year = buildingPolicy.year;
+                _this3.create.month = buildingPolicy.month;
+                _this3.create.amount = buildingPolicy.amount;
+                _this3.create.percent = buildingPolicy.percent;
+                _this3.create.percent_amount = buildingPolicy.percent_amount;
+                _this3.create.after_expenses = buildingPolicy.after_expenses;
+                _this3.create.plus_extra_revenues = buildingPolicy.plus_extra_revenues;
+                _this3.create.collected_rent_type = buildingPolicy.collected_rent_type;
+                _this3.create.company_pays_rest = buildingPolicy.company_pays_rest;
+                _this3.create.owner_pays_rest = buildingPolicy.owner_pays_rest;
+                _this3.getBuildings();
+                _this3.getPolicies();
+              }
+            case 10:
+            case "end":
+              return _context2.stop();
+          }
+        }, _callee2);
+      })), 50);
+    },
+    resetForm: function resetForm() {
+      this.defaultData();
+    },
+    AddSubmit: function AddSubmit() {
+      var _this4 = this;
+      if (this.create.amount === null) {
+        delete this.create.amount;
+      }
+      if (this.create.percent === null) {
+        delete this.create.percent;
+      }
+      if (this.create.percent_amount === null) {
+        delete this.create.percent_amount;
+      }
+      if (this.create.company_pays_rest === null || this.create.company_pays_rest === "") {
+        delete this.create.company_pays_rest;
+      }
+      if (this.create.owner_pays_rest === null || this.create.owner_pays_rest === "") {
+        delete this.create.owner_pays_rest;
+      }
+      if (this.$v.create.$invalid) {
+        this.$v.create.$touch();
+        return;
+      } else {
+        this.isLoader = true;
+        this.errors = {};
+        this.is_disabled = false;
+        var buildingPolicyData = [{
+          building_id: this.create.building_id,
+          policy_id: this.create.policy_id,
+          year: this.create.year,
+          month: this.create.month,
+          amount: this.create.amount,
+          percent: this.create.percent,
+          percent_amount: this.create.percent_amount,
+          after_expenses: this.create.after_expenses,
+          plus_extra_revenues: this.create.plus_extra_revenues,
+          collected_rent_type: this.create.collected_rent_type,
+          company_pays_rest: this.create.company_pays_rest,
+          owner_pays_rest: this.create.owner_pays_rest
+        }];
+        if (this.type != "edit") {
+          _api_adminAxios__WEBPACK_IMPORTED_MODULE_0__["default"].post(this.url, {
+            "building-policy": buildingPolicyData,
+            company_id: this.$store.getters["auth/company_id"]
+          }).then(function (res) {
+            _this4.is_disabled = true;
+            if (!_this4.isPage) _this4.$emit("created");else _this4.$emit("getDataTable");
+            setTimeout(function () {
+              _this4.successFun("Addedsuccessfully");
+            }, 500);
+          })["catch"](function (err) {
+            if (err.response.data) {
+              _this4.errors = err.response.data.errors;
+            } else {
+              _this4.errorFun("Error", "Thereisanerrorinthesystem");
+            }
+          })["finally"](function () {
+            _this4.isLoader = false;
+          });
+        } else {
+          _api_adminAxios__WEBPACK_IMPORTED_MODULE_0__["default"].put("".concat(this.url, "/").concat(this.idObjEdit.idEdit), {
+            "building-policy": buildingPolicyData,
+            company_id: this.$store.getters["auth/company_id"]
+          }).then(function (res) {
+            _this4.$bvModal.hide(_this4.id);
+            _this4.$emit("getDataTable");
+            setTimeout(function () {
+              _this4.successFun("Editsuccessfully");
+            }, 500);
+          })["catch"](function (err) {
+            if (err.response.data) {
+              _this4.errors = err.response.data.errors;
+            } else {
+              _this4.errorFun("Error", "Thereisanerrorinthesystem");
+            }
+          })["finally"](function () {
+            _this4.isLoader = false;
+          });
+        }
+      }
+    },
+    getBuildings: function getBuildings() {
+      var _this5 = this;
+      return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3() {
+        return _regeneratorRuntime().wrap(function _callee3$(_context3) {
+          while (1) switch (_context3.prev = _context3.next) {
+            case 0:
+              _this5.isLoader = true;
+              _context3.next = 3;
+              return _api_adminAxios__WEBPACK_IMPORTED_MODULE_0__["default"].get("/real-estate/buildings").then(function (res) {
+                _this5.isLoader = false;
+                var l = res.data.data;
+                if (_this5.isPermission("create building RealState")) {
+                  l.unshift({
+                    id: 0,
+                    name: "اضافة مبنى",
+                    name_e: "Add building"
+                  });
+                }
+                _this5.buildings = l;
+              })["catch"](function (err) {
+                sweetalert2__WEBPACK_IMPORTED_MODULE_1___default().fire({
+                  icon: "error",
+                  title: "".concat(_this5.$t("general.Error")),
+                  text: "".concat(_this5.$t("general.Thereisanerrorinthesystem"))
+                });
+              });
+            case 3:
+            case "end":
+              return _context3.stop();
+          }
+        }, _callee3);
+      }))();
+    },
+    getPolicies: function getPolicies() {
+      var _this6 = this;
+      return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee4() {
+        return _regeneratorRuntime().wrap(function _callee4$(_context4) {
+          while (1) switch (_context4.prev = _context4.next) {
+            case 0:
+              _this6.isLoader = true;
+              _context4.next = 3;
+              return _api_adminAxios__WEBPACK_IMPORTED_MODULE_0__["default"].get("/real-estate/policy").then(function (res) {
+                _this6.isLoader = false;
+                var l = res.data.data;
+                if (_this6.isPermission("create policy RealState")) {
+                  l.unshift({
+                    id: 0,
+                    name: "اضافة سياسة",
+                    name_e: "Add Policy"
+                  });
+                }
+                _this6.policies = l;
+              })["catch"](function (err) {
+                sweetalert2__WEBPACK_IMPORTED_MODULE_1___default().fire({
+                  icon: "error",
+                  title: "".concat(_this6.$t("general.Error")),
+                  text: "".concat(_this6.$t("general.Thereisanerrorinthesystem"))
+                });
+              });
+            case 3:
+            case "end":
+              return _context4.stop();
+          }
+        }, _callee4);
+      }))();
+    }
+  }
+});
+
+/***/ }),
+
 /***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/create/realEstate/building.vue?vue&type=script&lang=js&":
 /*!*********************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/create/realEstate/building.vue?vue&type=script&lang=js& ***!
@@ -4167,465 +4626,6 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
       //   this.componentsTabDisabled = true;
       //   this.financeTabDisabled = true;
       //   this.accountingTabDisabled = true;
-    }
-  }
-});
-
-/***/ }),
-
-/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/create/realEstate/buildingPolicy.vue?vue&type=script&lang=js&":
-/*!***************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/create/realEstate/buildingPolicy.vue?vue&type=script&lang=js& ***!
-  \***************************************************************************************************************************************************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _api_adminAxios__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../api/adminAxios */ "./resources/js/api/adminAxios.js");
-/* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! sweetalert2 */ "./node_modules/sweetalert2/dist/sweetalert2.all.js");
-/* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(sweetalert2__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _components_widgets_errorMessage__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../components/widgets/errorMessage */ "./resources/js/components/widgets/errorMessage.vue");
-/* harmony import */ var _components_general_loader__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../components/general/loader */ "./resources/js/components/general/loader.vue");
-/* harmony import */ var _building__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./building */ "./resources/js/components/create/realEstate/building.vue");
-/* harmony import */ var vue_multiselect__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! vue-multiselect */ "./node_modules/vue-multiselect/dist/vue-multiselect.min.js");
-/* harmony import */ var vue_multiselect__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(vue_multiselect__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var _helper_mixin_translation_comp_mixin__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../../helper/mixin/translation-comp-mixin */ "./resources/js/helper/mixin/translation-comp-mixin.js");
-/* harmony import */ var _helper_mixin_success_error__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../../helper/mixin/success&error */ "./resources/js/helper/mixin/success&error.js");
-function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
-function _regeneratorRuntime() { "use strict"; /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */ _regeneratorRuntime = function _regeneratorRuntime() { return exports; }; var exports = {}, Op = Object.prototype, hasOwn = Op.hasOwnProperty, defineProperty = Object.defineProperty || function (obj, key, desc) { obj[key] = desc.value; }, $Symbol = "function" == typeof Symbol ? Symbol : {}, iteratorSymbol = $Symbol.iterator || "@@iterator", asyncIteratorSymbol = $Symbol.asyncIterator || "@@asyncIterator", toStringTagSymbol = $Symbol.toStringTag || "@@toStringTag"; function define(obj, key, value) { return Object.defineProperty(obj, key, { value: value, enumerable: !0, configurable: !0, writable: !0 }), obj[key]; } try { define({}, ""); } catch (err) { define = function define(obj, key, value) { return obj[key] = value; }; } function wrap(innerFn, outerFn, self, tryLocsList) { var protoGenerator = outerFn && outerFn.prototype instanceof Generator ? outerFn : Generator, generator = Object.create(protoGenerator.prototype), context = new Context(tryLocsList || []); return defineProperty(generator, "_invoke", { value: makeInvokeMethod(innerFn, self, context) }), generator; } function tryCatch(fn, obj, arg) { try { return { type: "normal", arg: fn.call(obj, arg) }; } catch (err) { return { type: "throw", arg: err }; } } exports.wrap = wrap; var ContinueSentinel = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} var IteratorPrototype = {}; define(IteratorPrototype, iteratorSymbol, function () { return this; }); var getProto = Object.getPrototypeOf, NativeIteratorPrototype = getProto && getProto(getProto(values([]))); NativeIteratorPrototype && NativeIteratorPrototype !== Op && hasOwn.call(NativeIteratorPrototype, iteratorSymbol) && (IteratorPrototype = NativeIteratorPrototype); var Gp = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(IteratorPrototype); function defineIteratorMethods(prototype) { ["next", "throw", "return"].forEach(function (method) { define(prototype, method, function (arg) { return this._invoke(method, arg); }); }); } function AsyncIterator(generator, PromiseImpl) { function invoke(method, arg, resolve, reject) { var record = tryCatch(generator[method], generator, arg); if ("throw" !== record.type) { var result = record.arg, value = result.value; return value && "object" == _typeof(value) && hasOwn.call(value, "__await") ? PromiseImpl.resolve(value.__await).then(function (value) { invoke("next", value, resolve, reject); }, function (err) { invoke("throw", err, resolve, reject); }) : PromiseImpl.resolve(value).then(function (unwrapped) { result.value = unwrapped, resolve(result); }, function (error) { return invoke("throw", error, resolve, reject); }); } reject(record.arg); } var previousPromise; defineProperty(this, "_invoke", { value: function value(method, arg) { function callInvokeWithMethodAndArg() { return new PromiseImpl(function (resolve, reject) { invoke(method, arg, resolve, reject); }); } return previousPromise = previousPromise ? previousPromise.then(callInvokeWithMethodAndArg, callInvokeWithMethodAndArg) : callInvokeWithMethodAndArg(); } }); } function makeInvokeMethod(innerFn, self, context) { var state = "suspendedStart"; return function (method, arg) { if ("executing" === state) throw new Error("Generator is already running"); if ("completed" === state) { if ("throw" === method) throw arg; return doneResult(); } for (context.method = method, context.arg = arg;;) { var delegate = context.delegate; if (delegate) { var delegateResult = maybeInvokeDelegate(delegate, context); if (delegateResult) { if (delegateResult === ContinueSentinel) continue; return delegateResult; } } if ("next" === context.method) context.sent = context._sent = context.arg;else if ("throw" === context.method) { if ("suspendedStart" === state) throw state = "completed", context.arg; context.dispatchException(context.arg); } else "return" === context.method && context.abrupt("return", context.arg); state = "executing"; var record = tryCatch(innerFn, self, context); if ("normal" === record.type) { if (state = context.done ? "completed" : "suspendedYield", record.arg === ContinueSentinel) continue; return { value: record.arg, done: context.done }; } "throw" === record.type && (state = "completed", context.method = "throw", context.arg = record.arg); } }; } function maybeInvokeDelegate(delegate, context) { var methodName = context.method, method = delegate.iterator[methodName]; if (undefined === method) return context.delegate = null, "throw" === methodName && delegate.iterator["return"] && (context.method = "return", context.arg = undefined, maybeInvokeDelegate(delegate, context), "throw" === context.method) || "return" !== methodName && (context.method = "throw", context.arg = new TypeError("The iterator does not provide a '" + methodName + "' method")), ContinueSentinel; var record = tryCatch(method, delegate.iterator, context.arg); if ("throw" === record.type) return context.method = "throw", context.arg = record.arg, context.delegate = null, ContinueSentinel; var info = record.arg; return info ? info.done ? (context[delegate.resultName] = info.value, context.next = delegate.nextLoc, "return" !== context.method && (context.method = "next", context.arg = undefined), context.delegate = null, ContinueSentinel) : info : (context.method = "throw", context.arg = new TypeError("iterator result is not an object"), context.delegate = null, ContinueSentinel); } function pushTryEntry(locs) { var entry = { tryLoc: locs[0] }; 1 in locs && (entry.catchLoc = locs[1]), 2 in locs && (entry.finallyLoc = locs[2], entry.afterLoc = locs[3]), this.tryEntries.push(entry); } function resetTryEntry(entry) { var record = entry.completion || {}; record.type = "normal", delete record.arg, entry.completion = record; } function Context(tryLocsList) { this.tryEntries = [{ tryLoc: "root" }], tryLocsList.forEach(pushTryEntry, this), this.reset(!0); } function values(iterable) { if (iterable) { var iteratorMethod = iterable[iteratorSymbol]; if (iteratorMethod) return iteratorMethod.call(iterable); if ("function" == typeof iterable.next) return iterable; if (!isNaN(iterable.length)) { var i = -1, next = function next() { for (; ++i < iterable.length;) if (hasOwn.call(iterable, i)) return next.value = iterable[i], next.done = !1, next; return next.value = undefined, next.done = !0, next; }; return next.next = next; } } return { next: doneResult }; } function doneResult() { return { value: undefined, done: !0 }; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, defineProperty(Gp, "constructor", { value: GeneratorFunctionPrototype, configurable: !0 }), defineProperty(GeneratorFunctionPrototype, "constructor", { value: GeneratorFunction, configurable: !0 }), GeneratorFunction.displayName = define(GeneratorFunctionPrototype, toStringTagSymbol, "GeneratorFunction"), exports.isGeneratorFunction = function (genFun) { var ctor = "function" == typeof genFun && genFun.constructor; return !!ctor && (ctor === GeneratorFunction || "GeneratorFunction" === (ctor.displayName || ctor.name)); }, exports.mark = function (genFun) { return Object.setPrototypeOf ? Object.setPrototypeOf(genFun, GeneratorFunctionPrototype) : (genFun.__proto__ = GeneratorFunctionPrototype, define(genFun, toStringTagSymbol, "GeneratorFunction")), genFun.prototype = Object.create(Gp), genFun; }, exports.awrap = function (arg) { return { __await: arg }; }, defineIteratorMethods(AsyncIterator.prototype), define(AsyncIterator.prototype, asyncIteratorSymbol, function () { return this; }), exports.AsyncIterator = AsyncIterator, exports.async = function (innerFn, outerFn, self, tryLocsList, PromiseImpl) { void 0 === PromiseImpl && (PromiseImpl = Promise); var iter = new AsyncIterator(wrap(innerFn, outerFn, self, tryLocsList), PromiseImpl); return exports.isGeneratorFunction(outerFn) ? iter : iter.next().then(function (result) { return result.done ? result.value : iter.next(); }); }, defineIteratorMethods(Gp), define(Gp, toStringTagSymbol, "Generator"), define(Gp, iteratorSymbol, function () { return this; }), define(Gp, "toString", function () { return "[object Generator]"; }), exports.keys = function (val) { var object = Object(val), keys = []; for (var key in object) keys.push(key); return keys.reverse(), function next() { for (; keys.length;) { var key = keys.pop(); if (key in object) return next.value = key, next.done = !1, next; } return next.done = !0, next; }; }, exports.values = values, Context.prototype = { constructor: Context, reset: function reset(skipTempReset) { if (this.prev = 0, this.next = 0, this.sent = this._sent = undefined, this.done = !1, this.delegate = null, this.method = "next", this.arg = undefined, this.tryEntries.forEach(resetTryEntry), !skipTempReset) for (var name in this) "t" === name.charAt(0) && hasOwn.call(this, name) && !isNaN(+name.slice(1)) && (this[name] = undefined); }, stop: function stop() { this.done = !0; var rootRecord = this.tryEntries[0].completion; if ("throw" === rootRecord.type) throw rootRecord.arg; return this.rval; }, dispatchException: function dispatchException(exception) { if (this.done) throw exception; var context = this; function handle(loc, caught) { return record.type = "throw", record.arg = exception, context.next = loc, caught && (context.method = "next", context.arg = undefined), !!caught; } for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i], record = entry.completion; if ("root" === entry.tryLoc) return handle("end"); if (entry.tryLoc <= this.prev) { var hasCatch = hasOwn.call(entry, "catchLoc"), hasFinally = hasOwn.call(entry, "finallyLoc"); if (hasCatch && hasFinally) { if (this.prev < entry.catchLoc) return handle(entry.catchLoc, !0); if (this.prev < entry.finallyLoc) return handle(entry.finallyLoc); } else if (hasCatch) { if (this.prev < entry.catchLoc) return handle(entry.catchLoc, !0); } else { if (!hasFinally) throw new Error("try statement without catch or finally"); if (this.prev < entry.finallyLoc) return handle(entry.finallyLoc); } } } }, abrupt: function abrupt(type, arg) { for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i]; if (entry.tryLoc <= this.prev && hasOwn.call(entry, "finallyLoc") && this.prev < entry.finallyLoc) { var finallyEntry = entry; break; } } finallyEntry && ("break" === type || "continue" === type) && finallyEntry.tryLoc <= arg && arg <= finallyEntry.finallyLoc && (finallyEntry = null); var record = finallyEntry ? finallyEntry.completion : {}; return record.type = type, record.arg = arg, finallyEntry ? (this.method = "next", this.next = finallyEntry.finallyLoc, ContinueSentinel) : this.complete(record); }, complete: function complete(record, afterLoc) { if ("throw" === record.type) throw record.arg; return "break" === record.type || "continue" === record.type ? this.next = record.arg : "return" === record.type ? (this.rval = this.arg = record.arg, this.method = "return", this.next = "end") : "normal" === record.type && afterLoc && (this.next = afterLoc), ContinueSentinel; }, finish: function finish(finallyLoc) { for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i]; if (entry.finallyLoc === finallyLoc) return this.complete(entry.completion, entry.afterLoc), resetTryEntry(entry), ContinueSentinel; } }, "catch": function _catch(tryLoc) { for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i]; if (entry.tryLoc === tryLoc) { var record = entry.completion; if ("throw" === record.type) { var thrown = record.arg; resetTryEntry(entry); } return thrown; } } throw new Error("illegal catch attempt"); }, delegateYield: function delegateYield(iterable, resultName, nextLoc) { return this.delegate = { iterator: values(iterable), resultName: resultName, nextLoc: nextLoc }, "next" === this.method && (this.arg = undefined), ContinueSentinel; } }, exports; }
-function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
-function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
-
-
-
-
-
-
-// import policy from "./policy";
-
-
-
-
-/**
- * Advanced Table component
- */
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  mixins: [_helper_mixin_translation_comp_mixin__WEBPACK_IMPORTED_MODULE_6__["default"], _helper_mixin_success_error__WEBPACK_IMPORTED_MODULE_7__["default"]],
-  props: {
-    id: {
-      "default": "create"
-    },
-    companyKeys: {
-      "default": []
-    },
-    defaultsKeys: {
-      "default": []
-    },
-    isPage: {
-      "default": true
-    },
-    isVisiblePage: {
-      "default": null
-    },
-    isRequiredPage: {
-      "default": null
-    },
-    type: {
-      "default": "create"
-    },
-    idObjEdit: {
-      "default": null
-    },
-    isPermission: {},
-    url: {
-      "default": "/real-estate/building-policy"
-    }
-  },
-  components: {
-    ErrorMessage: _components_widgets_errorMessage__WEBPACK_IMPORTED_MODULE_2__["default"],
-    loader: _components_general_loader__WEBPACK_IMPORTED_MODULE_3__["default"],
-    Multiselect: (vue_multiselect__WEBPACK_IMPORTED_MODULE_5___default()),
-    Building: _building__WEBPACK_IMPORTED_MODULE_4__["default"]
-    // policy,
-  },
-  data: function data() {
-    return {
-      showAmountInput: false,
-      showPercentInput: false,
-      showPercentAmountInput: false,
-      showCompanyPaysInput: false,
-      showOwnerPaysInput: false,
-      policies: [],
-      buildings: [],
-      isLoader: false,
-      isCustom: false,
-      create: {
-        policy_id: null,
-        building_id: null,
-        year: null,
-        month: null,
-        amount: null,
-        percent: null,
-        percent_amount: "",
-        after_expenses: "",
-        plus_extra_revenues: "",
-        collected_rent_type: "",
-        company_pays_rest: "",
-        owner_pays_rest: ""
-      },
-      errors: {},
-      is_disabled: false,
-      current_page: 1,
-      company_id: 48
-    };
-  },
-  validations: {
-    create: {
-      building_id: {
-        required: true
-      },
-      policy_id: {
-        required: true
-      },
-      year: {
-        required: true
-      },
-      month: {
-        required: true
-      },
-      amount: {
-        numeric: true
-      },
-      percent: {
-        numeric: true
-      },
-      percent_amount: {
-        numeric: true
-      },
-      after_expenses: {
-        required: true
-      },
-      plus_extra_revenues: {
-        required: true
-      },
-      collected_rent_type: {
-        required: true
-      },
-      company_pays_rest: {
-        string: true
-      },
-      owner_pays_rest: {
-        string: true
-      }
-    }
-  },
-  computed: {
-    selectedPolicyId: function selectedPolicyId() {
-      return this.create.policy_id;
-    }
-  },
-  watch: {
-    selectedPolicyId: function selectedPolicyId(newPolicyId) {
-      this.showAmountInput = [1, 2, 4, 5].includes(newPolicyId);
-      this.showPercentInput = [2, 3, 5].includes(newPolicyId);
-      this.showPercentAmountInput = [5].includes(newPolicyId);
-      if (newPolicyId === 1 || newPolicyId === 4) {
-        this.create.after_expenses = "no";
-        this.create.plus_extra_revenues = "no";
-        this.create.collected_rent_type = "accrued";
-      } else {
-        this.create.after_expenses = "yes";
-        this.create.plus_extra_revenues = "yes";
-        this.create.collected_rent_type = "actual";
-      }
-      this.showCompanyPaysInput = [1].includes(newPolicyId);
-      this.showOwnerPaysInput = [2, 4, 5].includes(newPolicyId);
-    }
-  },
-  methods: {
-    getCustomTableFields: function getCustomTableFields() {
-      var _this = this;
-      return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
-        return _regeneratorRuntime().wrap(function _callee$(_context) {
-          while (1) switch (_context.prev = _context.next) {
-            case 0:
-              _this.isCustom = true;
-              _context.next = 3;
-              return _api_adminAxios__WEBPACK_IMPORTED_MODULE_0__["default"].get("/customTable/table-columns/rlst_building_policies").then(function (res) {
-                _this.fields = res.data;
-              })["catch"](function (err) {
-                _this.errorFun("Error", "Thereisanerrorinthesystem");
-              })["finally"](function () {
-                _this.isCustom = false;
-              });
-            case 3:
-            case "end":
-              return _context.stop();
-          }
-        }, _callee);
-      }))();
-    },
-    isVisible: function isVisible(fieldName) {
-      if (!this.isPage) {
-        var res = this.fields.filter(function (field) {
-          return field.column_name == fieldName;
-        });
-        return res.length > 0 && res[0].is_visible == 1 ? true : false;
-      } else {
-        return this.isVisiblePage(fieldName);
-      }
-    },
-    isRequired: function isRequired(fieldName) {
-      if (!this.isPage) {
-        var res = this.fields.filter(function (field) {
-          return field.column_name == fieldName;
-        });
-        return res.length > 0 && res[0].is_required == 1 ? true : false;
-      } else {
-        return this.isRequiredPage(fieldName);
-      }
-    },
-    showBuildingModal: function showBuildingModal() {
-      if (this.create.building_id == 0) {
-        this.$bvModal.show("building-create");
-        this.create.building_id = null;
-      }
-    },
-    showPolicyModal: function showPolicyModal() {
-      if (this.create.policy_id == 0) {
-        this.$bvModal.show("policy-create");
-        this.create.policy_id = null;
-      }
-    },
-    defaultData: function defaultData() {
-      var _this2 = this;
-      var edit = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
-      this.create = {
-        building_id: null,
-        policy_id: null,
-        year: null,
-        month: null,
-        amount: null,
-        percent: null,
-        percent_amount: null,
-        after_expenses: "",
-        plus_extra_revenues: "",
-        collected_rent_type: "",
-        company_pays_rest: "",
-        owner_pays_rest: ""
-      };
-      this.$nextTick(function () {
-        _this2.$v.$reset();
-      });
-      this.is_disabled = false;
-      this.errors = {};
-    },
-    resetModalHidden: function resetModalHidden() {
-      this.defaultData();
-      this.$bvModal.hide(this.id);
-    },
-    resetModal: function resetModal() {
-      var _this3 = this;
-      this.defaultData();
-      setTimeout( /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
-        var buildingPolicy;
-        return _regeneratorRuntime().wrap(function _callee2$(_context2) {
-          while (1) switch (_context2.prev = _context2.next) {
-            case 0:
-              if (!(_this3.type != "edit")) {
-                _context2.next = 9;
-                break;
-              }
-              if (_this3.isPage) {
-                _context2.next = 4;
-                break;
-              }
-              _context2.next = 4;
-              return _this3.getCustomTableFields();
-            case 4:
-              _this3.$nextTick(function () {
-                _this3.$v.$reset();
-              });
-              _this3.getBuildings();
-              _this3.getPolicies();
-              _context2.next = 10;
-              break;
-            case 9:
-              if (_this3.idObjEdit.dataObj) {
-                buildingPolicy = _this3.idObjEdit.dataObj;
-                _this3.errors = {};
-                _this3.create.building_id = buildingPolicy.building.id;
-                _this3.create.policy_id = buildingPolicy.policy.id;
-                _this3.create.year = buildingPolicy.year;
-                _this3.create.month = buildingPolicy.month;
-                _this3.create.amount = buildingPolicy.amount;
-                _this3.create.percent = buildingPolicy.percent;
-                _this3.create.percent_amount = buildingPolicy.percent_amount;
-                _this3.create.after_expenses = buildingPolicy.after_expenses;
-                _this3.create.plus_extra_revenues = buildingPolicy.plus_extra_revenues;
-                _this3.create.collected_rent_type = buildingPolicy.collected_rent_type;
-                _this3.create.company_pays_rest = buildingPolicy.company_pays_rest;
-                _this3.create.owner_pays_rest = buildingPolicy.owner_pays_rest;
-                _this3.getBuildings();
-                _this3.getPolicies();
-              }
-            case 10:
-            case "end":
-              return _context2.stop();
-          }
-        }, _callee2);
-      })), 50);
-    },
-    resetForm: function resetForm() {
-      this.defaultData();
-    },
-    AddSubmit: function AddSubmit() {
-      var _this4 = this;
-      if (this.create.amount === null) {
-        delete this.create.amount;
-      }
-      if (this.create.percent === null) {
-        delete this.create.percent;
-      }
-      if (this.create.percent_amount === null) {
-        delete this.create.percent_amount;
-      }
-      if (this.create.company_pays_rest === null || this.create.company_pays_rest === "") {
-        delete this.create.company_pays_rest;
-      }
-      if (this.create.owner_pays_rest === null || this.create.owner_pays_rest === "") {
-        delete this.create.owner_pays_rest;
-      }
-      if (this.$v.create.$invalid) {
-        this.$v.create.$touch();
-        return;
-      } else {
-        this.isLoader = true;
-        this.errors = {};
-        this.is_disabled = false;
-        var buildingPolicyData = [{
-          building_id: this.create.building_id,
-          policy_id: this.create.policy_id,
-          year: this.create.year,
-          month: this.create.month,
-          amount: this.create.amount,
-          percent: this.create.percent,
-          percent_amount: this.create.percent_amount,
-          after_expenses: this.create.after_expenses,
-          plus_extra_revenues: this.create.plus_extra_revenues,
-          collected_rent_type: this.create.collected_rent_type,
-          company_pays_rest: this.create.company_pays_rest,
-          owner_pays_rest: this.create.owner_pays_rest
-        }];
-        if (this.type != "edit") {
-          _api_adminAxios__WEBPACK_IMPORTED_MODULE_0__["default"].post(this.url, {
-            "building-policy": buildingPolicyData,
-            company_id: this.$store.getters["auth/company_id"]
-          }).then(function (res) {
-            _this4.is_disabled = true;
-            if (!_this4.isPage) _this4.$emit("created");else _this4.$emit("getDataTable");
-            setTimeout(function () {
-              _this4.successFun("Addedsuccessfully");
-            }, 500);
-          })["catch"](function (err) {
-            if (err.response.data) {
-              _this4.errors = err.response.data.errors;
-            } else {
-              _this4.errorFun("Error", "Thereisanerrorinthesystem");
-            }
-          })["finally"](function () {
-            _this4.isLoader = false;
-          });
-        } else {
-          _api_adminAxios__WEBPACK_IMPORTED_MODULE_0__["default"].put("".concat(this.url, "/").concat(this.idObjEdit.idEdit), {
-            "building-policy": buildingPolicyData,
-            company_id: this.$store.getters["auth/company_id"]
-          }).then(function (res) {
-            _this4.$bvModal.hide(_this4.id);
-            _this4.$emit("getDataTable");
-            setTimeout(function () {
-              _this4.successFun("Editsuccessfully");
-            }, 500);
-          })["catch"](function (err) {
-            if (err.response.data) {
-              _this4.errors = err.response.data.errors;
-            } else {
-              _this4.errorFun("Error", "Thereisanerrorinthesystem");
-            }
-          })["finally"](function () {
-            _this4.isLoader = false;
-          });
-        }
-      }
-    },
-    getBuildings: function getBuildings() {
-      var _this5 = this;
-      return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3() {
-        return _regeneratorRuntime().wrap(function _callee3$(_context3) {
-          while (1) switch (_context3.prev = _context3.next) {
-            case 0:
-              _this5.isLoader = true;
-              _context3.next = 3;
-              return _api_adminAxios__WEBPACK_IMPORTED_MODULE_0__["default"].get("/real-estate/buildings").then(function (res) {
-                _this5.isLoader = false;
-                var l = res.data.data;
-                if (_this5.isPermission("create building RealState")) {
-                  l.unshift({
-                    id: 0,
-                    name: "اضافة مبنى",
-                    name_e: "Add building"
-                  });
-                }
-                _this5.buildings = l;
-              })["catch"](function (err) {
-                sweetalert2__WEBPACK_IMPORTED_MODULE_1___default().fire({
-                  icon: "error",
-                  title: "".concat(_this5.$t("general.Error")),
-                  text: "".concat(_this5.$t("general.Thereisanerrorinthesystem"))
-                });
-              });
-            case 3:
-            case "end":
-              return _context3.stop();
-          }
-        }, _callee3);
-      }))();
-    },
-    getPolicies: function getPolicies() {
-      var _this6 = this;
-      return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee4() {
-        return _regeneratorRuntime().wrap(function _callee4$(_context4) {
-          while (1) switch (_context4.prev = _context4.next) {
-            case 0:
-              _this6.isLoader = true;
-              _context4.next = 3;
-              return _api_adminAxios__WEBPACK_IMPORTED_MODULE_0__["default"].get("/real-estate/policy").then(function (res) {
-                _this6.isLoader = false;
-                var l = res.data.data;
-                if (_this6.isPermission("create policy RealState")) {
-                  l.unshift({
-                    id: 0,
-                    name: "اضافة سياسة",
-                    name_e: "Add Policy"
-                  });
-                }
-                _this6.policies = l;
-              })["catch"](function (err) {
-                sweetalert2__WEBPACK_IMPORTED_MODULE_1___default().fire({
-                  icon: "error",
-                  title: "".concat(_this6.$t("general.Error")),
-                  text: "".concat(_this6.$t("general.Thereisanerrorinthesystem"))
-                });
-              });
-            case 3:
-            case "end":
-              return _context4.stop();
-          }
-        }, _callee4);
-      }))();
     }
   }
 });
@@ -6787,7 +6787,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _helper_mixin_customTable__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../../helper/mixin/customTable */ "./resources/js/helper/mixin/customTable.js");
 /* harmony import */ var _helper_mixin_success_error__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../../../helper/mixin/success&error */ "./resources/js/helper/mixin/success&error.js");
 /* harmony import */ var _helper_mixin_crudHelper__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../../../helper/mixin/crudHelper */ "./resources/js/helper/mixin/crudHelper.js");
-/* harmony import */ var _components_create_realEstate_buildingPolicy__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../../../components/create/realEstate/buildingPolicy */ "./resources/js/components/create/realEstate/buildingPolicy.vue");
+/* harmony import */ var _components_create_realEstate_BuildingPolicy__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../../../components/create/realEstate/BuildingPolicy */ "./resources/js/components/create/realEstate/BuildingPolicy.vue");
 
 
 
@@ -6825,7 +6825,7 @@ __webpack_require__.r(__webpack_exports__);
     searchPage: _components_general_searchPage__WEBPACK_IMPORTED_MODULE_4__["default"],
     actionSetting: _components_general_actionSetting__WEBPACK_IMPORTED_MODULE_5__["default"],
     tableCustom: _components_general_tableCustom__WEBPACK_IMPORTED_MODULE_6__["default"],
-    BuildingPolicy: _components_create_realEstate_buildingPolicy__WEBPACK_IMPORTED_MODULE_11__["default"]
+    BuildingPolicy: _components_create_realEstate_BuildingPolicy__WEBPACK_IMPORTED_MODULE_11__["default"]
   },
   data: function data() {
     return {
@@ -9993,6 +9993,643 @@ render._withStripped = true;
 
 /***/ }),
 
+/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/loaders/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/create/realEstate/BuildingPolicy.vue?vue&type=template&id=37f06043&":
+/*!**************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/loaders/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/create/realEstate/BuildingPolicy.vue?vue&type=template&id=37f06043& ***!
+  \**************************************************************************************************************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* binding */ render),
+/* harmony export */   "staticRenderFns": () => (/* binding */ staticRenderFns)
+/* harmony export */ });
+var render = function render() {
+  var _vm = this,
+    _c = _vm._self._c;
+  return _c("div", [_c("Building", {
+    attrs: {
+      companyKeys: _vm.companyKeys,
+      defaultsKeys: _vm.defaultsKeys,
+      isPage: false,
+      type: "create",
+      isPermission: _vm.isPermission,
+      id: "building-create"
+    },
+    on: {
+      created: _vm.getBuildings
+    }
+  }), _vm._v(" "), _c("b-modal", {
+    attrs: {
+      id: "create",
+      title: _vm.type != "edit" ? _vm.getCompanyKey("building_policy_create_form") : _vm.getCompanyKey("building_policy_form"),
+      "dialog-class": "modal-lg",
+      "title-class": "font-18",
+      "body-class": "p-4",
+      "hide-footer": true
+    },
+    on: {
+      show: _vm.resetModal,
+      hidden: _vm.resetModalHidden
+    }
+  }, [_c("form", [_vm.isCustom && !_vm.isPage ? _c("loader", {
+    attrs: {
+      size: "large"
+    }
+  }) : _vm._e(), _vm._v(" "), _c("div", {
+    staticClass: "mb-3 d-flex justify-content-end"
+  }, [_vm.type != "edit" ? _c("b-button", {
+    "class": ["font-weight-bold px-2", _vm.is_disabled ? "mx-2" : ""],
+    attrs: {
+      variant: "success",
+      disabled: !_vm.is_disabled,
+      type: "button"
+    },
+    on: {
+      click: function click($event) {
+        $event.preventDefault();
+        return _vm.resetForm.apply(null, arguments);
+      }
+    }
+  }, [_vm._v("\n          " + _vm._s(_vm.$t("general.AddNewRecord")) + "\n        ")]) : _vm._e(), _vm._v(" "), !_vm.is_disabled ? [!_vm.isLoader ? _c("b-button", {
+    staticClass: "mx-1",
+    attrs: {
+      variant: "success",
+      type: "submit"
+    },
+    on: {
+      click: function click($event) {
+        $event.preventDefault();
+        return _vm.AddSubmit.apply(null, arguments);
+      }
+    }
+  }, [_vm._v("\n            " + _vm._s(_vm.type != "edit" ? _vm.$t("general.Add") : _vm.$t("general.edit")) + "\n          ")]) : _c("b-button", {
+    staticClass: "mx-1",
+    attrs: {
+      variant: "success",
+      disabled: ""
+    }
+  }, [_c("b-spinner", {
+    attrs: {
+      small: ""
+    }
+  }), _vm._v(" "), _c("span", {
+    staticClass: "sr-only"
+  }, [_vm._v(_vm._s(_vm.$t("login.Loading")) + "...")])], 1)] : _vm._e(), _vm._v(" "), _c("b-button", {
+    attrs: {
+      variant: "danger",
+      type: "button"
+    },
+    on: {
+      click: function click($event) {
+        $event.preventDefault();
+        return _vm.resetModalHidden.apply(null, arguments);
+      }
+    }
+  }, [_vm._v("\n          " + _vm._s(_vm.$t("general.Cancel")) + "\n        ")])], 2), _vm._v(" "), _c("div", {
+    staticClass: "row"
+  }, [_c("div", {
+    staticClass: "col-md-12 position-relative"
+  }, [_c("div", {
+    staticClass: "form-group"
+  }, [_c("label", {
+    staticClass: "my-1 mr-2"
+  }, [_vm._v(_vm._s(_vm.getCompanyKey("building")))]), _vm._v(" "), _c("multiselect", {
+    "class": {
+      "is-invalid": _vm.$v.create.building_id.$error || _vm.errors.building_id
+    },
+    attrs: {
+      options: _vm.buildings.map(function (type) {
+        return type.id;
+      }),
+      "custom-label": function customLabel(opt) {
+        return _vm.buildings.find(function (x) {
+          return x.id == opt;
+        }) ? _vm.$i18n.locale == "ar" ? _vm.buildings.find(function (x) {
+          return x.id == opt;
+        }).name : _vm.buildings.find(function (x) {
+          return x.id == opt;
+        }).name_e : "";
+      }
+    },
+    on: {
+      input: _vm.showBuildingModal
+    },
+    model: {
+      value: _vm.create.building_id,
+      callback: function callback($$v) {
+        _vm.$set(_vm.create, "building_id", $$v);
+      },
+      expression: "create.building_id"
+    }
+  }), _vm._v(" "), !_vm.$v.create.building_id.required ? _c("div", {
+    staticClass: "invalid-feedback"
+  }, [_vm._v("\n              " + _vm._s(_vm.$t("general.fieldIsRequired")) + "\n            ")]) : _vm._e(), _vm._v(" "), _vm.errors.building_id ? _vm._l(_vm.errors.building_id, function (errorMessage, index) {
+    return _c("ErrorMessage", {
+      key: index
+    }, [_vm._v(_vm._s(errorMessage))]);
+  }) : _vm._e()], 2)]), _vm._v(" "), _c("div", {
+    staticClass: "col-md-12 position-relative"
+  }, [_c("div", {
+    staticClass: "form-group"
+  }, [_c("label", {
+    staticClass: "my-1 mr-2"
+  }, [_vm._v(_vm._s(_vm.$t("general.policy")))]), _vm._v(" "), _c("multiselect", {
+    "class": {
+      "is-invalid": _vm.$v.create.policy_id.$error || _vm.errors.policy_id
+    },
+    attrs: {
+      options: _vm.policies.map(function (type) {
+        return type.id;
+      }),
+      "custom-label": function customLabel(opt) {
+        return _vm.policies.find(function (x) {
+          return x.id == opt;
+        }) ? _vm.$i18n.locale == "ar" ? _vm.policies.find(function (x) {
+          return x.id == opt;
+        }).name : _vm.policies.find(function (x) {
+          return x.id == opt;
+        }).name_e : "";
+      }
+    },
+    model: {
+      value: _vm.create.policy_id,
+      callback: function callback($$v) {
+        _vm.$set(_vm.create, "policy_id", $$v);
+      },
+      expression: "create.policy_id"
+    }
+  }), _vm._v(" "), !_vm.$v.create.policy_id.required ? _c("div", {
+    staticClass: "invalid-feedback"
+  }, [_vm._v("\n              " + _vm._s(_vm.$t("general.fieldIsRequired")) + "\n            ")]) : _vm._e(), _vm._v(" "), _vm.errors.policy_id ? _vm._l(_vm.errors.policy_id, function (errorMessage, index) {
+    return _c("ErrorMessage", {
+      key: index
+    }, [_vm._v(_vm._s(errorMessage))]);
+  }) : _vm._e()], 2)])]), _vm._v(" "), _c("hr", {
+    staticStyle: {
+      margin: "10px 0 !important",
+      "border-top": "1px solid rgb(141 163 159 / 42%)"
+    }
+  }), _vm._v(" "), _c("div", {
+    staticClass: "row"
+  }, [_c("div", {
+    staticClass: "col-md-4"
+  }, [_c("div", {
+    staticClass: "form-group"
+  }, [_c("label", {
+    staticClass: "control-label"
+  }, [_vm._v("\n              " + _vm._s(_vm.$t("general.Year")) + "\n              "), _c("span", {
+    staticClass: "text-danger"
+  }, [_vm._v("*")])]), _vm._v(" "), _c("div", {
+    staticClass: "input-group"
+  }, [_c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.$v.create.year.$model,
+      expression: "$v.create.year.$model"
+    }],
+    staticClass: "form-control",
+    "class": {
+      "is-invalid": _vm.$v.create.year.$error || _vm.errors.year,
+      "is-valid": !_vm.$v.create.year.$invalid && !_vm.errors.year
+    },
+    attrs: {
+      type: "number",
+      placeholder: "YYYY",
+      "data-provide": "datepicker",
+      "data-date-format": "yyyy",
+      "data-date-start-view": "years",
+      "data-date-min-view-mode": "years",
+      "data-date-autoclose": "true",
+      "data-date-min-view": "years"
+    },
+    domProps: {
+      value: _vm.$v.create.year.$model
+    },
+    on: {
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.$set(_vm.$v.create.year, "$model", $event.target.value);
+      }
+    }
+  }), _vm._v(" "), _c("div", {
+    staticClass: "input-group-append"
+  }, [_c("span", {
+    staticClass: "input-group-text"
+  }, [_c("i", {
+    staticClass: "far fa-calendar"
+  })])])]), _vm._v(" "), _vm.errors.year ? _vm._l(_vm.errors.year, function (errorMessage, index) {
+    return _c("ErrorMessage", {
+      key: index
+    }, [_vm._v(_vm._s(errorMessage))]);
+  }) : _vm._e()], 2)]), _vm._v(" "), _c("div", {
+    staticClass: "col-md-4"
+  }, [_c("div", {
+    staticClass: "form-group"
+  }, [_c("label", {
+    staticClass: "control-label"
+  }, [_vm._v("\n              " + _vm._s(_vm.$t("general.month")) + "\n              "), _c("span", {
+    staticClass: "text-danger"
+  }, [_vm._v("*")])]), _vm._v(" "), _c("div", {
+    staticClass: "input-group"
+  }, [_c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.$v.create.month.$model,
+      expression: "$v.create.month.$model"
+    }],
+    staticClass: "form-control",
+    "class": {
+      "is-invalid": _vm.$v.create.month.$error || _vm.errors.month,
+      "is-valid": !_vm.$v.create.month.$invalid && !_vm.errors.month
+    },
+    attrs: {
+      type: "number",
+      placeholder: "MM",
+      "data-provide": "datepicker",
+      "data-date-format": "mm",
+      "data-date-start-view": "months",
+      "data-date-min-view-mode": "months",
+      "data-date-autoclose": "true",
+      "data-date-min-view": "months"
+    },
+    domProps: {
+      value: _vm.$v.create.month.$model
+    },
+    on: {
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.$set(_vm.$v.create.month, "$model", $event.target.value);
+      }
+    }
+  }), _vm._v(" "), _c("div", {
+    staticClass: "input-group-append"
+  }, [_c("span", {
+    staticClass: "input-group-text"
+  }, [_c("i", {
+    staticClass: "far fa-calendar"
+  })])])]), _vm._v(" "), _vm.errors.month ? _vm._l(_vm.errors.month, function (errorMessage, index) {
+    return _c("ErrorMessage", {
+      key: index
+    }, [_vm._v(_vm._s(errorMessage))]);
+  }) : _vm._e()], 2)])]), _vm._v(" "), _c("hr", {
+    staticStyle: {
+      margin: "10px 0 !important",
+      "border-top": "1px solid rgb(141 163 159 / 42%)"
+    }
+  }), _vm._v(" "), _c("div", {
+    staticClass: "row"
+  }, [_vm.showAmountInput ? _c("div", {
+    staticClass: "col-md-4"
+  }, [_c("div", {
+    staticClass: "form-group"
+  }, [_c("label", {
+    staticClass: "control-label"
+  }, [_vm._v("\n              " + _vm._s(_vm.$t("general.amount")) + "\n              "), _c("span", {
+    staticClass: "text-danger"
+  }, [_vm._v("*")])]), _vm._v(" "), _c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.$v.create.amount.$model,
+      expression: "$v.create.amount.$model"
+    }],
+    staticClass: "form-control",
+    "class": {
+      "is-invalid": _vm.$v.create.amount.$error || _vm.errors.amount,
+      "is-valid": !_vm.$v.create.amount.$invalid && !_vm.errors.amount
+    },
+    attrs: {
+      type: "number",
+      step: "0.1"
+    },
+    domProps: {
+      value: _vm.$v.create.amount.$model
+    },
+    on: {
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.$set(_vm.$v.create.amount, "$model", $event.target.value);
+      }
+    }
+  }), _vm._v(" "), _vm.errors.amount ? _vm._l(_vm.errors.amount, function (errorMessage, index) {
+    return _c("ErrorMessage", {
+      key: index
+    }, [_vm._v(_vm._s(errorMessage))]);
+  }) : _vm._e()], 2)]) : _vm._e(), _vm._v(" "), _vm.showPercentInput ? _c("div", {
+    staticClass: "col-md-4"
+  }, [_c("div", {
+    staticClass: "form-group"
+  }, [_c("label", {
+    staticClass: "control-label"
+  }, [_vm._v("\n              " + _vm._s(_vm.$t("general.percent")) + "\n              "), _c("span", {
+    staticClass: "text-danger"
+  }, [_vm._v("*")])]), _vm._v(" "), _c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.$v.create.percent.$model,
+      expression: "$v.create.percent.$model"
+    }],
+    staticClass: "form-control",
+    "class": {
+      "is-invalid": _vm.$v.create.percent.$error || _vm.errors.percent,
+      "is-valid": !_vm.$v.create.percent.$invalid && !_vm.errors.percent
+    },
+    attrs: {
+      type: "number",
+      step: "0.1"
+    },
+    domProps: {
+      value: _vm.$v.create.percent.$model
+    },
+    on: {
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.$set(_vm.$v.create.percent, "$model", $event.target.value);
+      }
+    }
+  }), _vm._v(" "), _vm.errors.percent ? _vm._l(_vm.errors.percent, function (errorMessage, index) {
+    return _c("ErrorMessage", {
+      key: index
+    }, [_vm._v(_vm._s(errorMessage))]);
+  }) : _vm._e()], 2)]) : _vm._e(), _vm._v(" "), _vm.showPercentAmountInput ? _c("div", {
+    staticClass: "col-md-4"
+  }, [_c("div", {
+    staticClass: "form-group"
+  }, [_c("label", {
+    staticClass: "control-label"
+  }, [_vm._v("\n              " + _vm._s(_vm.$t("general.percent_amount")) + "\n              "), _c("span", {
+    staticClass: "text-danger"
+  }, [_vm._v("*")])]), _vm._v(" "), _c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.$v.create.percent_amount.$model,
+      expression: "$v.create.percent_amount.$model"
+    }],
+    staticClass: "form-control",
+    "class": {
+      "is-invalid": _vm.$v.create.percent_amount.$error || _vm.errors.percent_amount,
+      "is-valid": !_vm.$v.create.percent_amount.$invalid && !_vm.errors.percent_amount
+    },
+    attrs: {
+      type: "number",
+      step: "0.1"
+    },
+    domProps: {
+      value: _vm.$v.create.percent_amount.$model
+    },
+    on: {
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.$set(_vm.$v.create.percent_amount, "$model", $event.target.value);
+      }
+    }
+  }), _vm._v(" "), _vm.errors.percent_amount ? _vm._l(_vm.errors.percent_amount, function (errorMessage, index) {
+    return _c("ErrorMessage", {
+      key: index
+    }, [_vm._v(_vm._s(errorMessage))]);
+  }) : _vm._e()], 2)]) : _vm._e()]), _vm._v(" "), _c("hr", {
+    staticStyle: {
+      margin: "10px 0 !important",
+      "border-top": "1px solid rgb(141 163 159 / 42%)"
+    }
+  }), _vm._v(" "), _c("div", {
+    staticClass: "row"
+  }, [_c("div", {
+    staticClass: "col-md-4"
+  }, [_c("div", {
+    staticClass: "form-group"
+  }, [_c("label", {
+    staticClass: "control-label"
+  }, [_vm._v("\n              " + _vm._s(_vm.$t("general.after_expenses")) + "\n              "), _c("span", {
+    staticClass: "text-danger"
+  }, [_vm._v("*")])]), _vm._v(" "), _c("b-form-group", {
+    "class": {
+      "is-invalid": _vm.$v.create.after_expenses.$error || _vm.errors.after_expenses,
+      "is-valid": !_vm.$v.create.after_expenses.$invalid && !_vm.errors.after_expenses
+    }
+  }, [_c("b-form-radio", {
+    staticClass: "d-inline-block",
+    attrs: {
+      name: "after_expenses",
+      value: "yes"
+    },
+    model: {
+      value: _vm.$v.create.after_expenses.$model,
+      callback: function callback($$v) {
+        _vm.$set(_vm.$v.create.after_expenses, "$model", $$v);
+      },
+      expression: "$v.create.after_expenses.$model"
+    }
+  }, [_vm._v(_vm._s(_vm.$t("general.Yes")))]), _vm._v(" "), _c("b-form-radio", {
+    staticClass: "d-inline-block m-1",
+    attrs: {
+      name: "after_expenses",
+      value: "no"
+    },
+    model: {
+      value: _vm.$v.create.after_expenses.$model,
+      callback: function callback($$v) {
+        _vm.$set(_vm.$v.create.after_expenses, "$model", $$v);
+      },
+      expression: "$v.create.after_expenses.$model"
+    }
+  }, [_vm._v(_vm._s(_vm.$t("general.No")))])], 1), _vm._v(" "), _vm.errors.after_expenses ? _vm._l(_vm.errors.after_expenses, function (errorMessage, index) {
+    return _c("ErrorMessage", {
+      key: index
+    }, [_vm._v(_vm._s(errorMessage))]);
+  }) : _vm._e()], 2)]), _vm._v(" "), _c("div", {
+    staticClass: "col-md-4"
+  }, [_c("div", {
+    staticClass: "form-group"
+  }, [_c("label", {
+    staticClass: "control-label"
+  }, [_vm._v("\n              " + _vm._s(_vm.$t("general.plus_extra_revenues")) + "\n              "), _c("span", {
+    staticClass: "text-danger"
+  }, [_vm._v("*")])]), _vm._v(" "), _c("b-form-group", {
+    "class": {
+      "is-invalid": _vm.$v.create.plus_extra_revenues.$error || _vm.errors.plus_extra_revenues,
+      "is-valid": !_vm.$v.create.plus_extra_revenues.$invalid && !_vm.errors.plus_extra_revenues
+    }
+  }, [_c("b-form-radio", {
+    staticClass: "d-inline-block",
+    attrs: {
+      name: "plus_extra_revenues",
+      value: "yes"
+    },
+    model: {
+      value: _vm.$v.create.plus_extra_revenues.$model,
+      callback: function callback($$v) {
+        _vm.$set(_vm.$v.create.plus_extra_revenues, "$model", $$v);
+      },
+      expression: "$v.create.plus_extra_revenues.$model"
+    }
+  }, [_vm._v(_vm._s(_vm.$t("general.Yes")))]), _vm._v(" "), _c("b-form-radio", {
+    staticClass: "d-inline-block m-1",
+    attrs: {
+      name: "plus_extra_revenues",
+      value: "no"
+    },
+    model: {
+      value: _vm.$v.create.plus_extra_revenues.$model,
+      callback: function callback($$v) {
+        _vm.$set(_vm.$v.create.plus_extra_revenues, "$model", $$v);
+      },
+      expression: "$v.create.plus_extra_revenues.$model"
+    }
+  }, [_vm._v(_vm._s(_vm.$t("general.No")))])], 1), _vm._v(" "), _vm.errors.plus_extra_revenues ? _vm._l(_vm.errors.plus_extra_revenues, function (errorMessage, index) {
+    return _c("ErrorMessage", {
+      key: index
+    }, [_vm._v(_vm._s(errorMessage))]);
+  }) : _vm._e()], 2)]), _vm._v(" "), _c("div", {
+    staticClass: "col-md-4"
+  }, [_c("div", {
+    staticClass: "form-group"
+  }, [_c("label", {
+    staticClass: "control-label"
+  }, [_vm._v("\n              " + _vm._s(_vm.$t("general.collected_rent_type")) + "\n              "), _c("span", {
+    staticClass: "text-danger"
+  }, [_vm._v("*")])]), _vm._v(" "), _c("b-form-group", {
+    "class": {
+      "is-invalid": _vm.$v.create.collected_rent_type.$error || _vm.errors.collected_rent_type,
+      "is-valid": !_vm.$v.create.collected_rent_type.$invalid && !_vm.errors.collected_rent_type
+    }
+  }, [_c("b-form-radio", {
+    staticClass: "d-inline-block",
+    attrs: {
+      name: "collected_rent_type",
+      value: "actual"
+    },
+    model: {
+      value: _vm.$v.create.collected_rent_type.$model,
+      callback: function callback($$v) {
+        _vm.$set(_vm.$v.create.collected_rent_type, "$model", $$v);
+      },
+      expression: "$v.create.collected_rent_type.$model"
+    }
+  }, [_vm._v(_vm._s(_vm.$t("general.Actual")))]), _vm._v(" "), _c("b-form-radio", {
+    staticClass: "d-inline-block m-1",
+    attrs: {
+      name: "collected_rent_type",
+      value: "accrued"
+    },
+    model: {
+      value: _vm.$v.create.collected_rent_type.$model,
+      callback: function callback($$v) {
+        _vm.$set(_vm.$v.create.collected_rent_type, "$model", $$v);
+      },
+      expression: "$v.create.collected_rent_type.$model"
+    }
+  }, [_vm._v(_vm._s(_vm.$t("general.Accrued")))])], 1), _vm._v(" "), _vm.errors.collected_rent_type ? _vm._l(_vm.errors.collected_rent_type, function (errorMessage, index) {
+    return _c("ErrorMessage", {
+      key: index
+    }, [_vm._v(_vm._s(errorMessage))]);
+  }) : _vm._e()], 2)])]), _vm._v(" "), _c("hr", {
+    staticStyle: {
+      margin: "10px 0 !important",
+      "border-top": "1px solid rgb(141 163 159 / 42%)"
+    }
+  }), _vm._v(" "), _c("div", {
+    staticClass: "row"
+  }, [_vm.showCompanyPaysInput ? _c("div", {
+    staticClass: "col-md-5"
+  }, [_c("div", {
+    staticClass: "form-group"
+  }, [_c("label", {
+    staticClass: "control-label"
+  }, [_vm._v("\n              " + _vm._s(_vm.$t("general.company_pays_rest")) + "\n              "), _c("span", {
+    staticClass: "text-danger"
+  }, [_vm._v("*")])]), _vm._v(" "), _c("b-form-group", {
+    "class": {
+      "is-invalid": _vm.$v.create.company_pays_rest.$error || _vm.errors.company_pays_rest,
+      "is-valid": !_vm.$v.create.company_pays_rest.$invalid && !_vm.errors.company_pays_rest
+    }
+  }, [_c("b-form-radio", {
+    staticClass: "d-inline-block",
+    attrs: {
+      name: "company_pays_rest",
+      value: "yes"
+    },
+    model: {
+      value: _vm.$v.create.company_pays_rest.$model,
+      callback: function callback($$v) {
+        _vm.$set(_vm.$v.create.company_pays_rest, "$model", $$v);
+      },
+      expression: "$v.create.company_pays_rest.$model"
+    }
+  }, [_vm._v(_vm._s(_vm.$t("general.Yes")))]), _vm._v(" "), _c("b-form-radio", {
+    staticClass: "d-inline-block m-1",
+    attrs: {
+      name: "company_pays_rest",
+      value: "no"
+    },
+    model: {
+      value: _vm.$v.create.company_pays_rest.$model,
+      callback: function callback($$v) {
+        _vm.$set(_vm.$v.create.company_pays_rest, "$model", $$v);
+      },
+      expression: "$v.create.company_pays_rest.$model"
+    }
+  }, [_vm._v(_vm._s(_vm.$t("general.No")))])], 1), _vm._v(" "), _vm.errors.company_pays_rest ? _vm._l(_vm.errors.company_pays_rest, function (errorMessage, index) {
+    return _c("ErrorMessage", {
+      key: index
+    }, [_vm._v(_vm._s(errorMessage))]);
+  }) : _vm._e()], 2)]) : _vm._e(), _vm._v(" "), _vm.showOwnerPaysInput ? _c("div", {
+    staticClass: "col-md-5"
+  }, [_c("div", {
+    staticClass: "form-group"
+  }, [_c("label", {
+    staticClass: "control-label"
+  }, [_vm._v("\n              " + _vm._s(_vm.$t("general.owner_pays_rest")) + "\n              "), _c("span", {
+    staticClass: "text-danger"
+  }, [_vm._v("*")])]), _vm._v(" "), _c("b-form-group", {
+    "class": {
+      "is-invalid": _vm.$v.create.owner_pays_rest.$error || _vm.errors.owner_pays_rest,
+      "is-valid": !_vm.$v.create.owner_pays_rest.$invalid && !_vm.errors.owner_pays_rest
+    }
+  }, [_c("b-form-radio", {
+    staticClass: "d-inline-block",
+    attrs: {
+      name: "owner_pays_rest",
+      value: "yes"
+    },
+    model: {
+      value: _vm.$v.create.owner_pays_rest.$model,
+      callback: function callback($$v) {
+        _vm.$set(_vm.$v.create.owner_pays_rest, "$model", $$v);
+      },
+      expression: "$v.create.owner_pays_rest.$model"
+    }
+  }, [_vm._v(_vm._s(_vm.$t("general.Yes")))]), _vm._v(" "), _c("b-form-radio", {
+    staticClass: "d-inline-block m-1",
+    attrs: {
+      name: "owner_pays_rest",
+      value: "no"
+    },
+    model: {
+      value: _vm.$v.create.owner_pays_rest.$model,
+      callback: function callback($$v) {
+        _vm.$set(_vm.$v.create.owner_pays_rest, "$model", $$v);
+      },
+      expression: "$v.create.owner_pays_rest.$model"
+    }
+  }, [_vm._v(_vm._s(_vm.$t("general.No")))])], 1), _vm._v(" "), _vm.errors.owner_pays_rest ? _vm._l(_vm.errors.owner_pays_rest, function (errorMessage, index) {
+    return _c("ErrorMessage", {
+      key: index
+    }, [_vm._v(_vm._s(errorMessage))]);
+  }) : _vm._e()], 2)]) : _vm._e()])], 1)])], 1);
+};
+var staticRenderFns = [];
+render._withStripped = true;
+
+
+/***/ }),
+
 /***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/loaders/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/create/realEstate/building.vue?vue&type=template&id=412caa91&scoped=true&":
 /*!********************************************************************************************************************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/loaders/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/create/realEstate/building.vue?vue&type=template&id=412caa91&scoped=true& ***!
@@ -12351,643 +12988,6 @@ var render = function render() {
       innerHTML: _vm._s(_vm.frameUrl)
     }
   }) : _vm._e()])])], 1)], 1)])], 1);
-};
-var staticRenderFns = [];
-render._withStripped = true;
-
-
-/***/ }),
-
-/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/loaders/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/create/realEstate/buildingPolicy.vue?vue&type=template&id=6ba6b7ba&":
-/*!**************************************************************************************************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/loaders/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/create/realEstate/buildingPolicy.vue?vue&type=template&id=6ba6b7ba& ***!
-  \**************************************************************************************************************************************************************************************************************************************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "render": () => (/* binding */ render),
-/* harmony export */   "staticRenderFns": () => (/* binding */ staticRenderFns)
-/* harmony export */ });
-var render = function render() {
-  var _vm = this,
-    _c = _vm._self._c;
-  return _c("div", [_c("Building", {
-    attrs: {
-      companyKeys: _vm.companyKeys,
-      defaultsKeys: _vm.defaultsKeys,
-      isPage: false,
-      type: "create",
-      isPermission: _vm.isPermission,
-      id: "building-create"
-    },
-    on: {
-      created: _vm.getBuildings
-    }
-  }), _vm._v(" "), _c("b-modal", {
-    attrs: {
-      id: "create",
-      title: _vm.type != "edit" ? _vm.getCompanyKey("building_policy_create_form") : _vm.getCompanyKey("building_policy_form"),
-      "dialog-class": "modal-lg",
-      "title-class": "font-18",
-      "body-class": "p-4",
-      "hide-footer": true
-    },
-    on: {
-      show: _vm.resetModal,
-      hidden: _vm.resetModalHidden
-    }
-  }, [_c("form", [_vm.isCustom && !_vm.isPage ? _c("loader", {
-    attrs: {
-      size: "large"
-    }
-  }) : _vm._e(), _vm._v(" "), _c("div", {
-    staticClass: "mb-3 d-flex justify-content-end"
-  }, [_vm.type != "edit" ? _c("b-button", {
-    "class": ["font-weight-bold px-2", _vm.is_disabled ? "mx-2" : ""],
-    attrs: {
-      variant: "success",
-      disabled: !_vm.is_disabled,
-      type: "button"
-    },
-    on: {
-      click: function click($event) {
-        $event.preventDefault();
-        return _vm.resetForm.apply(null, arguments);
-      }
-    }
-  }, [_vm._v("\n          " + _vm._s(_vm.$t("general.AddNewRecord")) + "\n        ")]) : _vm._e(), _vm._v(" "), !_vm.is_disabled ? [!_vm.isLoader ? _c("b-button", {
-    staticClass: "mx-1",
-    attrs: {
-      variant: "success",
-      type: "submit"
-    },
-    on: {
-      click: function click($event) {
-        $event.preventDefault();
-        return _vm.AddSubmit.apply(null, arguments);
-      }
-    }
-  }, [_vm._v("\n            " + _vm._s(_vm.type != "edit" ? _vm.$t("general.Add") : _vm.$t("general.edit")) + "\n          ")]) : _c("b-button", {
-    staticClass: "mx-1",
-    attrs: {
-      variant: "success",
-      disabled: ""
-    }
-  }, [_c("b-spinner", {
-    attrs: {
-      small: ""
-    }
-  }), _vm._v(" "), _c("span", {
-    staticClass: "sr-only"
-  }, [_vm._v(_vm._s(_vm.$t("login.Loading")) + "...")])], 1)] : _vm._e(), _vm._v(" "), _c("b-button", {
-    attrs: {
-      variant: "danger",
-      type: "button"
-    },
-    on: {
-      click: function click($event) {
-        $event.preventDefault();
-        return _vm.resetModalHidden.apply(null, arguments);
-      }
-    }
-  }, [_vm._v("\n          " + _vm._s(_vm.$t("general.Cancel")) + "\n        ")])], 2), _vm._v(" "), _c("div", {
-    staticClass: "row"
-  }, [_c("div", {
-    staticClass: "col-md-12 position-relative"
-  }, [_c("div", {
-    staticClass: "form-group"
-  }, [_c("label", {
-    staticClass: "my-1 mr-2"
-  }, [_vm._v(_vm._s(_vm.getCompanyKey("building")))]), _vm._v(" "), _c("multiselect", {
-    "class": {
-      "is-invalid": _vm.$v.create.building_id.$error || _vm.errors.building_id
-    },
-    attrs: {
-      options: _vm.buildings.map(function (type) {
-        return type.id;
-      }),
-      "custom-label": function customLabel(opt) {
-        return _vm.buildings.find(function (x) {
-          return x.id == opt;
-        }) ? _vm.$i18n.locale == "ar" ? _vm.buildings.find(function (x) {
-          return x.id == opt;
-        }).name : _vm.buildings.find(function (x) {
-          return x.id == opt;
-        }).name_e : "";
-      }
-    },
-    on: {
-      input: _vm.showBuildingModal
-    },
-    model: {
-      value: _vm.create.building_id,
-      callback: function callback($$v) {
-        _vm.$set(_vm.create, "building_id", $$v);
-      },
-      expression: "create.building_id"
-    }
-  }), _vm._v(" "), !_vm.$v.create.building_id.required ? _c("div", {
-    staticClass: "invalid-feedback"
-  }, [_vm._v("\n              " + _vm._s(_vm.$t("general.fieldIsRequired")) + "\n            ")]) : _vm._e(), _vm._v(" "), _vm.errors.building_id ? _vm._l(_vm.errors.building_id, function (errorMessage, index) {
-    return _c("ErrorMessage", {
-      key: index
-    }, [_vm._v(_vm._s(errorMessage))]);
-  }) : _vm._e()], 2)]), _vm._v(" "), _c("div", {
-    staticClass: "col-md-12 position-relative"
-  }, [_c("div", {
-    staticClass: "form-group"
-  }, [_c("label", {
-    staticClass: "my-1 mr-2"
-  }, [_vm._v(_vm._s(_vm.$t("general.policy")))]), _vm._v(" "), _c("multiselect", {
-    "class": {
-      "is-invalid": _vm.$v.create.policy_id.$error || _vm.errors.policy_id
-    },
-    attrs: {
-      options: _vm.policies.map(function (type) {
-        return type.id;
-      }),
-      "custom-label": function customLabel(opt) {
-        return _vm.policies.find(function (x) {
-          return x.id == opt;
-        }) ? _vm.$i18n.locale == "ar" ? _vm.policies.find(function (x) {
-          return x.id == opt;
-        }).name : _vm.policies.find(function (x) {
-          return x.id == opt;
-        }).name_e : "";
-      }
-    },
-    model: {
-      value: _vm.create.policy_id,
-      callback: function callback($$v) {
-        _vm.$set(_vm.create, "policy_id", $$v);
-      },
-      expression: "create.policy_id"
-    }
-  }), _vm._v(" "), !_vm.$v.create.policy_id.required ? _c("div", {
-    staticClass: "invalid-feedback"
-  }, [_vm._v("\n              " + _vm._s(_vm.$t("general.fieldIsRequired")) + "\n            ")]) : _vm._e(), _vm._v(" "), _vm.errors.policy_id ? _vm._l(_vm.errors.policy_id, function (errorMessage, index) {
-    return _c("ErrorMessage", {
-      key: index
-    }, [_vm._v(_vm._s(errorMessage))]);
-  }) : _vm._e()], 2)])]), _vm._v(" "), _c("hr", {
-    staticStyle: {
-      margin: "10px 0 !important",
-      "border-top": "1px solid rgb(141 163 159 / 42%)"
-    }
-  }), _vm._v(" "), _c("div", {
-    staticClass: "row"
-  }, [_c("div", {
-    staticClass: "col-md-4"
-  }, [_c("div", {
-    staticClass: "form-group"
-  }, [_c("label", {
-    staticClass: "control-label"
-  }, [_vm._v("\n              " + _vm._s(_vm.$t("general.Year")) + "\n              "), _c("span", {
-    staticClass: "text-danger"
-  }, [_vm._v("*")])]), _vm._v(" "), _c("div", {
-    staticClass: "input-group"
-  }, [_c("input", {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: _vm.$v.create.year.$model,
-      expression: "$v.create.year.$model"
-    }],
-    staticClass: "form-control",
-    "class": {
-      "is-invalid": _vm.$v.create.year.$error || _vm.errors.year,
-      "is-valid": !_vm.$v.create.year.$invalid && !_vm.errors.year
-    },
-    attrs: {
-      type: "number",
-      placeholder: "YYYY",
-      "data-provide": "datepicker",
-      "data-date-format": "yyyy",
-      "data-date-start-view": "years",
-      "data-date-min-view-mode": "years",
-      "data-date-autoclose": "true",
-      "data-date-min-view": "years"
-    },
-    domProps: {
-      value: _vm.$v.create.year.$model
-    },
-    on: {
-      input: function input($event) {
-        if ($event.target.composing) return;
-        _vm.$set(_vm.$v.create.year, "$model", $event.target.value);
-      }
-    }
-  }), _vm._v(" "), _c("div", {
-    staticClass: "input-group-append"
-  }, [_c("span", {
-    staticClass: "input-group-text"
-  }, [_c("i", {
-    staticClass: "far fa-calendar"
-  })])])]), _vm._v(" "), _vm.errors.year ? _vm._l(_vm.errors.year, function (errorMessage, index) {
-    return _c("ErrorMessage", {
-      key: index
-    }, [_vm._v(_vm._s(errorMessage))]);
-  }) : _vm._e()], 2)]), _vm._v(" "), _c("div", {
-    staticClass: "col-md-4"
-  }, [_c("div", {
-    staticClass: "form-group"
-  }, [_c("label", {
-    staticClass: "control-label"
-  }, [_vm._v("\n              " + _vm._s(_vm.$t("general.month")) + "\n              "), _c("span", {
-    staticClass: "text-danger"
-  }, [_vm._v("*")])]), _vm._v(" "), _c("div", {
-    staticClass: "input-group"
-  }, [_c("input", {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: _vm.$v.create.month.$model,
-      expression: "$v.create.month.$model"
-    }],
-    staticClass: "form-control",
-    "class": {
-      "is-invalid": _vm.$v.create.month.$error || _vm.errors.month,
-      "is-valid": !_vm.$v.create.month.$invalid && !_vm.errors.month
-    },
-    attrs: {
-      type: "number",
-      placeholder: "MM",
-      "data-provide": "datepicker",
-      "data-date-format": "mm",
-      "data-date-start-view": "months",
-      "data-date-min-view-mode": "months",
-      "data-date-autoclose": "true",
-      "data-date-min-view": "months"
-    },
-    domProps: {
-      value: _vm.$v.create.month.$model
-    },
-    on: {
-      input: function input($event) {
-        if ($event.target.composing) return;
-        _vm.$set(_vm.$v.create.month, "$model", $event.target.value);
-      }
-    }
-  }), _vm._v(" "), _c("div", {
-    staticClass: "input-group-append"
-  }, [_c("span", {
-    staticClass: "input-group-text"
-  }, [_c("i", {
-    staticClass: "far fa-calendar"
-  })])])]), _vm._v(" "), _vm.errors.month ? _vm._l(_vm.errors.month, function (errorMessage, index) {
-    return _c("ErrorMessage", {
-      key: index
-    }, [_vm._v(_vm._s(errorMessage))]);
-  }) : _vm._e()], 2)])]), _vm._v(" "), _c("hr", {
-    staticStyle: {
-      margin: "10px 0 !important",
-      "border-top": "1px solid rgb(141 163 159 / 42%)"
-    }
-  }), _vm._v(" "), _c("div", {
-    staticClass: "row"
-  }, [_vm.showAmountInput ? _c("div", {
-    staticClass: "col-md-4"
-  }, [_c("div", {
-    staticClass: "form-group"
-  }, [_c("label", {
-    staticClass: "control-label"
-  }, [_vm._v("\n              " + _vm._s(_vm.$t("general.amount")) + "\n              "), _c("span", {
-    staticClass: "text-danger"
-  }, [_vm._v("*")])]), _vm._v(" "), _c("input", {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: _vm.$v.create.amount.$model,
-      expression: "$v.create.amount.$model"
-    }],
-    staticClass: "form-control",
-    "class": {
-      "is-invalid": _vm.$v.create.amount.$error || _vm.errors.amount,
-      "is-valid": !_vm.$v.create.amount.$invalid && !_vm.errors.amount
-    },
-    attrs: {
-      type: "number",
-      step: "0.1"
-    },
-    domProps: {
-      value: _vm.$v.create.amount.$model
-    },
-    on: {
-      input: function input($event) {
-        if ($event.target.composing) return;
-        _vm.$set(_vm.$v.create.amount, "$model", $event.target.value);
-      }
-    }
-  }), _vm._v(" "), _vm.errors.amount ? _vm._l(_vm.errors.amount, function (errorMessage, index) {
-    return _c("ErrorMessage", {
-      key: index
-    }, [_vm._v(_vm._s(errorMessage))]);
-  }) : _vm._e()], 2)]) : _vm._e(), _vm._v(" "), _vm.showPercentInput ? _c("div", {
-    staticClass: "col-md-4"
-  }, [_c("div", {
-    staticClass: "form-group"
-  }, [_c("label", {
-    staticClass: "control-label"
-  }, [_vm._v("\n              " + _vm._s(_vm.$t("general.percent")) + "\n              "), _c("span", {
-    staticClass: "text-danger"
-  }, [_vm._v("*")])]), _vm._v(" "), _c("input", {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: _vm.$v.create.percent.$model,
-      expression: "$v.create.percent.$model"
-    }],
-    staticClass: "form-control",
-    "class": {
-      "is-invalid": _vm.$v.create.percent.$error || _vm.errors.percent,
-      "is-valid": !_vm.$v.create.percent.$invalid && !_vm.errors.percent
-    },
-    attrs: {
-      type: "number",
-      step: "0.1"
-    },
-    domProps: {
-      value: _vm.$v.create.percent.$model
-    },
-    on: {
-      input: function input($event) {
-        if ($event.target.composing) return;
-        _vm.$set(_vm.$v.create.percent, "$model", $event.target.value);
-      }
-    }
-  }), _vm._v(" "), _vm.errors.percent ? _vm._l(_vm.errors.percent, function (errorMessage, index) {
-    return _c("ErrorMessage", {
-      key: index
-    }, [_vm._v(_vm._s(errorMessage))]);
-  }) : _vm._e()], 2)]) : _vm._e(), _vm._v(" "), _vm.showPercentAmountInput ? _c("div", {
-    staticClass: "col-md-4"
-  }, [_c("div", {
-    staticClass: "form-group"
-  }, [_c("label", {
-    staticClass: "control-label"
-  }, [_vm._v("\n              " + _vm._s(_vm.$t("general.percent_amount")) + "\n              "), _c("span", {
-    staticClass: "text-danger"
-  }, [_vm._v("*")])]), _vm._v(" "), _c("input", {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: _vm.$v.create.percent_amount.$model,
-      expression: "$v.create.percent_amount.$model"
-    }],
-    staticClass: "form-control",
-    "class": {
-      "is-invalid": _vm.$v.create.percent_amount.$error || _vm.errors.percent_amount,
-      "is-valid": !_vm.$v.create.percent_amount.$invalid && !_vm.errors.percent_amount
-    },
-    attrs: {
-      type: "number",
-      step: "0.1"
-    },
-    domProps: {
-      value: _vm.$v.create.percent_amount.$model
-    },
-    on: {
-      input: function input($event) {
-        if ($event.target.composing) return;
-        _vm.$set(_vm.$v.create.percent_amount, "$model", $event.target.value);
-      }
-    }
-  }), _vm._v(" "), _vm.errors.percent_amount ? _vm._l(_vm.errors.percent_amount, function (errorMessage, index) {
-    return _c("ErrorMessage", {
-      key: index
-    }, [_vm._v(_vm._s(errorMessage))]);
-  }) : _vm._e()], 2)]) : _vm._e()]), _vm._v(" "), _c("hr", {
-    staticStyle: {
-      margin: "10px 0 !important",
-      "border-top": "1px solid rgb(141 163 159 / 42%)"
-    }
-  }), _vm._v(" "), _c("div", {
-    staticClass: "row"
-  }, [_c("div", {
-    staticClass: "col-md-4"
-  }, [_c("div", {
-    staticClass: "form-group"
-  }, [_c("label", {
-    staticClass: "control-label"
-  }, [_vm._v("\n              " + _vm._s(_vm.$t("general.after_expenses")) + "\n              "), _c("span", {
-    staticClass: "text-danger"
-  }, [_vm._v("*")])]), _vm._v(" "), _c("b-form-group", {
-    "class": {
-      "is-invalid": _vm.$v.create.after_expenses.$error || _vm.errors.after_expenses,
-      "is-valid": !_vm.$v.create.after_expenses.$invalid && !_vm.errors.after_expenses
-    }
-  }, [_c("b-form-radio", {
-    staticClass: "d-inline-block",
-    attrs: {
-      name: "after_expenses",
-      value: "yes"
-    },
-    model: {
-      value: _vm.$v.create.after_expenses.$model,
-      callback: function callback($$v) {
-        _vm.$set(_vm.$v.create.after_expenses, "$model", $$v);
-      },
-      expression: "$v.create.after_expenses.$model"
-    }
-  }, [_vm._v(_vm._s(_vm.$t("general.Yes")))]), _vm._v(" "), _c("b-form-radio", {
-    staticClass: "d-inline-block m-1",
-    attrs: {
-      name: "after_expenses",
-      value: "no"
-    },
-    model: {
-      value: _vm.$v.create.after_expenses.$model,
-      callback: function callback($$v) {
-        _vm.$set(_vm.$v.create.after_expenses, "$model", $$v);
-      },
-      expression: "$v.create.after_expenses.$model"
-    }
-  }, [_vm._v(_vm._s(_vm.$t("general.No")))])], 1), _vm._v(" "), _vm.errors.after_expenses ? _vm._l(_vm.errors.after_expenses, function (errorMessage, index) {
-    return _c("ErrorMessage", {
-      key: index
-    }, [_vm._v(_vm._s(errorMessage))]);
-  }) : _vm._e()], 2)]), _vm._v(" "), _c("div", {
-    staticClass: "col-md-4"
-  }, [_c("div", {
-    staticClass: "form-group"
-  }, [_c("label", {
-    staticClass: "control-label"
-  }, [_vm._v("\n              " + _vm._s(_vm.$t("general.plus_extra_revenues")) + "\n              "), _c("span", {
-    staticClass: "text-danger"
-  }, [_vm._v("*")])]), _vm._v(" "), _c("b-form-group", {
-    "class": {
-      "is-invalid": _vm.$v.create.plus_extra_revenues.$error || _vm.errors.plus_extra_revenues,
-      "is-valid": !_vm.$v.create.plus_extra_revenues.$invalid && !_vm.errors.plus_extra_revenues
-    }
-  }, [_c("b-form-radio", {
-    staticClass: "d-inline-block",
-    attrs: {
-      name: "plus_extra_revenues",
-      value: "yes"
-    },
-    model: {
-      value: _vm.$v.create.plus_extra_revenues.$model,
-      callback: function callback($$v) {
-        _vm.$set(_vm.$v.create.plus_extra_revenues, "$model", $$v);
-      },
-      expression: "$v.create.plus_extra_revenues.$model"
-    }
-  }, [_vm._v(_vm._s(_vm.$t("general.Yes")))]), _vm._v(" "), _c("b-form-radio", {
-    staticClass: "d-inline-block m-1",
-    attrs: {
-      name: "plus_extra_revenues",
-      value: "no"
-    },
-    model: {
-      value: _vm.$v.create.plus_extra_revenues.$model,
-      callback: function callback($$v) {
-        _vm.$set(_vm.$v.create.plus_extra_revenues, "$model", $$v);
-      },
-      expression: "$v.create.plus_extra_revenues.$model"
-    }
-  }, [_vm._v(_vm._s(_vm.$t("general.No")))])], 1), _vm._v(" "), _vm.errors.plus_extra_revenues ? _vm._l(_vm.errors.plus_extra_revenues, function (errorMessage, index) {
-    return _c("ErrorMessage", {
-      key: index
-    }, [_vm._v(_vm._s(errorMessage))]);
-  }) : _vm._e()], 2)]), _vm._v(" "), _c("div", {
-    staticClass: "col-md-4"
-  }, [_c("div", {
-    staticClass: "form-group"
-  }, [_c("label", {
-    staticClass: "control-label"
-  }, [_vm._v("\n              " + _vm._s(_vm.$t("general.collected_rent_type")) + "\n              "), _c("span", {
-    staticClass: "text-danger"
-  }, [_vm._v("*")])]), _vm._v(" "), _c("b-form-group", {
-    "class": {
-      "is-invalid": _vm.$v.create.collected_rent_type.$error || _vm.errors.collected_rent_type,
-      "is-valid": !_vm.$v.create.collected_rent_type.$invalid && !_vm.errors.collected_rent_type
-    }
-  }, [_c("b-form-radio", {
-    staticClass: "d-inline-block",
-    attrs: {
-      name: "collected_rent_type",
-      value: "actual"
-    },
-    model: {
-      value: _vm.$v.create.collected_rent_type.$model,
-      callback: function callback($$v) {
-        _vm.$set(_vm.$v.create.collected_rent_type, "$model", $$v);
-      },
-      expression: "$v.create.collected_rent_type.$model"
-    }
-  }, [_vm._v(_vm._s(_vm.$t("general.Actual")))]), _vm._v(" "), _c("b-form-radio", {
-    staticClass: "d-inline-block m-1",
-    attrs: {
-      name: "collected_rent_type",
-      value: "accrued"
-    },
-    model: {
-      value: _vm.$v.create.collected_rent_type.$model,
-      callback: function callback($$v) {
-        _vm.$set(_vm.$v.create.collected_rent_type, "$model", $$v);
-      },
-      expression: "$v.create.collected_rent_type.$model"
-    }
-  }, [_vm._v(_vm._s(_vm.$t("general.Accrued")))])], 1), _vm._v(" "), _vm.errors.collected_rent_type ? _vm._l(_vm.errors.collected_rent_type, function (errorMessage, index) {
-    return _c("ErrorMessage", {
-      key: index
-    }, [_vm._v(_vm._s(errorMessage))]);
-  }) : _vm._e()], 2)])]), _vm._v(" "), _c("hr", {
-    staticStyle: {
-      margin: "10px 0 !important",
-      "border-top": "1px solid rgb(141 163 159 / 42%)"
-    }
-  }), _vm._v(" "), _c("div", {
-    staticClass: "row"
-  }, [_vm.showCompanyPaysInput ? _c("div", {
-    staticClass: "col-md-5"
-  }, [_c("div", {
-    staticClass: "form-group"
-  }, [_c("label", {
-    staticClass: "control-label"
-  }, [_vm._v("\n              " + _vm._s(_vm.$t("general.company_pays_rest")) + "\n              "), _c("span", {
-    staticClass: "text-danger"
-  }, [_vm._v("*")])]), _vm._v(" "), _c("b-form-group", {
-    "class": {
-      "is-invalid": _vm.$v.create.company_pays_rest.$error || _vm.errors.company_pays_rest,
-      "is-valid": !_vm.$v.create.company_pays_rest.$invalid && !_vm.errors.company_pays_rest
-    }
-  }, [_c("b-form-radio", {
-    staticClass: "d-inline-block",
-    attrs: {
-      name: "company_pays_rest",
-      value: "yes"
-    },
-    model: {
-      value: _vm.$v.create.company_pays_rest.$model,
-      callback: function callback($$v) {
-        _vm.$set(_vm.$v.create.company_pays_rest, "$model", $$v);
-      },
-      expression: "$v.create.company_pays_rest.$model"
-    }
-  }, [_vm._v(_vm._s(_vm.$t("general.Yes")))]), _vm._v(" "), _c("b-form-radio", {
-    staticClass: "d-inline-block m-1",
-    attrs: {
-      name: "company_pays_rest",
-      value: "no"
-    },
-    model: {
-      value: _vm.$v.create.company_pays_rest.$model,
-      callback: function callback($$v) {
-        _vm.$set(_vm.$v.create.company_pays_rest, "$model", $$v);
-      },
-      expression: "$v.create.company_pays_rest.$model"
-    }
-  }, [_vm._v(_vm._s(_vm.$t("general.No")))])], 1), _vm._v(" "), _vm.errors.company_pays_rest ? _vm._l(_vm.errors.company_pays_rest, function (errorMessage, index) {
-    return _c("ErrorMessage", {
-      key: index
-    }, [_vm._v(_vm._s(errorMessage))]);
-  }) : _vm._e()], 2)]) : _vm._e(), _vm._v(" "), _vm.showOwnerPaysInput ? _c("div", {
-    staticClass: "col-md-5"
-  }, [_c("div", {
-    staticClass: "form-group"
-  }, [_c("label", {
-    staticClass: "control-label"
-  }, [_vm._v("\n              " + _vm._s(_vm.$t("general.owner_pays_rest")) + "\n              "), _c("span", {
-    staticClass: "text-danger"
-  }, [_vm._v("*")])]), _vm._v(" "), _c("b-form-group", {
-    "class": {
-      "is-invalid": _vm.$v.create.owner_pays_rest.$error || _vm.errors.owner_pays_rest,
-      "is-valid": !_vm.$v.create.owner_pays_rest.$invalid && !_vm.errors.owner_pays_rest
-    }
-  }, [_c("b-form-radio", {
-    staticClass: "d-inline-block",
-    attrs: {
-      name: "owner_pays_rest",
-      value: "yes"
-    },
-    model: {
-      value: _vm.$v.create.owner_pays_rest.$model,
-      callback: function callback($$v) {
-        _vm.$set(_vm.$v.create.owner_pays_rest, "$model", $$v);
-      },
-      expression: "$v.create.owner_pays_rest.$model"
-    }
-  }, [_vm._v(_vm._s(_vm.$t("general.Yes")))]), _vm._v(" "), _c("b-form-radio", {
-    staticClass: "d-inline-block m-1",
-    attrs: {
-      name: "owner_pays_rest",
-      value: "no"
-    },
-    model: {
-      value: _vm.$v.create.owner_pays_rest.$model,
-      callback: function callback($$v) {
-        _vm.$set(_vm.$v.create.owner_pays_rest, "$model", $$v);
-      },
-      expression: "$v.create.owner_pays_rest.$model"
-    }
-  }, [_vm._v(_vm._s(_vm.$t("general.No")))])], 1), _vm._v(" "), _vm.errors.owner_pays_rest ? _vm._l(_vm.errors.owner_pays_rest, function (errorMessage, index) {
-    return _c("ErrorMessage", {
-      key: index
-    }, [_vm._v(_vm._s(errorMessage))]);
-  }) : _vm._e()], 2)]) : _vm._e()])], 1)])], 1);
 };
 var staticRenderFns = [];
 render._withStripped = true;
@@ -19476,6 +19476,45 @@ component.options.__file = "resources/js/components/create/general/street.vue"
 
 /***/ }),
 
+/***/ "./resources/js/components/create/realEstate/BuildingPolicy.vue":
+/*!**********************************************************************!*\
+  !*** ./resources/js/components/create/realEstate/BuildingPolicy.vue ***!
+  \**********************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _BuildingPolicy_vue_vue_type_template_id_37f06043___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./BuildingPolicy.vue?vue&type=template&id=37f06043& */ "./resources/js/components/create/realEstate/BuildingPolicy.vue?vue&type=template&id=37f06043&");
+/* harmony import */ var _BuildingPolicy_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./BuildingPolicy.vue?vue&type=script&lang=js& */ "./resources/js/components/create/realEstate/BuildingPolicy.vue?vue&type=script&lang=js&");
+/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+;
+var component = (0,_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _BuildingPolicy_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _BuildingPolicy_vue_vue_type_template_id_37f06043___WEBPACK_IMPORTED_MODULE_0__.render,
+  _BuildingPolicy_vue_vue_type_template_id_37f06043___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns,
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/create/realEstate/BuildingPolicy.vue"
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (component.exports);
+
+/***/ }),
+
 /***/ "./resources/js/components/create/realEstate/building.vue":
 /*!****************************************************************!*\
   !*** ./resources/js/components/create/realEstate/building.vue ***!
@@ -19513,45 +19552,6 @@ var component = (0,_node_modules_vue_loader_lib_runtime_componentNormalizer_js__
 /* hot reload */
 if (false) { var api; }
 component.options.__file = "resources/js/components/create/realEstate/building.vue"
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (component.exports);
-
-/***/ }),
-
-/***/ "./resources/js/components/create/realEstate/buildingPolicy.vue":
-/*!**********************************************************************!*\
-  !*** ./resources/js/components/create/realEstate/buildingPolicy.vue ***!
-  \**********************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _buildingPolicy_vue_vue_type_template_id_6ba6b7ba___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./buildingPolicy.vue?vue&type=template&id=6ba6b7ba& */ "./resources/js/components/create/realEstate/buildingPolicy.vue?vue&type=template&id=6ba6b7ba&");
-/* harmony import */ var _buildingPolicy_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./buildingPolicy.vue?vue&type=script&lang=js& */ "./resources/js/components/create/realEstate/buildingPolicy.vue?vue&type=script&lang=js&");
-/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
-
-
-
-
-
-/* normalize component */
-;
-var component = (0,_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
-  _buildingPolicy_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
-  _buildingPolicy_vue_vue_type_template_id_6ba6b7ba___WEBPACK_IMPORTED_MODULE_0__.render,
-  _buildingPolicy_vue_vue_type_template_id_6ba6b7ba___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns,
-  false,
-  null,
-  null,
-  null
-  
-)
-
-/* hot reload */
-if (false) { var api; }
-component.options.__file = "resources/js/components/create/realEstate/buildingPolicy.vue"
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (component.exports);
 
 /***/ }),
@@ -20542,6 +20542,22 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/js/components/create/realEstate/BuildingPolicy.vue?vue&type=script&lang=js&":
+/*!***********************************************************************************************!*\
+  !*** ./resources/js/components/create/realEstate/BuildingPolicy.vue?vue&type=script&lang=js& ***!
+  \***********************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_BuildingPolicy_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!../../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./BuildingPolicy.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/create/realEstate/BuildingPolicy.vue?vue&type=script&lang=js&");
+ /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_BuildingPolicy_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
 /***/ "./resources/js/components/create/realEstate/building.vue?vue&type=script&lang=js&":
 /*!*****************************************************************************************!*\
   !*** ./resources/js/components/create/realEstate/building.vue?vue&type=script&lang=js& ***!
@@ -20555,22 +20571,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_building_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!../../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./building.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/create/realEstate/building.vue?vue&type=script&lang=js&");
  /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_building_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
-
-/***/ }),
-
-/***/ "./resources/js/components/create/realEstate/buildingPolicy.vue?vue&type=script&lang=js&":
-/*!***********************************************************************************************!*\
-  !*** ./resources/js/components/create/realEstate/buildingPolicy.vue?vue&type=script&lang=js& ***!
-  \***********************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_buildingPolicy_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!../../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./buildingPolicy.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/create/realEstate/buildingPolicy.vue?vue&type=script&lang=js&");
- /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_buildingPolicy_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
 
 /***/ }),
 
@@ -21045,6 +21045,23 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/js/components/create/realEstate/BuildingPolicy.vue?vue&type=template&id=37f06043&":
+/*!*****************************************************************************************************!*\
+  !*** ./resources/js/components/create/realEstate/BuildingPolicy.vue?vue&type=template&id=37f06043& ***!
+  \*****************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* reexport safe */ _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_lib_loaders_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_lib_index_js_vue_loader_options_BuildingPolicy_vue_vue_type_template_id_37f06043___WEBPACK_IMPORTED_MODULE_0__.render),
+/* harmony export */   "staticRenderFns": () => (/* reexport safe */ _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_lib_loaders_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_lib_index_js_vue_loader_options_BuildingPolicy_vue_vue_type_template_id_37f06043___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns)
+/* harmony export */ });
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_lib_loaders_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_lib_index_js_vue_loader_options_BuildingPolicy_vue_vue_type_template_id_37f06043___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!../../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??ruleSet[1].rules[2]!../../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./BuildingPolicy.vue?vue&type=template&id=37f06043& */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/loaders/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/create/realEstate/BuildingPolicy.vue?vue&type=template&id=37f06043&");
+
+
+/***/ }),
+
 /***/ "./resources/js/components/create/realEstate/building.vue?vue&type=template&id=412caa91&scoped=true&":
 /*!***********************************************************************************************************!*\
   !*** ./resources/js/components/create/realEstate/building.vue?vue&type=template&id=412caa91&scoped=true& ***!
@@ -21058,23 +21075,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "staticRenderFns": () => (/* reexport safe */ _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_lib_loaders_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_lib_index_js_vue_loader_options_building_vue_vue_type_template_id_412caa91_scoped_true___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns)
 /* harmony export */ });
 /* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_lib_loaders_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_lib_index_js_vue_loader_options_building_vue_vue_type_template_id_412caa91_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!../../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??ruleSet[1].rules[2]!../../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./building.vue?vue&type=template&id=412caa91&scoped=true& */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/loaders/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/create/realEstate/building.vue?vue&type=template&id=412caa91&scoped=true&");
-
-
-/***/ }),
-
-/***/ "./resources/js/components/create/realEstate/buildingPolicy.vue?vue&type=template&id=6ba6b7ba&":
-/*!*****************************************************************************************************!*\
-  !*** ./resources/js/components/create/realEstate/buildingPolicy.vue?vue&type=template&id=6ba6b7ba& ***!
-  \*****************************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "render": () => (/* reexport safe */ _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_lib_loaders_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_lib_index_js_vue_loader_options_buildingPolicy_vue_vue_type_template_id_6ba6b7ba___WEBPACK_IMPORTED_MODULE_0__.render),
-/* harmony export */   "staticRenderFns": () => (/* reexport safe */ _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_lib_loaders_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_lib_index_js_vue_loader_options_buildingPolicy_vue_vue_type_template_id_6ba6b7ba___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns)
-/* harmony export */ });
-/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_lib_loaders_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_lib_index_js_vue_loader_options_buildingPolicy_vue_vue_type_template_id_6ba6b7ba___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!../../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??ruleSet[1].rules[2]!../../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./buildingPolicy.vue?vue&type=template&id=6ba6b7ba& */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/loaders/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/create/realEstate/buildingPolicy.vue?vue&type=template&id=6ba6b7ba&");
 
 
 /***/ }),

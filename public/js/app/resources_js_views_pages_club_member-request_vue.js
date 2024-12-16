@@ -1726,7 +1726,10 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
   },
   data: function data() {
     return {
-      per_page: 50,
+      inputPerPage: null,
+      debounceTimer: null,
+      serachInput: "",
+      per_page: 15,
       search: "",
       debounce: {},
       enabled3: true,
@@ -1815,28 +1818,27 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
     /**
      * watch per_page
      */
-    per_page: function per_page(after, befour) {
-      this.getData();
-    },
+    // per_page(after, befour) {
+    //     this.getData();
+    // },
     /**
      * watch search
      */
-    search: function search(after, befour) {
-      var _this = this;
-      clearTimeout(this.debounce);
-      this.debounce = setTimeout(function () {
-        _this.getData();
-      }, 400);
-    },
+    // search(after, befour) {
+    //     clearTimeout(this.debounce);
+    //     this.debounce = setTimeout(() => {
+    //         this.getData();
+    //     }, 400);
+    // },
     /**
      * watch check All table
      */
     isCheckAll: function isCheckAll(after, befour) {
-      var _this2 = this;
+      var _this = this;
       if (after) {
         this.members.forEach(function (el) {
-          if (!_this2.checkAll.includes(el.id)) {
-            _this2.checkAll.push(el.id);
+          if (!_this.checkAll.includes(el.id)) {
+            _this.checkAll.push(el.id);
           }
         });
       } else {
@@ -1849,6 +1851,22 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
     this.getData();
   },
   methods: {
+    handelSerach: function handelSerach() {
+      var _this2 = this;
+      clearTimeout(this.debounce);
+      this.debounce = setTimeout(function () {
+        _this2.search = _this2.serachInput;
+        _this2.getData();
+      }, 1000);
+    },
+    handelPerPageInput: function handelPerPageInput() {
+      var _this3 = this;
+      clearTimeout(this.debounceTimer);
+      this.debounceTimer = setTimeout(function () {
+        _this3.per_page = _this3.inputPerPage;
+        _this3.getData();
+      }, 1000);
+    },
     isPermission: function isPermission(item) {
       if (this.$store.state.auth.type == "user") {
         return this.$store.state.auth.permissions.includes(item);
@@ -1859,7 +1877,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
      *  start get Data countrie && pagination
      */
     getData: function getData() {
-      var _this3 = this;
+      var _this4 = this;
       var page = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
       this.isLoader = true;
       var _filterSetting = _toConsumableArray(this.filterSetting);
@@ -1877,21 +1895,21 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       }
       _api_adminAxios__WEBPACK_IMPORTED_MODULE_3__["default"].get("/club-members/member-requests?hasTransaction=1&page=".concat(page, "&per_page=").concat(this.per_page, "&company_id=").concat(this.company_id, "&search=").concat(this.search, "&").concat(filter)).then(function (res) {
         var l = res.data;
-        _this3.members = l.data;
-        _this3.membersPagination = l.pagination;
-        _this3.current_page = l.pagination.current_page;
+        _this4.members = l.data;
+        _this4.membersPagination = l.pagination;
+        _this4.current_page = l.pagination.current_page;
       })["catch"](function (err) {
         sweetalert2__WEBPACK_IMPORTED_MODULE_5___default().fire({
           icon: "error",
-          title: "".concat(_this3.$t("general.Error")),
-          text: "".concat(_this3.$t("general.Thereisanerrorinthesystem"))
+          title: "".concat(_this4.$t("general.Error")),
+          text: "".concat(_this4.$t("general.Thereisanerrorinthesystem"))
         });
       })["finally"](function () {
-        _this3.isLoader = false;
+        _this4.isLoader = false;
       });
     },
     getDataCurrentPage: function getDataCurrentPage() {
-      var _this4 = this;
+      var _this5 = this;
       var page = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
       if (this.current_page <= this.membersPagination.last_page && this.current_page != this.membersPagination.current_page && this.current_page) {
         this.isLoader = true;
@@ -1901,17 +1919,17 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
         }
         _api_adminAxios__WEBPACK_IMPORTED_MODULE_3__["default"].get("/club-members/member-requests?hasTransaction=1&page=".concat(this.current_page, "&per_page=").concat(this.per_page, "&search=").concat(this.search, "&").concat(filter, "&company_id=").concat(this.company_id)).then(function (res) {
           var l = res.data;
-          _this4.members = l.data;
-          _this4.membersPagination = l.pagination;
-          _this4.current_page = l.pagination.current_page;
+          _this5.members = l.data;
+          _this5.membersPagination = l.pagination;
+          _this5.current_page = l.pagination.current_page;
         })["catch"](function (err) {
           sweetalert2__WEBPACK_IMPORTED_MODULE_5___default().fire({
             icon: "error",
-            title: "".concat(_this4.$t("general.Error")),
-            text: "".concat(_this4.$t("general.Thereisanerrorinthesystem"))
+            title: "".concat(_this5.$t("general.Error")),
+            text: "".concat(_this5.$t("general.Thereisanerrorinthesystem"))
           });
         })["finally"](function () {
-          _this4.isLoader = false;
+          _this5.isLoader = false;
         });
       }
     },
@@ -1919,14 +1937,14 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
      *  end get Data countrie && pagination
      */
     acceptSubmit: function acceptSubmit(id) {
-      var _this5 = this;
+      var _this6 = this;
       this.approve["accept-members"].forEach(function (el, index) {
-        _this5.approve["accept-members"][index]["session_date"] = _this5.approve.session_date;
-        _this5.approve["accept-members"][index]["session_number"] = _this5.approve.session_number;
-        _this5.approve["accept-members"][index]["executive_office_date"] = _this5.approve.executive_office_date;
-        _this5.approve["accept-members"][index]["executive_office_number"] = _this5.approve.executive_office_number;
-        _this5.approve["accept-members"][index]["board_of_directors_date"] = _this5.approve.board_of_directors_date;
-        _this5.approve["accept-members"][index]["board_of_directors_number"] = _this5.approve.board_of_directors_number;
+        _this6.approve["accept-members"][index]["session_date"] = _this6.approve.session_date;
+        _this6.approve["accept-members"][index]["session_number"] = _this6.approve.session_number;
+        _this6.approve["accept-members"][index]["executive_office_date"] = _this6.approve.executive_office_date;
+        _this6.approve["accept-members"][index]["executive_office_number"] = _this6.approve.executive_office_number;
+        _this6.approve["accept-members"][index]["board_of_directors_date"] = _this6.approve.board_of_directors_date;
+        _this6.approve["accept-members"][index]["board_of_directors_number"] = _this6.approve.board_of_directors_number;
       });
       this.$v.approve.$touch();
       if (this.$v.approve.$invalid) {
@@ -1937,43 +1955,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
         _api_adminAxios__WEBPACK_IMPORTED_MODULE_3__["default"].post("/club-members/members/bulk-update", {
           "accept-members": this.approve["accept-members"]
         }).then(function (res) {
-          _this5.$bvModal.hide("modal_accept");
-          _this5.getData();
-          setTimeout(function () {
-            sweetalert2__WEBPACK_IMPORTED_MODULE_5___default().fire({
-              icon: "success",
-              text: "".concat(_this5.$t("general.Editsuccessfully")),
-              showConfirmButton: false,
-              timer: 1500
-            });
-          }, 500);
-        })["catch"](function (err) {
-          if (err.response.data) {
-            _this5.errors = err.response.data.errors;
-          } else {
-            sweetalert2__WEBPACK_IMPORTED_MODULE_5___default().fire({
-              icon: "error",
-              title: "".concat(_this5.$t("general.Error")),
-              text: "".concat(_this5.$t("general.Thereisanerrorinthesystem"))
-            });
-          }
-        })["finally"](function () {
-          _this5.isLoader = false;
-        });
-      }
-    },
-    rejectSubmit: function rejectSubmit() {
-      var _this6 = this;
-      this.$v.reject.$touch();
-      if (this.$v.reject.$invalid) {
-        return;
-      } else {
-        this.isLoader = true;
-        this.errors = {};
-        _api_adminAxios__WEBPACK_IMPORTED_MODULE_3__["default"].put("/club-members/members/decline-member/".concat(this.checkAll[0]), {
-          notes: this.reject.notes
-        }).then(function (res) {
-          _this6.$bvModal.hide("modal_rejected");
+          _this6.$bvModal.hide("modal_accept");
           _this6.getData();
           setTimeout(function () {
             sweetalert2__WEBPACK_IMPORTED_MODULE_5___default().fire({
@@ -1998,11 +1980,47 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
         });
       }
     },
+    rejectSubmit: function rejectSubmit() {
+      var _this7 = this;
+      this.$v.reject.$touch();
+      if (this.$v.reject.$invalid) {
+        return;
+      } else {
+        this.isLoader = true;
+        this.errors = {};
+        _api_adminAxios__WEBPACK_IMPORTED_MODULE_3__["default"].put("/club-members/members/decline-member/".concat(this.checkAll[0]), {
+          notes: this.reject.notes
+        }).then(function (res) {
+          _this7.$bvModal.hide("modal_rejected");
+          _this7.getData();
+          setTimeout(function () {
+            sweetalert2__WEBPACK_IMPORTED_MODULE_5___default().fire({
+              icon: "success",
+              text: "".concat(_this7.$t("general.Editsuccessfully")),
+              showConfirmButton: false,
+              timer: 1500
+            });
+          }, 500);
+        })["catch"](function (err) {
+          if (err.response.data) {
+            _this7.errors = err.response.data.errors;
+          } else {
+            sweetalert2__WEBPACK_IMPORTED_MODULE_5___default().fire({
+              icon: "error",
+              title: "".concat(_this7.$t("general.Error")),
+              text: "".concat(_this7.$t("general.Thereisanerrorinthesystem"))
+            });
+          }
+        })["finally"](function () {
+          _this7.isLoader = false;
+        });
+      }
+    },
     /**
      *   show Modal (Accept)
      */
     resetModalAccept: function resetModalAccept() {
-      var _this7 = this;
+      var _this8 = this;
       this.session_date = new Date();
       this.date = [];
       this.approve = {
@@ -2016,15 +2034,15 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       };
       this.checkAll.forEach(function (id) {
         var _member$first_name, _member$second_name, _member$third_name, _member$last_name, _member$family_name;
-        var member = _this7.members.find(function (el) {
+        var member = _this8.members.find(function (el) {
           return el.id == id;
         });
-        _this7.approve["accept-members"].push({
+        _this8.approve["accept-members"].push({
           id: id,
-          membership_date: _this7.formatDate(member.transaction.date)
+          membership_date: _this8.formatDate(member.transaction.date)
         });
-        _this7.date.push({
-          membership_date: _this7.formatDate(member.transaction.date),
+        _this8.date.push({
+          membership_date: _this8.formatDate(member.transaction.date),
           name: "".concat((_member$first_name = member.first_name) !== null && _member$first_name !== void 0 ? _member$first_name : "", " ").concat((_member$second_name = member.second_name) !== null && _member$second_name !== void 0 ? _member$second_name : "", " ").concat((_member$third_name = member.third_name) !== null && _member$third_name !== void 0 ? _member$third_name : "", " ").concat((_member$last_name = member.last_name) !== null && _member$last_name !== void 0 ? _member$last_name : "", " ").concat((_member$family_name = member.family_name) !== null && _member$family_name !== void 0 ? _member$family_name : "")
         });
       });
@@ -2081,10 +2099,10 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
      *   Export Excel
      */
     ExportExcel: function ExportExcel(type, fn, dl) {
-      var _this8 = this;
+      var _this9 = this;
       this.enabled3 = false;
       setTimeout(function () {
-        var elt = _this8.$refs.exportable_table;
+        var elt = _this9.$refs.exportable_table;
         var wb = XLSX.utils.table_to_book(elt, {
           sheet: "Sheet JS"
         });
@@ -2097,7 +2115,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
         } else {
           XLSX.writeFile(wb, fn || ("Stores" + "." || 0) + (type || "xlsx"));
         }
-        _this8.enabled3 = true;
+        _this9.enabled3 = true;
       }, 100);
     },
     formatDate: function formatDate(value) {
@@ -5370,8 +5388,8 @@ var render = function render() {
     directives: [{
       name: "model",
       rawName: "v-model.trim",
-      value: _vm.search,
-      expression: "search",
+      value: _vm.serachInput,
+      expression: "serachInput",
       modifiers: {
         trim: true
       }
@@ -5387,13 +5405,13 @@ var render = function render() {
       placeholder: "".concat(_vm.$t("general.Search"), "...")
     },
     domProps: {
-      value: _vm.search
+      value: _vm.serachInput
     },
     on: {
-      input: function input($event) {
+      input: [function ($event) {
         if ($event.target.composing) return;
-        _vm.search = $event.target.value.trim();
-      },
+        _vm.serachInput = $event.target.value.trim();
+      }, _vm.handelSerach],
       blur: function blur($event) {
         return _vm.$forceUpdate();
       }
@@ -5495,7 +5513,7 @@ var render = function render() {
       },
       expression: "setting.date"
     }
-  }, [_vm._v(" " + _vm._s(_vm.$t("general.subscriptionDate")))]), _vm._v(" "), _c("b-form-checkbox", {
+  }, [_vm._v("\n                                            " + _vm._s(_vm.$t("general.subscriptionDate")))]), _vm._v(" "), _c("b-form-checkbox", {
     staticClass: "mb-1",
     model: {
       value: _vm.setting.birth_date,
@@ -5593,13 +5611,52 @@ var render = function render() {
       href: "javascript:void(0)"
     }
   }, [_vm._v("Apply")])])], 1)], 1), _vm._v(" "), _c("div", {
+    staticClass: "d-inline-flex align-items-center"
+  }, [_c("label", {
+    staticClass: "control-label mb-0",
+    attrs: {
+      "for": "rows"
+    }
+  }, [_vm._v("\n                                        " + _vm._s(_vm.$t("general.chooseRows")) + "\n                                    ")]), _vm._v(" "), _c("span", {
+    staticClass: "mx-1"
+  }, [_vm._v(":")]), _vm._v(" "), _c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model.number",
+      value: _vm.inputPerPage,
+      expression: "inputPerPage",
+      modifiers: {
+        number: true
+      }
+    }],
+    staticClass: "form-control-sm mb-0",
+    staticStyle: {
+      width: "70px"
+    },
+    attrs: {
+      type: "number",
+      id: "rows"
+    },
+    domProps: {
+      value: _vm.inputPerPage
+    },
+    on: {
+      input: [function ($event) {
+        if ($event.target.composing) return;
+        _vm.inputPerPage = _vm._n($event.target.value);
+      }, _vm.handelPerPageInput],
+      blur: function blur($event) {
+        return _vm.$forceUpdate();
+      }
+    }
+  })]), _vm._v(" "), _c("div", {
     staticClass: "d-inline-flex align-items-center pagination-custom"
   }, [_c("div", {
     staticClass: "d-inline-block",
     staticStyle: {
       "font-size": "13px"
     }
-  }, [_vm._v("\n                                        " + _vm._s(_vm.membersPagination.from) + "-" + _vm._s(_vm.membersPagination.to) + " /\n                                        " + _vm._s(_vm.membersPagination.total) + "\n                                    ")]), _vm._v(" "), _c("div", {
+  }, [_vm._v("\n                                        " + _vm._s(_vm.membersPagination.from) + "-" + _vm._s(_vm.membersPagination.to) + "\n                                        /\n                                        " + _vm._s(_vm.membersPagination.total) + "\n                                    ")]), _vm._v(" "), _c("div", {
     staticClass: "d-inline-block"
   }, [_c("a", {
     style: {
@@ -5725,7 +5782,7 @@ var render = function render() {
       callback: function callback($$v) {
         _vm.$set(_vm.$v.approve.session_date, "$model", $$v);
       },
-      expression: "$v.approve.session_date.$model"
+      expression: "\n                                                $v.approve.session_date\n                                                    .$model\n                                            "
     }
   }), _vm._v(" "), _vm.errors.session_date ? _vm._l(_vm.errors.session_date, function (errorMessage, index) {
     return _c("ErrorMessage", {
@@ -5740,7 +5797,7 @@ var render = function render() {
       name: "model",
       rawName: "v-model",
       value: _vm.$v.approve.session_number.$model,
-      expression: "$v.approve.session_number.$model"
+      expression: "\n                                                $v.approve.session_number\n                                                    .$model\n                                            "
     }],
     staticClass: "form-control",
     "class": {
@@ -5787,7 +5844,7 @@ var render = function render() {
       callback: function callback($$v) {
         _vm.$set(_vm.$v.approve.executive_office_date, "$model", $$v);
       },
-      expression: "$v.approve.executive_office_date.$model"
+      expression: "\n                                                $v.approve\n                                                    .executive_office_date\n                                                    .$model\n                                            "
     }
   }), _vm._v(" "), _vm.errors.executive_office_date ? _vm._l(_vm.errors.executive_office_date, function (errorMessage, index) {
     return _c("ErrorMessage", {
@@ -5802,7 +5859,7 @@ var render = function render() {
       name: "model",
       rawName: "v-model",
       value: _vm.$v.approve.executive_office_number.$model,
-      expression: "$v.approve.executive_office_number.$model"
+      expression: "\n                                                $v.approve\n                                                    .executive_office_number\n                                                    .$model\n                                            "
     }],
     staticClass: "form-control",
     "class": {
@@ -5849,7 +5906,7 @@ var render = function render() {
       callback: function callback($$v) {
         _vm.$set(_vm.$v.approve.board_of_directors_date, "$model", $$v);
       },
-      expression: "$v.approve.board_of_directors_date.$model"
+      expression: "\n                                                $v.approve\n                                                    .board_of_directors_date\n                                                    .$model\n                                            "
     }
   }), _vm._v(" "), _vm.errors.board_of_directors_date ? _vm._l(_vm.errors.board_of_directors_date, function (errorMessage, index) {
     return _c("ErrorMessage", {
@@ -5864,7 +5921,7 @@ var render = function render() {
       name: "model",
       rawName: "v-model",
       value: _vm.$v.approve.board_of_directors_number.$model,
-      expression: "$v.approve.board_of_directors_number.$model"
+      expression: "\n                                                $v.approve\n                                                    .board_of_directors_number\n                                                    .$model\n                                            "
     }],
     staticClass: "form-control",
     "class": {
@@ -5926,7 +5983,7 @@ var render = function render() {
         name: "model",
         rawName: "v-model",
         value: _vm.date[index].membership_date,
-        expression: "date[index].membership_date"
+        expression: "\n                                                    date[index]\n                                                        .membership_date\n                                                "
       }],
       staticClass: "form-control",
       attrs: {
@@ -6072,11 +6129,11 @@ var render = function render() {
     staticStyle: {
       "font-weight": "bold"
     }
-  }, [_vm._v(_vm._s(_vm.$t("general.SulaibikhatClub")))]), _vm._v(" "), _c("h2", {
+  }, [_vm._v("\n                                        " + _vm._s(_vm.$t("general.SulaibikhatClub")) + "\n                                    ")]), _vm._v(" "), _c("h2", {
     staticStyle: {
       "font-weight": "bold"
     }
-  }, [_vm._v(" " + _vm._s(_vm.$t("general.StatementOfParticipantsAwaitingAcceptance")) + " ")])])]), _vm._v(" "), _c("div", {
+  }, [_vm._v("\n                                        " + _vm._s(_vm.$t("general.StatementOfParticipantsAwaitingAcceptance")) + "\n                                    ")])])]), _vm._v(" "), _c("div", {
     staticClass: "text-center",
     staticStyle: {
       width: "15%",
@@ -6356,17 +6413,17 @@ var render = function render() {
           }
         }
       }
-    })])]) : _vm._e(), _vm._v(" "), _c("td", [_vm._v(" " + _vm._s(index + 1))]), _vm._v(" "), _vm.setting.full_name ? _c("td", [_vm._v("\n                                    " + _vm._s(data.full_name) + "\n                                ")]) : _vm._e(), _vm._v(" "), _vm.setting.document_no ? _c("td", [_c("h5", {
+    })])]) : _vm._e(), _vm._v(" "), _c("td", [_vm._v(_vm._s(index + 1))]), _vm._v(" "), _vm.setting.full_name ? _c("td", [_vm._v("\n                                        " + _vm._s(data.full_name) + "\n                                    ")]) : _vm._e(), _vm._v(" "), _vm.setting.document_no ? _c("td", [_c("h5", {
       staticClass: "m-0 font-weight-normal"
-    }, [_vm._v(_vm._s(data.transaction ? data.transaction.document_no : "---"))])]) : _vm._e(), _vm._v(" "), _vm.setting.date ? _c("td", [_c("h5", {
+    }, [_vm._v("\n                                            " + _vm._s(data.transaction ? data.transaction.document_no : "---") + "\n                                        ")])]) : _vm._e(), _vm._v(" "), _vm.setting.date ? _c("td", [_c("h5", {
       staticClass: "m-0 font-weight-normal"
-    }, [_vm._v(_vm._s(_vm.formatDate(data.transaction.date)))])]) : _vm._e(), _vm._v(" "), _vm.setting.birth_date ? _c("td", [_vm._v("\n                                    " + _vm._s(data.birth_date) + "\n                                ")]) : _vm._e(), _vm._v(" "), _vm.setting.gender ? _c("td", [_vm._v("\n                                    " + _vm._s(data.gender == 1 ? _vm.$t("general.male") : _vm.$t("general.female")) + "\n                                ")]) : _vm._e(), _vm._v(" "), _vm.setting.member_type_id ? _c("td", [_vm._v("\n                                    " + _vm._s(parseInt(data.member_type_id) == 1 ? _vm.$t("general.pendingMember") : _vm.$t("general.unacceptable")) + "\n                                ")]) : _vm._e(), _vm._v(" "), _vm.setting.national_id ? _c("td", [_vm._v("\n                                    " + _vm._s(data.national_id) + "\n                                ")]) : _vm._e(), _vm._v(" "), _vm.setting.home_phone ? _c("td", [_vm._v("\n                                    " + _vm._s(data.home_phone) + "\n                                ")]) : _vm._e(), _vm._v(" "), _vm.setting.work_phone ? _c("td", [_vm._v("\n                                    " + _vm._s(data.work_phone) + "\n                                ")]) : _vm._e(), _vm._v(" "), _vm.setting.home_address ? _c("td", [_vm._v("\n                                    " + _vm._s(data.home_address) + "\n                                ")]) : _vm._e(), _vm._v(" "), _vm.setting.work_address ? _c("td", [_vm._v("\n                                    " + _vm._s(data.work_address) + "\n                                ")]) : _vm._e(), _vm._v(" "), _vm.setting.job ? _c("td", [_vm._v("\n                                    " + _vm._s(data.job) + "\n                                ")]) : _vm._e(), _vm._v(" "), _vm.setting.degree ? _c("td", [_vm._v("\n                                    " + _vm._s(data.degree) + "\n                                ")]) : _vm._e()]);
+    }, [_vm._v("\n                                            " + _vm._s(_vm.formatDate(data.transaction.date)) + "\n                                        ")])]) : _vm._e(), _vm._v(" "), _vm.setting.birth_date ? _c("td", [_vm._v("\n                                        " + _vm._s(data.birth_date) + "\n                                    ")]) : _vm._e(), _vm._v(" "), _vm.setting.gender ? _c("td", [_vm._v("\n                                        " + _vm._s(data.gender == 1 ? _vm.$t("general.male") : _vm.$t("general.female")) + "\n                                    ")]) : _vm._e(), _vm._v(" "), _vm.setting.member_type_id ? _c("td", [_vm._v("\n                                        " + _vm._s(parseInt(data.member_type_id) == 1 ? _vm.$t("general.pendingMember") : _vm.$t("general.unacceptable")) + "\n                                    ")]) : _vm._e(), _vm._v(" "), _vm.setting.national_id ? _c("td", [_vm._v("\n                                        " + _vm._s(data.national_id) + "\n                                    ")]) : _vm._e(), _vm._v(" "), _vm.setting.home_phone ? _c("td", [_vm._v("\n                                        " + _vm._s(data.home_phone) + "\n                                    ")]) : _vm._e(), _vm._v(" "), _vm.setting.work_phone ? _c("td", [_vm._v("\n                                        " + _vm._s(data.work_phone) + "\n                                    ")]) : _vm._e(), _vm._v(" "), _vm.setting.home_address ? _c("td", [_vm._v("\n                                        " + _vm._s(data.home_address) + "\n                                    ")]) : _vm._e(), _vm._v(" "), _vm.setting.work_address ? _c("td", [_vm._v("\n                                        " + _vm._s(data.work_address) + "\n                                    ")]) : _vm._e(), _vm._v(" "), _vm.setting.job ? _c("td", [_vm._v("\n                                        " + _vm._s(data.job) + "\n                                    ")]) : _vm._e(), _vm._v(" "), _vm.setting.degree ? _c("td", [_vm._v("\n                                        " + _vm._s(data.degree) + "\n                                    ")]) : _vm._e()]);
   }), 0) : _c("tbody", [_c("tr", [_c("th", {
     staticClass: "text-center",
     attrs: {
       colspan: "30"
     }
-  }, [_vm._v("\n                                    " + _vm._s(_vm.$t("general.notDataFound")) + "\n                                ")])])])])], 1)], 1)])])])], 1);
+  }, [_vm._v("\n                                        " + _vm._s(_vm.$t("general.notDataFound")) + "\n                                    ")])])])])], 1)], 1)])])])], 1);
 };
 var staticRenderFns = [];
 render._withStripped = true;
@@ -7038,7 +7095,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.data-header-print {\n    display: none;\n}\n@media print {\n.do-not-print {\n        display: none;\n}\n.arrow-sort {\n        display: none;\n}\n.text-success {\n        background-color: unset;\n        color: #6c757d !important;\n        border: unset;\n}\n.text-danger {\n        background-color: unset;\n        color: #6c757d !important;\n        border: unset;\n}\ntd{\n        border: 1px solid black !important;\n        font-size: 16px !important;\n        font-weight: bold !important\n}\nth{\n        border: 1px solid black !important;\n        color: black;\n        text-align: center;\n        font-size: 16px !important;\n        font-weight: bold !important\n}\nthead{\n        border: 1px solid black !important;\n}\ntbody{\n        border: 1px solid black !important;\n}\ntable {\n        border: 1px solid black !important;\n}\n.data-header-print {\n        width: 100%;\n        display: inline-block;\n}\n.dir-print-rtl {\n        direction: rtl !important;\n}\n.dir-print-ltr {\n        direction: ltr !important;\n}\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.data-header-print {\n    display: none;\n}\n@media print {\n.do-not-print {\n        display: none;\n}\n.arrow-sort {\n        display: none;\n}\n.text-success {\n        background-color: unset;\n        color: #6c757d !important;\n        border: unset;\n}\n.text-danger {\n        background-color: unset;\n        color: #6c757d !important;\n        border: unset;\n}\ntd {\n        border: 1px solid black !important;\n        font-size: 16px !important;\n        font-weight: bold !important;\n}\nth {\n        border: 1px solid black !important;\n        color: black;\n        text-align: center;\n        font-size: 16px !important;\n        font-weight: bold !important;\n}\nthead {\n        border: 1px solid black !important;\n}\ntbody {\n        border: 1px solid black !important;\n}\ntable {\n        border: 1px solid black !important;\n}\n.data-header-print {\n        width: 100%;\n        display: inline-block;\n}\n.dir-print-rtl {\n        direction: rtl !important;\n}\n.dir-print-ltr {\n        direction: ltr !important;\n}\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 

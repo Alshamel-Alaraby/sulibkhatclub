@@ -49,29 +49,22 @@ class CmTransaction extends Model
         return $this->belongsTo(CmMemberRequest::class, 'member_request_id');
     }
 
-    public function scopeFilter($query, $request)
-    {
-        return $query->where(function ($q) use ($request) {
+public function scopeFilter($query, $request)
+{
+    $query->where(function ($q) use ($request) {
+        if ($request->search && $request->columns) {
+            $q->orWhereHas('memberRequest', function ($query) use ($request) {
+                $query->where('full_name', 'like', '%' . $request->search . '%');
+            });
+        }
 
-            if ($request->search && $request->columns) {
-                foreach ($request->columns as $column) {
-                    if (strpos($column, ".") > 0) {
-                        $column = explode(".", $column);
-                        $q->orWhereRelation($column[0], $column[1], 'like', '%' . $request->search . '%');
-                        $q->orWhereHas($column[0], function ($q) use ($column, $request) {
-                            $q->where($column[1], 'like', '%' . $request->search . '%');
-                        });
-                    } else {
-                        $q->orWhere($column, 'like', '%' . $request->search . '%');
-                    }
-                }
-            }
+        if ($request->key && $request->value) {
+            $q->where($request->key, $request->value);
+        }
+    });
 
-            if ($request->key && $request->value) {
-                $q->where($request->key, $request->value);
-            }
-        });
-    }
+    // Debug the SQL
+}
 
     public function getActivitylogOptions(): LogOptions
     {

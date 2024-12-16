@@ -3,19 +3,24 @@
 namespace Modules\ClubMembers\Transformers;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use Modules\ClubMembers\Transformers\StatusResource;
 
 class CmMemberRequestResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
      *
-     * @param  \Illuminate\Http\Request
+     * @param  \Illuminate\Http\Request $request
      * @return array
      */
     public function toArray($request)
     {
-        return [
+        // Cache repeated relationships to avoid duplicate queries
+        $memberType = $this->memberType;
+        $financialStatus = $this->financialStatus;
+        $status = $this->status;
 
+        return [
             'id' => $this->id,
             'first_name' => $this->first_name,
             'second_name' => $this->second_name,
@@ -41,19 +46,23 @@ class CmMemberRequestResource extends JsonResource
             'applying_date' => $this->applying_date,
             'applying_number' => $this->applying_number,
             'sponsor_id' => $this->sponsor_id,
-            'member_type_id' => $this->member_type_id, //$this->member_type_id,
+            'member_kind_id' => $this->member_kind_id,
             'financial_status_id' => $this->financial_status_id,
-            "status_id" => $this->status_id,
-            'member_type' => $this->member_type,
+            'member_status_id' => $this->member_status_id,
+            'member_type' => $memberType,
             'notes' => $this->notes,
             'gender' => $this->gender,
             'sponsors' => $this->sponsors,
-            'financial_status' => $this->financialStatus,
-            'transaction' => $this->cmTransaction ? collect(new CmTransactionResource($this->cmTransaction))->only(['id',"date",'document_no','year','amount','serial']) : null  ,
-            "status" => new StatusResource($this->status),
+            'financial_status' => $financialStatus,
+            'status' => new StatusResource($status),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
-            'sponsor' => $this->sponsor,
+            'cm_transaction_count' => $request->has('include_transaction_count') ? $this->cm_transaction_count : null,
+            'transaction' => $request->has('hasTransaction') ? $this->cmTransaction : null,
+            'executive_office_date' => $this->executive_office_date,
+            'executive_office_number' => $this->executive_office_number,
+            'board_of_directors_date' => $this->board_of_directors_date,
+            'board_of_directors_number' => $this->board_of_directors_number,
             'application_number' => $this->application_number,
         ];
     }

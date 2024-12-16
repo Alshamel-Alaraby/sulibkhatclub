@@ -7,7 +7,13 @@ import Layout from "../../layouts/main";
 import PageHeader from "../../../components/general/Page-header";
 import adminApi from "../../../api/adminAxios";
 import Switches from "vue-switches";
-import { required, minLength, maxLength, integer, requiredIf } from "vuelidate/lib/validators";
+import {
+    required,
+    minLength,
+    maxLength,
+    integer,
+    requiredIf,
+} from "vuelidate/lib/validators";
 import Swal from "sweetalert2";
 import ErrorMessage from "../../../components/widgets/errorMessage";
 import loader from "../../../components/general/loader";
@@ -15,7 +21,10 @@ import permissionGuard from "../../../helper/permission";
 
 import alphaArabic from "../../../helper/alphaArabic";
 import alphaEnglish from "../../../helper/alphaEnglish";
-import { dynamicSortString, dynamicSortNumber } from "../../../helper/tableSort";
+import {
+    dynamicSortString,
+    dynamicSortNumber,
+} from "../../../helper/tableSort";
 import translation from "../../../helper/mixin/translation-mixin";
 import Multiselect from "vue-multiselect";
 import { formatDateOnly } from "../../../helper/startDate";
@@ -44,6 +53,8 @@ export default {
     },
     data() {
         return {
+            inputPerPage: null,
+            debounceTimer: null,
             fields: [],
             per_page: 50,
             search: "",
@@ -87,7 +98,7 @@ export default {
                 job: true,
                 degree: true,
                 sponsor_id: true,
-                membership_number: true
+                membership_number: true,
             },
             is_disabled: false,
             filterSetting: [
@@ -111,19 +122,22 @@ export default {
             printLoading: true,
             printObj: {
                 id: "printData",
-            }
+            },
         };
     },
     beforeRouteEnter(to, from, next) {
-            next((vm) => {
-      return permissionGuard(vm, "Accepted Member", "all acceptedMembers club");
-    });
-
+        next((vm) => {
+            return permissionGuard(
+                vm,
+                "Accepted Member",
+                "all acceptedMembers club"
+            );
+        });
     },
     validations: {
         create: {
             status_id: { required },
-            sponsor_id: {required},
+            sponsor_id: { required },
             financial_status_id: { required },
         },
     },
@@ -131,9 +145,9 @@ export default {
         /**
          * watch per_page
          */
-        per_page(after, befour) {
-            this.getData();
-        },
+        // per_page(after, befour) {
+        //     this.getData();
+        // },
         /**
          * watch search
          */
@@ -163,9 +177,89 @@ export default {
         this.getData();
     },
     methods: {
+        handelPerPageInput() {
+            clearTimeout(this.debounceTimer);
+            this.debounceTimer = setTimeout(() => {
+                this.per_page = this.inputPerPage;
+                this.getData();
+            }, 1000);
+        },
+        printElement(selector) {
+            const elementTest = document.querySelector(selector);
+
+            if (elementTest) {
+                const rowsPerPage = 50; // Maximum rows per page
+                const members = this.members;
+                const totalPages = Math.ceil(members.length / rowsPerPage);
+
+                // Temporarily show the header
+                const headerElement =
+                    document.querySelector(".data-header-print");
+                headerElement.style.display = "flex"; // Make it visible temporarily
+                const header = headerElement.outerHTML; // Get header HTML
+                headerElement.style.display = "none"; // Restore original style
+
+                // Get the rendered <tbody> from the DOM
+                const originalTbody = document
+                    .querySelector(selector)
+                    .querySelector("tbody");
+                const allRows = Array.from(
+                    originalTbody.querySelectorAll("tr")
+                ); // Get all rendered rows
+
+                let printableContent = "";
+
+                for (let page = 0; page < totalPages; page++) {
+                    const startIndex = page * rowsPerPage;
+                    const pageRows = allRows.slice(
+                        startIndex,
+                        startIndex + rowsPerPage
+                    ); // Get rows for this page
+
+                    // Create a new <tbody> for the current page
+                    const tbodyClone = document.createElement("tbody");
+                    pageRows.forEach((row) =>
+                        tbodyClone.appendChild(row.cloneNode(true))
+                    ); // Clone rows for this page
+
+                    // Clone the entire table
+                    const tableClone = document
+                        .querySelector(selector)
+                        .querySelector("table")
+                        .cloneNode(true);
+
+                    // Replace the table's <tbody> with the cloned, paginated <tbody>
+                    tableClone.querySelector("tbody").replaceWith(tbodyClone);
+
+                    // Add header and table for this page
+                    printableContent += `
+                <div style="page-break-after: always;">
+                    ${header}
+                    ${tableClone.outerHTML}
+                </div>
+            `;
+                }
+
+                const container = document.createElement("div");
+                container.innerHTML = printableContent;
+                document.body.appendChild(container);
+
+                $(container).printThis({
+                    header: null, // Header is already included in the content
+                    pageTitle: "Members Apply",
+                    importCSS: true,
+                    afterPrint: () => {
+                        console.log("Print completed");
+                        container.remove();
+                    },
+                });
+            } else {
+                console.log("Element to print not found", selector);
+            }
+        },
         isPermission(item) {
-            if (this.$store.state.auth.type == 'user'){
-                return this.$store.state.auth.permissions.includes(item)
+            if (this.$store.state.auth.type == "user") {
+                return this.$store.state.auth.permissions.includes(item);
             }
             return true;
         },
@@ -205,17 +299,20 @@ export default {
                     .then((res) => {
                         let l = res.data.data;
                         l.forEach((e) => {
-                            this.Tooltip += `Created By: ${e.causer_type}; Event: ${e.event
-                            }; Description: ${e.description} ;Created At: ${this.formatDate(
-                                e.created_at
-                            )} \n`;
+                            this.Tooltip += `Created By: ${
+                                e.causer_type
+                            }; Event: ${e.event}; Description: ${
+                                e.description
+                            } ;Created At: ${this.formatDate(e.created_at)} \n`;
                         });
                     })
                     .catch((err) => {
                         Swal.fire({
                             icon: "error",
                             title: `${this.$t("general.Error")}`,
-                            text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                            text: `${this.$t(
+                                "general.Thereisanerrorinthesystem"
+                            )}`,
                         });
                     });
             } else {
@@ -278,7 +375,9 @@ export default {
                         Swal.fire({
                             icon: "error",
                             title: `${this.$t("general.Error")}`,
-                            text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                            text: `${this.$t(
+                                "general.Thereisanerrorinthesystem"
+                            )}`,
                         });
                     })
                     .finally(() => {
@@ -302,7 +401,10 @@ export default {
                 this.isLoader = true;
                 this.errors = {};
                 adminApi
-                    .put(`/club-members/members/update-accepted-members/${this.create.id}`, this.create)
+                    .put(
+                        `/club-members/members/update-accepted-members/${this.create.id}`,
+                        this.create
+                    )
                     .then((res) => {
                         this.getData();
                         setTimeout(() => {
@@ -321,7 +423,9 @@ export default {
                             Swal.fire({
                                 icon: "error",
                                 title: `${this.$t("general.Error")}`,
-                                text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                                text: `${this.$t(
+                                    "general.Thereisanerrorinthesystem"
+                                )}`,
                             });
                         }
                     })
@@ -342,7 +446,8 @@ export default {
             await this.getSponsors();
             await this.getFinancialStatus();
             this.create.id = id;
-            this.create.financial_status_id = member.financial_status_id ?? null;
+            this.create.financial_status_id =
+                member.financial_status_id ?? null;
             this.create.status_id = member.status_id ?? null;
             this.create.sponsor_id = member.sponsor_id ?? null;
             this.errors = {};
@@ -390,8 +495,12 @@ export default {
                 .get(`/statuses`)
                 .then((res) => {
                     let l = res.data.data;
-                    if(this.isPermission('create Status')){
-                        l.unshift({ id: 0, name: "اضف حاله", name_e: "Add Status" });
+                    if (this.isPermission("create Status")) {
+                        l.unshift({
+                            id: 0,
+                            name: "اضف حاله",
+                            name_e: "Add Status",
+                        });
                     }
                     this.statuses = l;
                 })
@@ -412,8 +521,12 @@ export default {
                 .get(`/club-members/sponsers`)
                 .then((res) => {
                     let l = res.data.data;
-                    if(this.isPermission('create sponsor club')){
-                        l.unshift({ id: 0, name: "اضف راعي", name_e: "Add sponsor" });
+                    if (this.isPermission("create sponsor club")) {
+                        l.unshift({
+                            id: 0,
+                            name: "اضف راعي",
+                            name_e: "Add sponsor",
+                        });
                     }
                     this.sponsors = l;
                 })
@@ -434,8 +547,12 @@ export default {
                 .get(`/club-members/financial-status`)
                 .then((res) => {
                     let l = res.data.data;
-                    if(this.isPermission('create financialStatus club')){
-                        l.unshift({ id: 0, name: "اضف حالة مالية", name_e: "Add financial status" });
+                    if (this.isPermission("create financialStatus club")) {
+                        l.unshift({
+                            id: 0,
+                            name: "اضف حالة مالية",
+                            name_e: "Add financial status",
+                        });
                     }
                     this.financialStatuses = l;
                 })
@@ -472,9 +589,18 @@ export default {
                 let elt = this.$refs.exportable_table;
                 let wb = XLSX.utils.table_to_book(elt, { sheet: "Sheet JS" });
                 if (dl) {
-                    XLSX.write(wb, { bookType: type, bookSST: true, type: 'base64' });
+                    XLSX.write(wb, {
+                        bookType: type,
+                        bookSST: true,
+                        type: "base64",
+                    });
                 } else {
-                    XLSX.writeFile(wb, fn || (('Stores' + '.' || 'SheetJSTableExport.') + (type || 'xlsx')));
+                    XLSX.writeFile(
+                        wb,
+                        fn ||
+                            ("Stores" + "." || "SheetJSTableExport.") +
+                                (type || "xlsx")
+                    );
                 }
                 this.enabled3 = true;
             }, 100);
@@ -486,7 +612,7 @@ export default {
         englishValue(txt) {
             this.create.name_e = englishValue(txt);
             this.edit.name_e = englishValue(txt);
-        }
+        },
     },
 };
 </script>
@@ -494,158 +620,421 @@ export default {
 <template>
     <Layout>
         <PageHeader />
-        <Status :companyKeys="companyKeys" :defaultsKeys="defaultsKeys" @created="getStatus" />
-        <Sponsor :companyKeys="companyKeys" :defaultsKeys="defaultsKeys" @created="getSponsors" />
-        <FinancialStatus :companyKeys="companyKeys" :defaultsKeys="defaultsKeys" @created="getFinancialStatus" />
+        <Status
+            :companyKeys="companyKeys"
+            :defaultsKeys="defaultsKeys"
+            @created="getStatus"
+        />
+        <Sponsor
+            :companyKeys="companyKeys"
+            :defaultsKeys="defaultsKeys"
+            @created="getSponsors"
+        />
+        <FinancialStatus
+            :companyKeys="companyKeys"
+            :defaultsKeys="defaultsKeys"
+            @created="getFinancialStatus"
+        />
         <div class="row">
             <div class="col-12">
                 <div class="card">
                     <div class="card-body">
                         <!-- start search -->
-                        <div class="row justify-content-between align-items-center mb-2">
-                            <h4 class="header-title">{{ $t("general.memberAcceptTable") }}</h4>
-                            <div class="col-xs-10 col-md-9 col-lg-7" style="font-weight: 500">
-                                <div class="d-inline-block" style="width: 22.2%">
+                        <div
+                            class="row justify-content-between align-items-center mb-2"
+                        >
+                            <h4 class="header-title">
+                                {{ $t("general.memberAcceptTable") }}
+                            </h4>
+                            <div
+                                class="col-xs-10 col-md-9 col-lg-7"
+                                style="font-weight: 500"
+                            >
+                                <div
+                                    class="d-inline-block"
+                                    style="width: 22.2%"
+                                >
                                     <!-- Basic dropdown -->
-                                    <b-dropdown variant="primary" :text="$t('general.searchSetting')" ref="dropdown"
-                                                class="btn-block setting-search">
-                                        <b-form-checkbox v-model="filterSetting" value="first_name" class="mb-1">{{
-                                                getCompanyKey("member_first_name") }}
+                                    <b-dropdown
+                                        variant="primary"
+                                        :text="$t('general.searchSetting')"
+                                        ref="dropdown"
+                                        class="btn-block setting-search"
+                                    >
+                                        <b-form-checkbox
+                                            v-model="filterSetting"
+                                            value="first_name"
+                                            class="mb-1"
+                                            >{{
+                                                getCompanyKey(
+                                                    "member_first_name"
+                                                )
+                                            }}
                                         </b-form-checkbox>
-                                        <b-form-checkbox v-model="filterSetting" value="second_name" class="mb-1">{{
-                                                getCompanyKey("member_second_name") }}
+                                        <b-form-checkbox
+                                            v-model="filterSetting"
+                                            value="second_name"
+                                            class="mb-1"
+                                            >{{
+                                                getCompanyKey(
+                                                    "member_second_name"
+                                                )
+                                            }}
                                         </b-form-checkbox>
-                                        <b-form-checkbox v-model="filterSetting" value="third_name" class="mb-1">{{
-                                                getCompanyKey("member_third_name") }}
+                                        <b-form-checkbox
+                                            v-model="filterSetting"
+                                            value="third_name"
+                                            class="mb-1"
+                                            >{{
+                                                getCompanyKey(
+                                                    "member_third_name"
+                                                )
+                                            }}
                                         </b-form-checkbox>
-                                        <b-form-checkbox v-model="filterSetting" value="last_name" class="mb-1">{{
-                                                getCompanyKey("member_last_name") }}
+                                        <b-form-checkbox
+                                            v-model="filterSetting"
+                                            value="last_name"
+                                            class="mb-1"
+                                            >{{
+                                                getCompanyKey(
+                                                    "member_last_name"
+                                                )
+                                            }}
                                         </b-form-checkbox>
-                                        <b-form-checkbox v-model="filterSetting" value="family_name" class="mb-1">{{
-                                                getCompanyKey("member_family_name") }}
+                                        <b-form-checkbox
+                                            v-model="filterSetting"
+                                            value="family_name"
+                                            class="mb-1"
+                                            >{{
+                                                getCompanyKey(
+                                                    "member_family_name"
+                                                )
+                                            }}
                                         </b-form-checkbox>
-                                        <b-form-checkbox v-model="filterSetting" value="status_id" class="mb-1">{{
-                                                getCompanyKey("status") }}
+                                        <b-form-checkbox
+                                            v-model="filterSetting"
+                                            value="status_id"
+                                            class="mb-1"
+                                            >{{ getCompanyKey("status") }}
                                         </b-form-checkbox>
-                                        <b-form-checkbox v-model="filterSetting" value="national_id" class="mb-1">{{
-                                                getCompanyKey("member_national_id") }}
+                                        <b-form-checkbox
+                                            v-model="filterSetting"
+                                            value="national_id"
+                                            class="mb-1"
+                                            >{{
+                                                getCompanyKey(
+                                                    "member_national_id"
+                                                )
+                                            }}
                                         </b-form-checkbox>
-                                        <b-form-checkbox v-model="filterSetting" value="nationality_number" class="mb-1">{{
-                                                getCompanyKey("member_nationality_number") }}
+                                        <b-form-checkbox
+                                            v-model="filterSetting"
+                                            value="nationality_number"
+                                            class="mb-1"
+                                            >{{
+                                                getCompanyKey(
+                                                    "member_nationality_number"
+                                                )
+                                            }}
                                         </b-form-checkbox>
-                                        <b-form-checkbox v-model="filterSetting" value="home_phone" class="mb-1">{{
-                                                getCompanyKey("member_home_phone") }}
+                                        <b-form-checkbox
+                                            v-model="filterSetting"
+                                            value="home_phone"
+                                            class="mb-1"
+                                            >{{
+                                                getCompanyKey(
+                                                    "member_home_phone"
+                                                )
+                                            }}
                                         </b-form-checkbox>
-                                        <b-form-checkbox v-model="filterSetting" value="work_phone" class="mb-1">{{
-                                                getCompanyKey("member_work_phone") }}
+                                        <b-form-checkbox
+                                            v-model="filterSetting"
+                                            value="work_phone"
+                                            class="mb-1"
+                                            >{{
+                                                getCompanyKey(
+                                                    "member_work_phone"
+                                                )
+                                            }}
                                         </b-form-checkbox>
-                                        <b-form-checkbox v-model="filterSetting" value="home_address" class="mb-1">{{
-                                                getCompanyKey("member_home_address") }}
+                                        <b-form-checkbox
+                                            v-model="filterSetting"
+                                            value="home_address"
+                                            class="mb-1"
+                                            >{{
+                                                getCompanyKey(
+                                                    "member_home_address"
+                                                )
+                                            }}
                                         </b-form-checkbox>
-                                        <b-form-checkbox v-model="filterSetting" value="work_address" class="mb-1">{{
-                                                getCompanyKey("member_work_address") }}
+                                        <b-form-checkbox
+                                            v-model="filterSetting"
+                                            value="work_address"
+                                            class="mb-1"
+                                            >{{
+                                                getCompanyKey(
+                                                    "member_work_address"
+                                                )
+                                            }}
                                         </b-form-checkbox>
                                     </b-dropdown>
                                     <!-- Basic dropdown -->
                                 </div>
 
-                                <div class="d-inline-block position-relative" style="width: 77%">
-                                    <span :class="[
-                                        'search-custom position-absolute',
-                                        $i18n.locale == 'ar' ? 'search-custom-ar' : '',
-                                    ]">
+                                <div
+                                    class="d-inline-block position-relative"
+                                    style="width: 77%"
+                                >
+                                    <span
+                                        :class="[
+                                            'search-custom position-absolute',
+                                            $i18n.locale == 'ar'
+                                                ? 'search-custom-ar'
+                                                : '',
+                                        ]"
+                                    >
                                         <i class="fe-search"></i>
                                     </span>
-                                    <input class="form-control" style="display: block; width: 93%; padding-top: 3px"
-                                           type="text" v-model.trim="search" :placeholder="`${$t('general.Search')}...`" />
+                                    <input
+                                        class="form-control"
+                                        style="
+                                            display: block;
+                                            width: 93%;
+                                            padding-top: 3px;
+                                        "
+                                        type="text"
+                                        v-model.trim="search"
+                                        :placeholder="`${$t(
+                                            'general.Search'
+                                        )}...`"
+                                    />
                                 </div>
                             </div>
                         </div>
                         <!-- end search -->
 
-                        <div class="row justify-content-between align-items-center mb-2 px-1">
-                            <div class="col-md-3 d-flex align-items-center mb-1 mb-xl-0">
+                        <div
+                            class="row justify-content-between align-items-center mb-2 px-1"
+                        >
+                            <div
+                                class="col-md-3 d-flex align-items-center mb-1 mb-xl-0"
+                            >
                                 <!-- start create and printer -->
                                 <div class="d-inline-flex">
-                                    <button @click="ExportExcel('xlsx')" class="custom-btn-dowonload">
+                                    <button
+                                        @click="ExportExcel('xlsx')"
+                                        class="custom-btn-dowonload"
+                                    >
                                         <i class="fas fa-file-download"></i>
                                     </button>
-                                    <button v-print="'#printData'" class="custom-btn-dowonload">
+                                    <button
+                                        @click="printElement('#printData')"
+                                        class="custom-btn-dowonload"
+                                    >
                                         <i class="fe-printer"></i>
                                     </button>
-                                    <button class="custom-btn-dowonload" @click="$bvModal.show(`modal-create-${checkAll[0]}`)"
-                                            v-if="checkAll.length == 1 && isPermission('update acceptedMembers club')">
-                                        <i class="mdi mdi-square-edit-outline"></i>
+                                    <button
+                                        class="custom-btn-dowonload"
+                                        @click="
+                                            $bvModal.show(
+                                                `modal-create-${checkAll[0]}`
+                                            )
+                                        "
+                                        v-if="
+                                            checkAll.length == 1 &&
+                                            isPermission(
+                                                'update acceptedMembers club'
+                                            )
+                                        "
+                                    >
+                                        <i
+                                            class="mdi mdi-square-edit-outline"
+                                        ></i>
                                     </button>
                                 </div>
                                 <!-- end create and printer -->
                             </div>
-                            <div class="col-xs-10 col-md-9 col-lg-7 d-flex align-items-center justify-content-end">
+                            <div
+                                class="col-xs-10 col-md-9 col-lg-7 d-flex align-items-center justify-content-end"
+                            >
                                 <div class="d-fex">
                                     <!-- start filter and setting -->
                                     <div class="d-inline-block">
-                                        <b-button class="mx-1 custom-btn-background">
+                                        <b-button
+                                            class="mx-1 custom-btn-background"
+                                        >
                                             {{ $t("general.filter") }}
                                             <i class="fas fa-filter"></i>
                                         </b-button>
-                                        <b-button class="mx-1 custom-btn-background">
+                                        <b-button
+                                            class="mx-1 custom-btn-background"
+                                        >
                                             {{ $t("general.group") }}
                                             <i class="fe-menu"></i>
                                         </b-button>
                                         <!-- Basic dropdown -->
-                                        <b-dropdown variant="primary"
-                                                    :html="`${$t('general.setting')} <i class='fe-settings'></i>`" ref="dropdown"
-                                                    class="dropdown-custom-ali">
-                                            <b-form-checkbox v-model="setting.first_name" class="mb-1">{{
-                                                    getCompanyKey("member_first_name") }}
+                                        <b-dropdown
+                                            variant="primary"
+                                            :html="`${$t(
+                                                'general.setting'
+                                            )} <i class='fe-settings'></i>`"
+                                            ref="dropdown"
+                                            class="dropdown-custom-ali"
+                                        >
+                                            <b-form-checkbox
+                                                v-model="setting.first_name"
+                                                class="mb-1"
+                                                >{{
+                                                    getCompanyKey(
+                                                        "member_first_name"
+                                                    )
+                                                }}
                                             </b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.second_name" class="mb-1">{{
-                                                    getCompanyKey("member_second_name") }}
+                                            <b-form-checkbox
+                                                v-model="setting.second_name"
+                                                class="mb-1"
+                                                >{{
+                                                    getCompanyKey(
+                                                        "member_second_name"
+                                                    )
+                                                }}
                                             </b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.third_name" class="mb-1">{{
-                                                    getCompanyKey("member_third_name") }}
+                                            <b-form-checkbox
+                                                v-model="setting.third_name"
+                                                class="mb-1"
+                                                >{{
+                                                    getCompanyKey(
+                                                        "member_third_name"
+                                                    )
+                                                }}
                                             </b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.last_name" class="mb-1">{{
-                                                    getCompanyKey("member_last_name") }}
+                                            <b-form-checkbox
+                                                v-model="setting.last_name"
+                                                class="mb-1"
+                                                >{{
+                                                    getCompanyKey(
+                                                        "member_last_name"
+                                                    )
+                                                }}
                                             </b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.family_name" class="mb-1">{{
-                                                    getCompanyKey("member_family_name") }}
+                                            <b-form-checkbox
+                                                v-model="setting.family_name"
+                                                class="mb-1"
+                                                >{{
+                                                    getCompanyKey(
+                                                        "member_family_name"
+                                                    )
+                                                }}
                                             </b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.birth_date" class="mb-1">{{
-                                                    getCompanyKey("member_birth_date") }}
+                                            <b-form-checkbox
+                                                v-model="setting.birth_date"
+                                                class="mb-1"
+                                                >{{
+                                                    getCompanyKey(
+                                                        "member_birth_date"
+                                                    )
+                                                }}
                                             </b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.membership_number" class="mb-1">{{
-                                                    getCompanyKey("member_membership_number") }}
+                                            <b-form-checkbox
+                                                v-model="
+                                                    setting.membership_number
+                                                "
+                                                class="mb-1"
+                                                >{{
+                                                    getCompanyKey(
+                                                        "member_membership_number"
+                                                    )
+                                                }}
                                             </b-form-checkbox>
-                                            <div class="d-flex justify-content-end">
-                                                <a href="javascript:void(0)" class="btn btn-primary btn-sm">Apply</a>
+                                            <div
+                                                class="d-flex justify-content-end"
+                                            >
+                                                <a
+                                                    href="javascript:void(0)"
+                                                    class="btn btn-primary btn-sm"
+                                                    >Apply</a
+                                                >
                                             </div>
                                         </b-dropdown>
                                         <!-- Basic dropdown -->
                                     </div>
                                     <!-- end filter and setting -->
-
+                                    <div
+                                        class="d-inline-flex align-items-center"
+                                    >
+                                        <label
+                                            for="rows"
+                                            class="control-label mb-0"
+                                        >
+                                            {{ $t("general.chooseRows") }}
+                                        </label>
+                                        <span class="mx-1">:</span>
+                                        <input
+                                            type="number"
+                                            id="rows"
+                                            v-model.number="inputPerPage"
+                                            @input="handelPerPageInput"
+                                            class="form-control-sm mb-0"
+                                            style="width: 70px"
+                                        />
+                                    </div>
                                     <!-- start Pagination -->
-                                    <div class="d-inline-flex align-items-center pagination-custom">
-                                        <div class="d-inline-block" style="font-size: 13px">
-                                            {{ membersPagination.from }}-{{ membersPagination.to }} /
+                                    <div
+                                        class="d-inline-flex align-items-center pagination-custom"
+                                    >
+                                        <div
+                                            class="d-inline-block"
+                                            style="font-size: 13px"
+                                        >
+                                            {{ membersPagination.from }}-{{
+                                                membersPagination.to
+                                            }}
+                                            /
                                             {{ membersPagination.total }}
                                         </div>
                                         <div class="d-inline-block">
-                                            <a href="javascript:void(0)" :style="{
-                                                'pointer-events':
-                                                    membersPagination.current_page == 1 ? 'none' : '',
-                                            }" @click.prevent="getData(membersPagination.current_page - 1)">
+                                            <a
+                                                href="javascript:void(0)"
+                                                :style="{
+                                                    'pointer-events':
+                                                        membersPagination.current_page ==
+                                                        1
+                                                            ? 'none'
+                                                            : '',
+                                                }"
+                                                @click.prevent="
+                                                    getData(
+                                                        membersPagination.current_page -
+                                                            1
+                                                    )
+                                                "
+                                            >
                                                 <span>&lt;</span>
                                             </a>
-                                            <input type="text" @keyup.enter="getDataCurrentPage()" v-model="current_page"
-                                                   class="pagination-current-page" />
-                                            <a href="javascript:void(0)" :style="{
-                                                'pointer-events':
-                                                    membersPagination.last_page == membersPagination.current_page
-                                                        ? 'none'
-                                                        : '',
-                                            }" @click.prevent="getData(membersPagination.current_page + 1)">
+                                            <input
+                                                type="text"
+                                                @keyup.enter="
+                                                    getDataCurrentPage()
+                                                "
+                                                v-model="current_page"
+                                                class="pagination-current-page"
+                                            />
+                                            <a
+                                                href="javascript:void(0)"
+                                                :style="{
+                                                    'pointer-events':
+                                                        membersPagination.last_page ==
+                                                        membersPagination.current_page
+                                                            ? 'none'
+                                                            : '',
+                                                }"
+                                                @click.prevent="
+                                                    getData(
+                                                        membersPagination.current_page +
+                                                            1
+                                                    )
+                                                "
+                                            >
                                                 <span>&gt;</span>
                                             </a>
                                         </div>
@@ -656,249 +1045,731 @@ export default {
                         </div>
 
                         <!-- start .table-responsive-->
-                        <div class="table-responsive mb-3 custom-table-theme position-relative" ref="exportable_table" id="printData">
+                        <div
+                            class="table-responsive mb-3 custom-table-theme position-relative"
+                            ref="exportable_table"
+                            id="printData"
+                        >
                             <!--       start loader       -->
                             <loader size="large" v-if="isLoader" />
                             <!--       end loader       -->
-                            <div class="row data-header-print" :class="[$i18n.locale == 'ar' ? 'dir-print-rtl' :'dir-print-ltr']">
-                                <div class="col-md-4" style="width: 15%; padding: 0 0 10px 20px; display: inline-block;">
-                                    <img style="width: 70%; " :src="'/images/sulib.png'">
+                            <div
+                                class="row data-header-print"
+                                :class="[
+                                    $i18n.locale == 'ar'
+                                        ? 'dir-print-rtl'
+                                        : 'dir-print-ltr',
+                                ]"
+                            >
+                                <div
+                                    class="col-md-4"
+                                    style="
+                                        width: 15%;
+                                        padding: 0 0 10px 20px;
+                                        display: inline-block;
+                                    "
+                                >
+                                    <img
+                                        style="width: 70%"
+                                        :src="'/images/sulib.png'"
+                                    />
                                 </div>
-                                <div class="text-center" style="width: 69%; padding-top: 5px; display: inline-block;">
-                                    <div style="width:100%; display: inline-block;">
-                                        <h2 style="font-weight: bold">{{ $t('general.SulaibikhatClub') }}</h2>
-                                        <h2 style="font-weight: bold"> {{ $t("general.StatementOfAcceptedMembers") }} </h2>
+                                <div
+                                    class="text-center"
+                                    style="
+                                        width: 69%;
+                                        padding-top: 5px;
+                                        display: inline-block;
+                                    "
+                                >
+                                    <div
+                                        style="
+                                            width: 100%;
+                                            display: inline-block;
+                                        "
+                                    >
+                                        <h2 style="font-weight: bold">
+                                            {{ $t("general.SulaibikhatClub") }}
+                                        </h2>
+                                        <h2 style="font-weight: bold">
+                                            {{
+                                                $t(
+                                                    "general.StatementOfAcceptedMembers"
+                                                )
+                                            }}
+                                        </h2>
                                     </div>
                                 </div>
-                                <div class="text-center" style="width: 15%; display: inline-block;">
-                                </div>
-
+                                <div
+                                    class="text-center"
+                                    style="width: 15%; display: inline-block"
+                                ></div>
                             </div>
-                            <table class="table table-borderless table-hover table-centered m-0" :class="[$i18n.locale == 'ar' ? 'dir-print-rtl' :'dir-print-ltr']">
+                            <table
+                                class="table table-borderless table-hover table-centered m-0"
+                                :class="[
+                                    $i18n.locale == 'ar'
+                                        ? 'dir-print-rtl'
+                                        : 'dir-print-ltr',
+                                ]"
+                            >
                                 <thead>
-                                <tr>
-                                    <th v-if="enabled3" class="do-not-print" scope="col" style="width: 0">
-                                        <div class="form-check custom-control">
-                                            <input class="form-check-input" type="checkbox" v-model="isCheckAll"
-                                                   style="width: 17px; height: 17px" />
-                                        </div>
-                                    </th>
-                                    <th>
-                                        <div class="d-flex justify-content-center">
-                                            <span>{{ $t("general.M") }}</span>
-                                        </div>
-                                    </th>
-                                    <th v-if="setting.first_name">
-                                        <div class="d-flex justify-content-center">
-                                            <span>{{ getCompanyKey("member_first_name") }}</span>
-                                            <div class="arrow-sort">
-                                                <i class="fas fa-arrow-up"
-                                                   @click="members.sort(sortString('name'))"></i>
-                                                <i class="fas fa-arrow-down"
-                                                   @click="members.sort(sortString('-name'))"></i>
+                                    <tr>
+                                        <th
+                                            v-if="enabled3"
+                                            class="do-not-print"
+                                            scope="col"
+                                            style="width: 0"
+                                        >
+                                            <div
+                                                class="form-check custom-control"
+                                            >
+                                                <input
+                                                    class="form-check-input"
+                                                    type="checkbox"
+                                                    v-model="isCheckAll"
+                                                    style="
+                                                        width: 17px;
+                                                        height: 17px;
+                                                    "
+                                                />
                                             </div>
-                                        </div>
-                                    </th>
-                                    <th v-if="setting.second_name">
-                                        <div class="d-flex justify-content-center">
-                                            <span>{{ getCompanyKey("member_second_name") }}</span>
-                                            <div class="arrow-sort">
-                                                <i class="fas fa-arrow-up"
-                                                   @click="members.sort(sortString('name_e'))"></i>
-                                                <i class="fas fa-arrow-down"
-                                                   @click="members.sort(sortString('-name_e'))"></i>
+                                        </th>
+                                        <th>
+                                            <div
+                                                class="d-flex justify-content-center"
+                                            >
+                                                <span>{{
+                                                    $t("general.M")
+                                                }}</span>
                                             </div>
-                                        </div>
-                                    </th>
-                                    <th v-if="setting.third_name">
-                                        <div class="d-flex justify-content-center">
-                                            <span>{{ getCompanyKey("member_third_name") }}</span>
-                                            <div class="arrow-sort">
-                                                <i class="fas fa-arrow-up"
-                                                   @click="members.sort(sortString('name_e'))"></i>
-                                                <i class="fas fa-arrow-down"
-                                                   @click="members.sort(sortString('-name_e'))"></i>
+                                        </th>
+                                        <th v-if="setting.first_name">
+                                            <div
+                                                class="d-flex justify-content-center"
+                                            >
+                                                <span>{{
+                                                    getCompanyKey(
+                                                        "member_first_name"
+                                                    )
+                                                }}</span>
+                                                <div class="arrow-sort">
+                                                    <i
+                                                        class="fas fa-arrow-up"
+                                                        @click="
+                                                            members.sort(
+                                                                sortString(
+                                                                    'name'
+                                                                )
+                                                            )
+                                                        "
+                                                    ></i>
+                                                    <i
+                                                        class="fas fa-arrow-down"
+                                                        @click="
+                                                            members.sort(
+                                                                sortString(
+                                                                    '-name'
+                                                                )
+                                                            )
+                                                        "
+                                                    ></i>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </th>
-                                    <th v-if="setting.last_name">
-                                        <div class="d-flex justify-content-center">
-                                            <span>{{ getCompanyKey("member_last_name") }}</span>
-                                            <div class="arrow-sort">
-                                                <i class="fas fa-arrow-up"
-                                                   @click="members.sort(sortString('name_e'))"></i>
-                                                <i class="fas fa-arrow-down"
-                                                   @click="members.sort(sortString('-name_e'))"></i>
+                                        </th>
+                                        <th v-if="setting.second_name">
+                                            <div
+                                                class="d-flex justify-content-center"
+                                            >
+                                                <span>{{
+                                                    getCompanyKey(
+                                                        "member_second_name"
+                                                    )
+                                                }}</span>
+                                                <div class="arrow-sort">
+                                                    <i
+                                                        class="fas fa-arrow-up"
+                                                        @click="
+                                                            members.sort(
+                                                                sortString(
+                                                                    'name_e'
+                                                                )
+                                                            )
+                                                        "
+                                                    ></i>
+                                                    <i
+                                                        class="fas fa-arrow-down"
+                                                        @click="
+                                                            members.sort(
+                                                                sortString(
+                                                                    '-name_e'
+                                                                )
+                                                            )
+                                                        "
+                                                    ></i>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </th>
-                                    <th v-if="setting.family_name">
-                                        <div class="d-flex justify-content-center">
-                                            <span>{{ getCompanyKey("member_family_name") }}</span>
-                                            <div class="arrow-sort">
-                                                <i class="fas fa-arrow-up"
-                                                   @click="members.sort(sortString('name_e'))"></i>
-                                                <i class="fas fa-arrow-down"
-                                                   @click="members.sort(sortString('-name_e'))"></i>
+                                        </th>
+                                        <th v-if="setting.third_name">
+                                            <div
+                                                class="d-flex justify-content-center"
+                                            >
+                                                <span>{{
+                                                    getCompanyKey(
+                                                        "member_third_name"
+                                                    )
+                                                }}</span>
+                                                <div class="arrow-sort">
+                                                    <i
+                                                        class="fas fa-arrow-up"
+                                                        @click="
+                                                            members.sort(
+                                                                sortString(
+                                                                    'name_e'
+                                                                )
+                                                            )
+                                                        "
+                                                    ></i>
+                                                    <i
+                                                        class="fas fa-arrow-down"
+                                                        @click="
+                                                            members.sort(
+                                                                sortString(
+                                                                    '-name_e'
+                                                                )
+                                                            )
+                                                        "
+                                                    ></i>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </th>
-                                    <th v-if="setting.birth_date">
-                                        <div class="d-flex justify-content-center">
-                                            <span>{{ getCompanyKey("member_birth_date") }}</span>
-                                            <div class="arrow-sort">
-                                                <i class="fas fa-arrow-up"
-                                                   @click="members.sort(sortString('birth_date'))"></i>
-                                                <i class="fas fa-arrow-down"
-                                                   @click="members.sort(sortString('-birth_date'))"></i>
+                                        </th>
+                                        <th v-if="setting.last_name">
+                                            <div
+                                                class="d-flex justify-content-center"
+                                            >
+                                                <span>{{
+                                                    getCompanyKey(
+                                                        "member_last_name"
+                                                    )
+                                                }}</span>
+                                                <div class="arrow-sort">
+                                                    <i
+                                                        class="fas fa-arrow-up"
+                                                        @click="
+                                                            members.sort(
+                                                                sortString(
+                                                                    'name_e'
+                                                                )
+                                                            )
+                                                        "
+                                                    ></i>
+                                                    <i
+                                                        class="fas fa-arrow-down"
+                                                        @click="
+                                                            members.sort(
+                                                                sortString(
+                                                                    '-name_e'
+                                                                )
+                                                            )
+                                                        "
+                                                    ></i>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </th>
-                                    <th v-if="setting.membership_number">
-                                        <div class="d-flex justify-content-center">
-                                            <span>{{ getCompanyKey("member_membership_number") }}</span>
-                                        </div>
-                                    </th>
-                                    <th v-if="enabled3" class="do-not-print"><i class="fas fa-ellipsis-v"></i></th>
-                                </tr>
+                                        </th>
+                                        <th v-if="setting.family_name">
+                                            <div
+                                                class="d-flex justify-content-center"
+                                            >
+                                                <span>{{
+                                                    getCompanyKey(
+                                                        "member_family_name"
+                                                    )
+                                                }}</span>
+                                                <div class="arrow-sort">
+                                                    <i
+                                                        class="fas fa-arrow-up"
+                                                        @click="
+                                                            members.sort(
+                                                                sortString(
+                                                                    'name_e'
+                                                                )
+                                                            )
+                                                        "
+                                                    ></i>
+                                                    <i
+                                                        class="fas fa-arrow-down"
+                                                        @click="
+                                                            members.sort(
+                                                                sortString(
+                                                                    '-name_e'
+                                                                )
+                                                            )
+                                                        "
+                                                    ></i>
+                                                </div>
+                                            </div>
+                                        </th>
+                                        <th v-if="setting.birth_date">
+                                            <div
+                                                class="d-flex justify-content-center"
+                                            >
+                                                <span>{{
+                                                    getCompanyKey(
+                                                        "member_birth_date"
+                                                    )
+                                                }}</span>
+                                                <div class="arrow-sort">
+                                                    <i
+                                                        class="fas fa-arrow-up"
+                                                        @click="
+                                                            members.sort(
+                                                                sortString(
+                                                                    'birth_date'
+                                                                )
+                                                            )
+                                                        "
+                                                    ></i>
+                                                    <i
+                                                        class="fas fa-arrow-down"
+                                                        @click="
+                                                            members.sort(
+                                                                sortString(
+                                                                    '-birth_date'
+                                                                )
+                                                            )
+                                                        "
+                                                    ></i>
+                                                </div>
+                                            </div>
+                                        </th>
+                                        <th v-if="setting.membership_number">
+                                            <div
+                                                class="d-flex justify-content-center"
+                                            >
+                                                <span>{{
+                                                    getCompanyKey(
+                                                        "member_membership_number"
+                                                    )
+                                                }}</span>
+                                            </div>
+                                        </th>
+                                        <th
+                                            v-if="enabled3"
+                                            class="do-not-print"
+                                        >
+                                            <i class="fas fa-ellipsis-v"></i>
+                                        </th>
+                                    </tr>
                                 </thead>
                                 <tbody v-if="members.length > 0">
-                                <tr
-                                    v-for="(data, index) in members" :key="data.id"
-                                    @click.capture="checkRow(data.id)"
-                                    @dblclick.prevent="$bvModal.show(`modal-create-${data.id}`)"
-                                    class="body-tr-custom"
-                                >
-                                    <td v-if="enabled3" class="do-not-print">
-                                        <div class="form-check custom-control" style="min-height: 1.9em">
-                                            <input style="width: 17px; height: 17px" class="form-check-input"
-                                                   type="checkbox" :value="data.id" v-model="checkAll" />
-                                        </div>
-                                    </td>
-                                    <td> {{index + 1}}</td>
-                                    <td v-if="setting.first_name">
-                                        {{ data.first_name }}
-                                    </td>
-                                    <td v-if="setting.second_name">
-                                        {{ data.second_name }}
-                                    </td>
-                                    <td v-if="setting.third_name">
-                                        {{ data.third_name }}
-                                    </td>
-                                    <td v-if="setting.last_name">
-                                        {{ data.last_name }}
-                                    </td>
-                                    <td v-if="setting.family_name">
-                                        {{ data.family_name }}
-                                    </td>
-                                    <td v-if="setting.birth_date">
-                                        {{ data.birth_date }}
-                                    </td>
-                                    <td v-if="setting.membership_number">
-                                        {{ data.membership_number }}
-                                    </td>
-                                    <td v-if="enabled3" class="do-not-print">
-                                        <button @mouseover="log(data.id)" @mousemove="log(data.id)" type="button"
-                                                class="btn" data-toggle="tooltip"
-                                                :data-placement="$i18n.locale == 'en' ? 'left' : 'right'" :title="Tooltip">
-                                            <i class="fe-info" style="font-size: 22px"></i>
-                                        </button>
-                                    </td>
-
-                                    <!--  create   -->
-                                    <b-modal :id="`modal-create-${data.id}`" :title="getCompanyKey('member_create_form')" title-class="font-18"
-                                              body-class="p-4 " :hide-footer="true" @show="resetModalEdit(data.id)"
-                                             @hidden="resetModalHiddenEdit">
-                                        <form>
-                                            <div class="mb-3 d-flex justify-content-end">
-                                                <b-button variant="success" type="submit" class="mx-1" v-if="!isLoader"
-                                                          @click.prevent="AddSubmit()">
-                                                    {{ $t("general.Edit") }}
-                                                </b-button>
-
-                                                <b-button variant="success" class="mx-1" disabled v-else>
-                                                    <b-spinner small></b-spinner>
-                                                    <span class="sr-only">{{ $t("login.Loading") }}...</span>
-                                                </b-button>
-                                                <b-button @click.prevent="$bvModal.hide(`modal-create-${data.id}`)" variant="danger" type="button">
-                                                    {{ $t("general.Cancel") }}
-                                                </b-button>
+                                    <tr
+                                        v-for="(data, index) in members"
+                                        :key="data.id"
+                                        @click.capture="checkRow(data.id)"
+                                        @dblclick.prevent="
+                                            $bvModal.show(
+                                                `modal-create-${data.id}`
+                                            )
+                                        "
+                                        class="body-tr-custom"
+                                    >
+                                        <td
+                                            v-if="enabled3"
+                                            class="do-not-print"
+                                        >
+                                            <div
+                                                class="form-check custom-control"
+                                                style="min-height: 1.9em"
+                                            >
+                                                <input
+                                                    style="
+                                                        width: 17px;
+                                                        height: 17px;
+                                                    "
+                                                    class="form-check-input"
+                                                    type="checkbox"
+                                                    :value="data.id"
+                                                    v-model="checkAll"
+                                                />
                                             </div>
-                                            <div class="row">
-                                                <div class="col-md-12">
-                                                    <div class="form-group position-relative">
-                                                        <label class="control-label">
-                                                            {{ getCompanyKey("status") }}
+                                        </td>
+                                        <td>{{ index + 1 }}</td>
+                                        <td v-if="setting.first_name">
+                                            {{ data.first_name }}
+                                        </td>
+                                        <td v-if="setting.second_name">
+                                            {{ data.second_name }}
+                                        </td>
+                                        <td v-if="setting.third_name">
+                                            {{ data.third_name }}
+                                        </td>
+                                        <td v-if="setting.last_name">
+                                            {{ data.last_name }}
+                                        </td>
+                                        <td v-if="setting.family_name">
+                                            {{ data.family_name }}
+                                        </td>
+                                        <td v-if="setting.birth_date">
+                                            {{ data.birth_date }}
+                                        </td>
+                                        <td v-if="setting.membership_number">
+                                            {{ data.membership_number }}
+                                        </td>
+                                        <td
+                                            v-if="enabled3"
+                                            class="do-not-print"
+                                        >
+                                            <button
+                                                @mouseover="log(data.id)"
+                                                @mousemove="log(data.id)"
+                                                type="button"
+                                                class="btn"
+                                                data-toggle="tooltip"
+                                                :data-placement="
+                                                    $i18n.locale == 'en'
+                                                        ? 'left'
+                                                        : 'right'
+                                                "
+                                                :title="Tooltip"
+                                            >
+                                                <i
+                                                    class="fe-info"
+                                                    style="font-size: 22px"
+                                                ></i>
+                                            </button>
+                                        </td>
 
-                                                        </label>
-                                                        <multiselect @input="showStatusModal" v-model="create.status_id"
-                                                                     :options="statuses.map((type) => type.id)" :custom-label="(opt) => $i18n.locale == 'ar' ? statuses.find((x) => x.id == opt).name
-                                                    : statuses.find((x) => x.id == opt).name_e">
-                                                        </multiselect>
-                                                        <div v-if="$v.create.status_id.$error || errors.status_id" class="text-danger">
-                                                            {{ $t("general.fieldIsRequired") }}
+                                        <!--  create   -->
+                                        <b-modal
+                                            :id="`modal-create-${data.id}`"
+                                            :title="
+                                                getCompanyKey(
+                                                    'member_create_form'
+                                                )
+                                            "
+                                            title-class="font-18"
+                                            body-class="p-4 "
+                                            :hide-footer="true"
+                                            @show="resetModalEdit(data.id)"
+                                            @hidden="resetModalHiddenEdit"
+                                        >
+                                            <form>
+                                                <div
+                                                    class="mb-3 d-flex justify-content-end"
+                                                >
+                                                    <b-button
+                                                        variant="success"
+                                                        type="submit"
+                                                        class="mx-1"
+                                                        v-if="!isLoader"
+                                                        @click.prevent="
+                                                            AddSubmit()
+                                                        "
+                                                    >
+                                                        {{ $t("general.Edit") }}
+                                                    </b-button>
+
+                                                    <b-button
+                                                        variant="success"
+                                                        class="mx-1"
+                                                        disabled
+                                                        v-else
+                                                    >
+                                                        <b-spinner
+                                                            small
+                                                        ></b-spinner>
+                                                        <span class="sr-only"
+                                                            >{{
+                                                                $t(
+                                                                    "login.Loading"
+                                                                )
+                                                            }}...</span
+                                                        >
+                                                    </b-button>
+                                                    <b-button
+                                                        @click.prevent="
+                                                            $bvModal.hide(
+                                                                `modal-create-${data.id}`
+                                                            )
+                                                        "
+                                                        variant="danger"
+                                                        type="button"
+                                                    >
+                                                        {{
+                                                            $t("general.Cancel")
+                                                        }}
+                                                    </b-button>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-12">
+                                                        <div
+                                                            class="form-group position-relative"
+                                                        >
+                                                            <label
+                                                                class="control-label"
+                                                            >
+                                                                {{
+                                                                    getCompanyKey(
+                                                                        "status"
+                                                                    )
+                                                                }}
+                                                            </label>
+                                                            <multiselect
+                                                                @input="
+                                                                    showStatusModal
+                                                                "
+                                                                v-model="
+                                                                    create.status_id
+                                                                "
+                                                                :options="
+                                                                    statuses.map(
+                                                                        (
+                                                                            type
+                                                                        ) =>
+                                                                            type.id
+                                                                    )
+                                                                "
+                                                                :custom-label="
+                                                                    (opt) =>
+                                                                        $i18n.locale ==
+                                                                        'ar'
+                                                                            ? statuses.find(
+                                                                                  (
+                                                                                      x
+                                                                                  ) =>
+                                                                                      x.id ==
+                                                                                      opt
+                                                                              )
+                                                                                  .name
+                                                                            : statuses.find(
+                                                                                  (
+                                                                                      x
+                                                                                  ) =>
+                                                                                      x.id ==
+                                                                                      opt
+                                                                              )
+                                                                                  .name_e
+                                                                "
+                                                            >
+                                                            </multiselect>
+                                                            <div
+                                                                v-if="
+                                                                    $v.create
+                                                                        .status_id
+                                                                        .$error ||
+                                                                    errors.status_id
+                                                                "
+                                                                class="text-danger"
+                                                            >
+                                                                {{
+                                                                    $t(
+                                                                        "general.fieldIsRequired"
+                                                                    )
+                                                                }}
+                                                            </div>
+                                                            <template
+                                                                v-if="
+                                                                    errors.status_id
+                                                                "
+                                                            >
+                                                                <ErrorMessage
+                                                                    v-for="(
+                                                                        errorMessage,
+                                                                        index
+                                                                    ) in errors.status_id"
+                                                                    :key="index"
+                                                                    >{{
+                                                                        errorMessage
+                                                                    }}
+                                                                </ErrorMessage>
+                                                            </template>
                                                         </div>
-                                                        <template v-if="errors.status_id">
-                                                            <ErrorMessage v-for="(errorMessage, index) in errors.status_id"
-                                                                          :key="index">{{ errorMessage }}
-                                                            </ErrorMessage>
-                                                        </template>
+                                                    </div>
+                                                    <div class="col-md-12">
+                                                        <div
+                                                            class="form-group position-relative"
+                                                        >
+                                                            <label
+                                                                class="control-label"
+                                                            >
+                                                                {{
+                                                                    getCompanyKey(
+                                                                        "financial_status"
+                                                                    )
+                                                                }}
+                                                            </label>
+                                                            <multiselect
+                                                                @input="
+                                                                    showFinancialStatusModal
+                                                                "
+                                                                v-model="
+                                                                    create.financial_status_id
+                                                                "
+                                                                :options="
+                                                                    financialStatuses.map(
+                                                                        (
+                                                                            type
+                                                                        ) =>
+                                                                            type.id
+                                                                    )
+                                                                "
+                                                                :custom-label="
+                                                                    (opt) =>
+                                                                        $i18n.locale ==
+                                                                        'ar'
+                                                                            ? financialStatuses.find(
+                                                                                  (
+                                                                                      x
+                                                                                  ) =>
+                                                                                      x.id ==
+                                                                                      opt
+                                                                              )
+                                                                                  .name
+                                                                            : financialStatuses.find(
+                                                                                  (
+                                                                                      x
+                                                                                  ) =>
+                                                                                      x.id ==
+                                                                                      opt
+                                                                              )
+                                                                                  .name_e
+                                                                "
+                                                            >
+                                                            </multiselect>
+                                                            <div
+                                                                v-if="
+                                                                    $v.create
+                                                                        .financial_status_id
+                                                                        .$error ||
+                                                                    errors.financial_status_id
+                                                                "
+                                                                class="text-danger"
+                                                            >
+                                                                {{
+                                                                    $t(
+                                                                        "general.fieldIsRequired"
+                                                                    )
+                                                                }}
+                                                            </div>
+                                                            <template
+                                                                v-if="
+                                                                    errors.financial_status_id
+                                                                "
+                                                            >
+                                                                <ErrorMessage
+                                                                    v-for="(
+                                                                        errorMessage,
+                                                                        index
+                                                                    ) in errors.financial_status_id"
+                                                                    :key="index"
+                                                                    >{{
+                                                                        errorMessage
+                                                                    }}
+                                                                </ErrorMessage>
+                                                            </template>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-12">
+                                                        <div
+                                                            class="form-group position-relative"
+                                                        >
+                                                            <label
+                                                                class="control-label"
+                                                            >
+                                                                {{
+                                                                    getCompanyKey(
+                                                                        "sponsor"
+                                                                    )
+                                                                }}
+                                                            </label>
+                                                            <multiselect
+                                                                @input="
+                                                                    showSponsorModal
+                                                                "
+                                                                v-model="
+                                                                    create.sponsor_id
+                                                                "
+                                                                :options="
+                                                                    sponsors.map(
+                                                                        (
+                                                                            type
+                                                                        ) =>
+                                                                            type.id
+                                                                    )
+                                                                "
+                                                                :custom-label="
+                                                                    $i18n.locale ==
+                                                                    'ar'
+                                                                        ? (
+                                                                              opt
+                                                                          ) =>
+                                                                              sponsors.find(
+                                                                                  (
+                                                                                      x
+                                                                                  ) =>
+                                                                                      x.id ==
+                                                                                      opt
+                                                                              )
+                                                                                  .name
+                                                                        : (
+                                                                              opt
+                                                                          ) =>
+                                                                              sponsors.find(
+                                                                                  (
+                                                                                      x
+                                                                                  ) =>
+                                                                                      x.id ==
+                                                                                      opt
+                                                                              )
+                                                                                  .name_e
+                                                                "
+                                                            >
+                                                            </multiselect>
+                                                            <div
+                                                                v-if="
+                                                                    $v.create
+                                                                        .sponsor_id
+                                                                        .$error ||
+                                                                    errors.sponsor_id
+                                                                "
+                                                                class="text-danger"
+                                                            >
+                                                                {{
+                                                                    $t(
+                                                                        "general.fieldIsRequired"
+                                                                    )
+                                                                }}
+                                                            </div>
+                                                            <template
+                                                                v-if="
+                                                                    errors.sponsor_id
+                                                                "
+                                                            >
+                                                                <ErrorMessage
+                                                                    v-for="(
+                                                                        errorMessage,
+                                                                        index
+                                                                    ) in errors.sponsor_id"
+                                                                    :key="index"
+                                                                    >{{
+                                                                        errorMessage
+                                                                    }}
+                                                                </ErrorMessage>
+                                                            </template>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                                <div class="col-md-12">
-                                                    <div class="form-group position-relative">
-                                                        <label class="control-label">
-                                                            {{ getCompanyKey("financial_status") }}
-
-                                                        </label>
-                                                        <multiselect @input="showFinancialStatusModal" v-model="create.financial_status_id"
-                                                                     :options="financialStatuses.map((type) => type.id)" :custom-label="(opt) => $i18n.locale == 'ar' ? financialStatuses.find((x) => x.id == opt).name
-                                                    : financialStatuses.find((x) => x.id == opt).name_e">
-                                                        </multiselect>
-                                                        <div v-if="$v.create.financial_status_id.$error || errors.financial_status_id"
-                                                             class="text-danger">
-                                                            {{ $t("general.fieldIsRequired") }}
-                                                        </div>
-                                                        <template v-if="errors.financial_status_id">
-                                                            <ErrorMessage v-for="(errorMessage, index) in errors.financial_status_id"
-                                                                          :key="index">{{ errorMessage }}
-                                                            </ErrorMessage>
-                                                        </template>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-12">
-                                                    <div class="form-group position-relative">
-                                                        <label class="control-label">
-                                                            {{ getCompanyKey("sponsor") }}
-
-                                                        </label>
-                                                        <multiselect @input="showSponsorModal" v-model="create.sponsor_id"
-                                                                     :options="sponsors.map((type) => type.id)"
-                                                                     :custom-label="$i18n.locale == 'ar' ? (opt) => sponsors.find((x) => x.id == opt).name : (opt) => sponsors.find((x) => x.id == opt).name_e">
-                                                        </multiselect>
-                                                        <div v-if="$v.create.sponsor_id.$error || errors.sponsor_id"
-                                                             class="text-danger">
-                                                            {{ $t("general.fieldIsRequired") }}
-                                                        </div>
-                                                        <template v-if="errors.sponsor_id">
-                                                            <ErrorMessage v-for="(errorMessage, index) in errors.sponsor_id"
-                                                                          :key="index">{{ errorMessage }}
-                                                            </ErrorMessage>
-                                                        </template>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </form>
-                                    </b-modal>
-                                    <!--  /create   -->
-                                </tr>
+                                            </form>
+                                        </b-modal>
+                                        <!--  /create   -->
+                                    </tr>
                                 </tbody>
                                 <tbody v-else>
-                                <tr>
-                                    <th class="text-center" colspan="30">
-                                        {{ $t("general.notDataFound") }}
-                                    </th>
-                                </tr>
+                                    <tr>
+                                        <th class="text-center" colspan="30">
+                                            {{ $t("general.notDataFound") }}
+                                        </th>
+                                    </tr>
                                 </tbody>
                             </table>
                         </div>
@@ -915,55 +1786,80 @@ export default {
     display: none;
 }
 @media print {
-    .do-not-print {
-        display: none;
+    /* General Table Styling */
+    table.table {
+        width: 100%; /* Ensure the table spans the full width */
+        border-collapse: collapse; /* Remove gaps between cells */
+        border: 1px solid black; /* Add a visible border */
+        font-size: 12px; /* Adjust font size for printing */
     }
 
-    .arrow-sort {
-        display: none;
+    /* Table Header (thead) Styling */
+    table.table thead {
+        display: table-header-group; /* Ensure the header repeats on each page */
+        background-color: #f5f5f5; /* Light gray background for headers */
+        color: black; /* Text color for headers */
+        text-align: center; /* Center align text in headers */
+        font-weight: bold; /* Make header text bold */
+        border-bottom: 2px solid black; /* Add a distinct bottom border */
     }
 
-    .text-success {
-        background-color: unset;
-        color: #6c757d !important;
-        border: unset;
+    /* Table Rows (tr) and Cells (td) Styling */
+    table.table tbody tr {
+        page-break-inside: avoid; /* Prevent rows from breaking across pages */
     }
 
-    .text-danger {
-        background-color: unset;
-        color: #6c757d !important;
-        border: unset;
+    table.table th,
+    table.table td {
+        border: 1px solid black; /* Add borders for all cells */
+        padding: 8px; /* Add padding for better readability */
+        text-align: left; /* Align text to the left */
     }
-    td{
-        border: 1px solid black !important;
-        font-size: 16px !important;
-        font-weight: bold !important
+
+    /* Remove Hover Effects for Printing */
+    table.table-hover tbody tr:hover {
+        background-color: transparent; /* Disable hover background */
     }
-    th{
-        border: 1px solid black !important;
-        color: black;
-        text-align: center;
-        font-size: 16px !important;
-        font-weight: bold !important
+
+    /* Centering Table Content */
+    table.table-centered td,
+    table.table-centered th {
+        text-align: center; /* Center all text */
+        vertical-align: middle; /* Vertically center text */
     }
-    thead{
-        border: 1px solid black !important;
+
+    /* Remove Borderless Appearance */
+    table.table-borderless td,
+    table.table-borderless th {
+        border: 1px solid black; /* Force borders for printing */
     }
-    tbody{
-        border: 1px solid black !important;
+
+    body {
+        margin: 0;
+        padding: 0;
     }
-    table {
-        border: 1px solid black !important;
-    }
+
+    /* Header Styling for Print */
     .data-header-print {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
         width: 100%;
-        display: inline-block;
+        margin-bottom: 10px;
+        background-color: white;
+        /* border-bottom: 2px solid black; /* Add bottom border for header */
+        padding: 10px 0;
     }
+
+    /* Additional Styling for RTL */
     .dir-print-rtl {
-        direction: rtl !important;
+        direction: rtl;
+        text-align: right;
     }
+
     .dir-print-ltr {
-        direction: ltr !important;
+        direction: ltr;
+        text-align: left;
     }
 }
 </style>

@@ -1897,7 +1897,7 @@
         "PrintDay": "Print Day",
         "DueDay": "Due Day",
         "RentContractTable": "Rent Contract Table",
-        "Can be increased" : "Can be increased",
+        "Can be increased": "Can be increased",
         "RentContractTable": "Rent Contract Table",
         "ActualTime": "Actual Time",
         "ExpectedTime": "Expected Time",
@@ -1942,6 +1942,7 @@
         "printDocuments": "Print Documents",
         "showSponsorPrint": "Show Sponsor Print",
         "application_number": "Application Number",
-        "sponser": "Sponsor"
+        "sponser": "Sponsor",
+        "filterMembers": "Filter Members"
     }
 }

@@ -6,7 +6,7 @@ use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Routing\Controller;
-
+use Modules\ClubMembers\Entities\CmMemberRequest;
 use Modules\ClubMembers\Http\Requests\CmMemberRequestRequest;
 use Modules\ClubMembers\Repositories\CmMemberRequest\CmMemberRequestInterface;
 use Modules\ClubMembers\Transformers\CmMemberRequestResource;
@@ -156,6 +156,12 @@ class CmMemberRequestController extends Controller
     public function checkNationalId(Request $request)
     {
         return $this->modelInterface->checkNationalId($request);
+    }
+
+    public function getNamesMembers()
+    {
+        $data = CmMemberRequest::select('id', 'full_name')->get();
+        return responseJson(200, "success", $data);
     }
 
 }
