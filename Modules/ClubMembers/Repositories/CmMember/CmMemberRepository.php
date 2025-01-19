@@ -764,6 +764,7 @@ class CmMemberRepository implements CmMemberInterface
             });
         }
 
+
         if ($request->per_page) {
             return ['data' => $models->paginate($request->per_page), 'paginate' => true];
         } else {

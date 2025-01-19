@@ -16,38 +16,36 @@ class CmMemberRequestRepository implements CmMemberRequestInterface
         $this->model = $model;
     }
 
-        public function all($request)
-        {
-            $models = $this->model->filter($request)->orderBy($request->order ? $request->order : 'id', $request->sort ? $request->sort : 'DESC');
+    public function all($request)
+    {
+        $models = $this->model->filter($request)->orderBy($request->order ? $request->order : 'id', $request->sort ? $request->sort : 'DESC');
 
-            if ($request->member_type_id) {
-                $models->where('member_type_id', $request->member_type_id);
-            }
-            if ($request->member_types) {
-                $models->whereIn('member_type_id', [1,2]);
-            }
-
-            if ($request->member_id){
-                $models->where('id', $request->member_id);
-            }
-            if ($request->doesNotHaveTransaction)
-            {
-                $models->whereDoesntHave('cmTransaction');
-            }
-            /*dd($models->get());*/
-            if ($request->hasTransaction)
-            {
-                $models->whereHas('cmTransaction');
-            }
-
-            if ($request->per_page) {
-                return ['data' => $models->paginate($request->per_page), 'paginate' => true];
-            } elseif ($request->limet){
-                return ['data' => $models->take($request->limet)->get(), 'paginate' => false];
-            }else {
-                return ['data' => $models->get(), 'paginate' => false];
-            }
+        if ($request->member_type_id) {
+            $models->where('member_type_id', $request->member_type_id);
         }
+        if ($request->member_types) {
+            $models->whereIn('member_type_id', [1, 2]);
+        }
+
+        if ($request->member_id) {
+            $models->where('id', $request->member_id);
+        }
+        if ($request->doesNotHaveTransaction) {
+            $models->whereDoesntHave('cmTransaction');
+        }
+        /*dd($models->get());*/
+        if ($request->hasTransaction) {
+            $models->whereHas('cmTransaction');
+        }
+
+        if ($request->per_page) {
+            return ['data' => $models->paginate($request->per_page), 'paginate' => true];
+        } elseif ($request->limet) {
+            return ['data' => $models->take($request->limet)->get(), 'paginate' => false];
+        } else {
+            return ['data' => $models->get(), 'paginate' => false];
+        }
+    }
 
 
 

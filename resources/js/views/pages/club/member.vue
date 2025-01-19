@@ -61,6 +61,9 @@ export default {
   },
   data() {
     return {
+        inputPerPage: null,
+        debounceTimer: null,
+        serachInput: "",
         sponsers: [],
       transactions: [],
       page_title: {},
@@ -261,6 +264,84 @@ export default {
     },
   },
   methods: {
+        handelPerPageInput() {
+            clearTimeout(this.debounceTimer);
+            this.debounceTimer = setTimeout(() => {
+                this.per_page = this.inputPerPage;
+                this.getData();
+            }, 1000);
+        },
+        printElement(selector) {
+            const elementTest = document.querySelector(selector);
+
+            if (elementTest) {
+                const rowsPerPage = 11;
+                const members = this.members;
+                const totalPages = Math.ceil(members.length / rowsPerPage);
+
+
+                const headerElement =
+                    document.querySelector(".data-header-print");
+                headerElement.style.display = "flex";
+                const header = headerElement.outerHTML;
+                headerElement.style.display = "none";
+
+                const originalTbody = document
+                    .querySelector(selector)
+                    .querySelector("tbody");
+                const allRows = Array.from(
+                    originalTbody.querySelectorAll("tr")
+                );
+
+                let printableContent = "";
+
+                for (let page = 0; page < totalPages; page++) {
+                    const startIndex = page * rowsPerPage;
+                    const pageRows = allRows.slice(
+                        startIndex,
+                        startIndex + rowsPerPage
+                    );
+
+
+                    const tbodyClone = document.createElement("tbody");
+                    pageRows.forEach((row) =>
+                        tbodyClone.appendChild(row.cloneNode(true))
+                    );
+
+
+                    const tableClone = document
+                        .querySelector(selector)
+                        .querySelector("table")
+                        .cloneNode(true);
+
+                    tableClone.querySelector("tbody").replaceWith(tbodyClone);
+
+                    printableContent += `
+                <div style="page-break-after: always;">
+                    ${header}
+                    ${tableClone.outerHTML}
+                </div>
+            `;
+                }
+
+                const container = document.createElement("div");
+                container.innerHTML = printableContent;
+                document.body.appendChild(container);
+
+                $(container).printThis({
+                    header: null,
+                    pageTitle: "Members Apply",
+                    importCSS: true,
+                    afterPrint: () => {
+                        console.log("Print completed");
+                        container.remove();
+                    },
+                });
+            } else {
+                console.log("Element to print not found", selector);
+            }
+        },
+
     async getSponsers() {
             this.isLoader = true;
             adminApi
@@ -842,9 +923,12 @@ export default {
                   >
                     <i class="fas fa-file-download"></i>
                   </button>
-                  <button v-print="'#printData'" class="custom-btn-dowonload">
-                    <i class="fe-printer"></i>
-                  </button>
+                  <button
+                                        @click="printElement('#printData')"
+                                        class="custom-btn-dowonload"
+                                    >
+                                        <i class="fe-printer"></i>
+                                    </button>
                 </div>
                 <!-- end create and printer -->
               </div>
@@ -951,6 +1035,25 @@ export default {
                     <!-- Basic dropdown -->
                   </div>
                   <!-- end filter and setting -->
+                                    <div
+                                        class="d-inline-flex align-items-center"
+                                    >
+                                        <label
+                                            for="rows"
+                                            class="control-label mb-0"
+                                        >
+                                            {{ $t("general.chooseRows") }}
+                                        </label>
+                                        <span class="mx-1">:</span>
+                                        <input
+                                            type="number"
+                                            id="rows"
+                                            v-model.number="inputPerPage"
+                                            @input="handelPerPageInput"
+                                            class="form-control-sm mb-0"
+                                            style="width: 70px"
+                                        />
+                                    </div>
 
                   <!-- start Pagination -->
                   <div
@@ -1314,11 +1417,71 @@ export default {
                 </b-modal>
                 <!--  /edit show transaction   -->
 
-              <table
-                class="table table-borderless table-hover table-centered m-0"
-                ref="exportable_table"
-                id="printData"
-              >
+             <div
+                            class="table-responsive mb-3 custom-table-theme position-relative"
+                            ref="exportable_table"
+                            id="printData"
+                        >
+                            <div
+                                class="row data-header-print"
+                                :class="[
+                                    $i18n.locale == 'ar'
+                                        ? 'dir-print-rtl'
+                                        : 'dir-print-ltr',
+                                ]"
+                            >
+                                <div
+                                    class="col-md-4"
+                                    style="
+                                        width: 15%;
+                                        padding: 0 0 10px 20px;
+                                        display: inline-block;
+                                    "
+                                >
+                                    <img
+                                        style="width: 70%"
+                                        :src="'/images/sulib.png'"
+                                    />
+                                </div>
+                                <div
+                                    class="text-center"
+                                    style="
+                                        width: 69%;
+                                        padding-top: 5px;
+                                        display: inline-block;
+                                    "
+                                >
+                                    <div
+                                        style="
+                                            width: 100%;
+                                            display: inline-block;
+                                        "
+                                    >
+                                        <h2 style="font-weight: bold">
+                                            {{ $t("general.SulaibikhatClub") }}
+                                        </h2>
+                                        <h2 style="font-weight: bold">
+                                            {{
+                                                $t(
+                                                    "general.members"
+                                                )
+                                            }}
+                                        </h2>
+                                    </div>
+                                </div>
+                                <div
+                                    class="text-center"
+                                    style="width: 15%; display: inline-block"
+                                ></div>
+                            </div>
+                                 <table
+                                class="table table-borderless table-hover table-centered m-0"
+                                :class="[
+                                    $i18n.locale == 'ar'
+                                        ? 'dir-print-rtl'
+                                        : 'dir-print-ltr',
+                                ]"
+                            >
                 <thead>
                   <tr>
                     <th
@@ -2702,6 +2865,7 @@ export default {
                   </tr>
                 </tbody>
               </table>
+             </div>
             </div>
             <!-- end .table-responsive-->
           </div>
@@ -2712,36 +2876,90 @@ export default {
 </template>
 
 <style>
+.data-header-print {
+    display: none;
+}
 @media print {
-  .do-not-print {
-    display: none;
-  }
+    @page {
+        size: landscape;
+        margin: 10mm; /* Adjust margins for better content fit */
+    }
 
-  .arrow-sort {
-    display: none;
-  }
+    /* General Table Styling */
+    table.table {
+        width: 100%; /* Ensure the table spans the full width */
+        border-collapse: collapse; /* Remove gaps between cells */
+        border: 1px solid black; /* Add a visible border */
+        font-size: 10px; /* Adjust font size for printing */
+    }
 
-  .text-success {
-    background-color: unset;
-    color: #6c757d !important;
-    border: unset;
-  }
+    /* Table Header (thead) Styling */
+    table.table thead {
+        display: table-header-group; /* Ensure the header repeats on each page */
+        background-color: #f5f5f5; /* Light gray background for headers */
+        color: black; /* Text color for headers */
+        text-align: center; /* Center align text in headers */
+        font-weight: bold; /* Make header text bold */
+        border-bottom: 2px solid black; /* Add a distinct bottom border */
+    }
 
-  .text-danger {
-    background-color: unset;
-    color: #6c757d !important;
-    border: unset;
-  }
-}
-thead th {
-  white-space: nowrap !important;
-}
-table td {
-  white-space: nowrap !important;
-}
-.custom-radio
-  .custom-control-input:disabled:checked
-  ~ .custom-control-label::before {
-  background-color: #2494be;
+    /* Table Rows (tr) and Cells (td) Styling */
+    table.table tbody tr {
+        page-break-inside: avoid; /* Prevent rows from breaking across pages */
+    }
+
+    table.table th,
+    table.table td {
+        border: 1px solid black; /* Add borders for all cells */
+        padding: 5px; /* Reduce padding for better space utilization */
+        text-align: left; /* Align text to the left */
+    }
+
+    /* Remove Hover Effects for Printing */
+    table.table-hover tbody tr:hover {
+        background-color: transparent; /* Disable hover background */
+    }
+
+    /* Centering Table Content */
+    table.table-centered td,
+    table.table-centered th {
+        text-align: center; /* Center all text */
+        vertical-align: middle; /* Vertically center text */
+    }
+
+    /* Remove Borderless Appearance */
+    table.table-borderless td,
+    table.table-borderless th {
+        border: 1px solid black; /* Force borders for printing */
+    }
+
+    body {
+        margin: 0;
+        padding: 0;
+    }
+
+    /* Header Styling for Print */
+    .data-header-print {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        margin-bottom: 10px;
+        background-color: white;
+        /* border-bottom: 2px solid black; /* Add bottom border for header */
+        padding: 10px 0;
+    }
+
+    /* Additional Styling for RTL */
+    .dir-print-rtl {
+        direction: rtl;
+        text-align: right;
+    }
+
+    .dir-print-ltr {
+        direction: ltr;
+        text-align: left;
+    }
 }
 </style>
+

@@ -609,6 +609,7 @@
         "12": "ديسمبر"
     },
     "general": {
+        "filterSponser": "فلتر الراعى",
         "storesTable": "جدول المخازن",
         "CreditNote": "اشعار دائن",
         "serialsTable": "جدول السيريال",

@@ -59,7 +59,8 @@ export default {
         return {
             selectedNameMember: [],
             membersNames: [],
-
+            sponsorsNames: [],
+            selectedNameSponser: [],
             inputPerPage: null,
             debounceTimer: null,
             serachInput: "",
@@ -183,8 +184,25 @@ export default {
         this.company_id = this.$store.getters["auth/company_id"];
         this.getData();
         this.getMemberNames();
+        this.getSponsersNames();
     },
     methods: {
+        applyFilters() {
+            if (
+                this.selectedNameMember &&
+                this.selectedNameSponser.length === 0
+            ) {
+                this.updateMembers();
+            } else if (
+                this.selectedNameSponser &&
+                this.selectedNameMember.length === 0
+            ) {
+                this.updateSponser();
+            } else {
+                this.updateMembers();
+            }
+        },
+
         updateMembers() {
             this.members = this.members.filter((member) =>
                 this.selectedNameMember.includes(member.id)
@@ -200,6 +218,13 @@ export default {
                 ? member.full_name
                 : member.full_name;
         },
+        updateSponser() {
+            console.log("updateSponser", this.selectedNameSponser);
+            this.members = this.members.filter((member) =>
+                this.selectedNameSponser.includes(member.sponsor_id)
+            );
+        },
+
         getMemberNames() {
             this.isLoader = true;
             adminApi
@@ -219,28 +244,51 @@ export default {
                     this.isLoader = false;
                 });
         },
+        getSponsersNames() {
+            this.isLoader = true;
+            adminApi
+                .get(`/club-members/sponsers`)
+                .then((res) => {
+                    const response = res.data;
+                    this.sponsorsNames = response.data;
+                })
+                .catch((err) => {
+                    Swal.fire({
+                        icon: "error",
+                        title: `${this.$t("general.Error")}`,
+                        text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                    });
+                })
+                .finally(() => {
+                    this.isLoader = false;
+                });
+        },
+        getSponsorsLabel(opt) {
+            const member = this.sponsorsNames.find((x) => x.id === opt);
+            if (!member) return null;
+            return this.$i18n.locale === "ar" ? member.name : member.name_e;
+        },
+
         printElement(selector) {
             const elementTest = document.querySelector(selector);
 
             if (elementTest) {
-                const rowsPerPage = 30; // Maximum rows per page
+                const rowsPerPage = 30;
                 const members = this.members;
                 const totalPages = Math.ceil(members.length / rowsPerPage);
 
-                // Temporarily show the header
                 const headerElement =
                     document.querySelector(".data-header-print");
-                headerElement.style.display = "flex"; // Make it visible temporarily
-                const header = headerElement.outerHTML; // Get header HTML
-                headerElement.style.display = "none"; // Restore original style
+                headerElement.style.display = "flex";
+                const header = headerElement.outerHTML;
+                headerElement.style.display = "none";
 
-                // Get the rendered <tbody> from the DOM
                 const originalTbody = document
                     .querySelector(selector)
                     .querySelector("tbody");
                 const allRows = Array.from(
                     originalTbody.querySelectorAll("tr")
-                ); // Get all rendered rows
+                );
 
                 let printableContent = "";
 
@@ -249,24 +297,19 @@ export default {
                     const pageRows = allRows.slice(
                         startIndex,
                         startIndex + rowsPerPage
-                    ); // Get rows for this page
-
-                    // Create a new <tbody> for the current page
+                    );
                     const tbodyClone = document.createElement("tbody");
                     pageRows.forEach((row) =>
                         tbodyClone.appendChild(row.cloneNode(true))
-                    ); // Clone rows for this page
+                    );
 
-                    // Clone the entire table
                     const tableClone = document
                         .querySelector(selector)
                         .querySelector("table")
                         .cloneNode(true);
 
-                    // Replace the table's <tbody> with the cloned, paginated <tbody>
                     tableClone.querySelector("tbody").replaceWith(tbodyClone);
 
-                    // Add header and table for this page
                     printableContent += `
                 <div style="page-break-after: always;">
                     ${header}
@@ -280,7 +323,7 @@ export default {
                 document.body.appendChild(container);
 
                 $(container).printThis({
-                    header: null, // Header is already included in the content
+                    header: null,
                     pageTitle: "Members Apply",
                     importCSS: true,
                     afterPrint: () => {
@@ -1076,7 +1119,7 @@ export default {
                         <b-modal
                             id="memberFilter"
                             title="Filter Members"
-                            @ok="updateMembers"
+                            @ok="applyFilters"
                             @cancel="getOriginalMembers"
                             ok-title="Apply"
                             cancel-title="Cancel"
@@ -1091,6 +1134,20 @@ export default {
                                         membersNames.map((type) => type.id)
                                     "
                                     :custom-label="getMemberLabel"
+                                    :multiple="true"
+                                >
+                                </multiselect>
+                            </div>
+                            <div class="form-group md-6">
+                                <label class="control-label">
+                                    {{ $t("general.filterSponser") }}
+                                </label>
+                                <multiselect
+                                    v-model="selectedNameSponser"
+                                    :options="
+                                        sponsorsNames.map((type) => type.id)
+                                    "
+                                    :custom-label="getSponsorsLabel"
                                     :multiple="true"
                                 >
                                 </multiselect>

@@ -42,7 +42,7 @@ class CmTransactionResource extends JsonResource
             'serial' => $this->serial
 
 
-//
+            //
 
 
 

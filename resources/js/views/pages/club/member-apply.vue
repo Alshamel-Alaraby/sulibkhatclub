@@ -50,6 +50,8 @@ export default {
         return {
             selectedNameMember: [],
             membersNames: [],
+            sponsorsNames: [],
+            selectedNameSponser: [],
             inputPerPage: null,
             debounceTimer: null,
             serachInput: "",
@@ -406,6 +408,7 @@ export default {
         this.getData();
         this.$store.dispatch("locationIp/getIp");
         this.getMemberNames();
+         this.getSponsersNames();
     },
     // directives: {
     //     print: {
@@ -417,9 +420,30 @@ export default {
     //     },
     // },
     methods: {
+        applyFilters() {
+            if (
+                this.selectedNameMember &&
+                this.selectedNameSponser.length === 0
+            ) {
+                this.updateMembers();
+            } else if (
+                this.selectedNameSponser &&
+                this.selectedNameMember.length === 0
+            ) {
+                this.updateSponser();
+            } else {
+                this.updateMembers();
+            }
+        },
         updateMembers() {
             this.members = this.members.filter((member) =>
                 this.selectedNameMember.includes(member.id)
+            );
+        },
+        updateSponser() {
+            console.log("updateSponser", this.selectedNameSponser);
+            this.members = this.members.filter((member) =>
+                this.selectedNameSponser.includes(member.sponsor_id)
             );
         },
         getOriginalMembers() {
@@ -450,6 +474,30 @@ export default {
                 .finally(() => {
                     this.isLoader = false;
                 });
+        },
+        getSponsersNames() {
+            this.isLoader = true;
+            adminApi
+                .get(`/club-members/sponsers`)
+                .then((res) => {
+                    const response = res.data;
+                    this.sponsorsNames = response.data;
+                })
+                .catch((err) => {
+                    Swal.fire({
+                        icon: "error",
+                        title: `${this.$t("general.Error")}`,
+                        text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                    });
+                })
+                .finally(() => {
+                    this.isLoader = false;
+                });
+        },
+        getSponsorsLabel(opt) {
+            const member = this.sponsorsNames.find((x) => x.id === opt);
+            if (!member) return null;
+            return this.$i18n.locale === "ar" ? member.name : member.name_e;
         },
         handelSerach() {
             clearTimeout(this.debounce);
@@ -1785,7 +1833,7 @@ export default {
                         <b-modal
                             id="memberFilter"
                             title="Filter Members"
-                            @ok="updateMembers"
+                            @ok="applyFilters"
                             @cancel="getOriginalMembers"
                             ok-title="Apply"
                             cancel-title="Cancel"
@@ -1800,6 +1848,20 @@ export default {
                                         membersNames.map((type) => type.id)
                                     "
                                     :custom-label="getMemberLabel"
+                                    :multiple="true"
+                                >
+                                </multiselect>
+                            </div>
+                            <div class="form-group md-6">
+                                <label class="control-label">
+                                    {{ $t("general.filterSponser") }}
+                                </label>
+                                <multiselect
+                                    v-model="selectedNameSponser"
+                                    :options="
+                                        sponsorsNames.map((type) => type.id)
+                                    "
+                                    :custom-label="getSponsorsLabel"
                                     :multiple="true"
                                 >
                                 </multiselect>

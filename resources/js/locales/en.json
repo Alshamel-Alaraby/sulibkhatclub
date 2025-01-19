@@ -599,6 +599,7 @@
         "12": "December"
     },
     "general": {
+        "filterSponser": "Filter Sponsers",
         "CreditNote": "Credit Note",
         "storesTable": "Stores Table",
         "serialsTable": "Serials Table",

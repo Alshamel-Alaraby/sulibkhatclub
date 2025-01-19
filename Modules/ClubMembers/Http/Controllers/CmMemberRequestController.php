@@ -10,6 +10,7 @@ use Modules\ClubMembers\Entities\CmMemberRequest;
 use Modules\ClubMembers\Http\Requests\CmMemberRequestRequest;
 use Modules\ClubMembers\Repositories\CmMemberRequest\CmMemberRequestInterface;
 use Modules\ClubMembers\Transformers\CmMemberRequestResource;
+use Modules\ClubMembers\Entities\CmMember;
 
 class CmMemberRequestController extends Controller
 {
@@ -158,10 +159,17 @@ class CmMemberRequestController extends Controller
         return $this->modelInterface->checkNationalId($request);
     }
 
-    public function getNamesMembers()
+    public function getNamesMembers(Request $request)
     {
-        $data = CmMemberRequest::select('id', 'full_name')->get();
+        if ($request->active) {
+            $data = CmMember::select('id', 'full_name')->whereNull('sponsor_id')->paginate(10);
+
+            if ($request->has('search') && $request->search !== '') {
+                $data = CmMember::select('id', 'full_name')->whereNull('sponsor_id')->where('full_name', 'like', '%' . $request->search . '%')->paginate(10);
+            }
+        } else {
+            $data = CmMemberRequest::select('id', 'full_name')->get();
+        }
         return responseJson(200, "success", $data);
     }
-
 }
