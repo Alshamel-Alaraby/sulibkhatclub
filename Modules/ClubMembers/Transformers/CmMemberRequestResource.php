@@ -22,7 +22,7 @@ class CmMemberRequestResource extends JsonResource
 
         $cacheKey = 'transaction_' . $this->id . '_' . $request->has('hasTransaction');
 
-        $transaction = Cache::remember($cacheKey, now()->addMinutes(10), function () use ($request) {
+        $transaction = Cache::remember($cacheKey, now()->addMinutes(10080), function () use ($request) {
             return $request->has('hasTransaction') && $this->cmTransaction
                 ? collect(new CmTransactionResource($this->cmTransaction))->only(['id', 'document_no', 'year', 'amount', 'serial', 'date'])
                 : ($this->cmTransaction
@@ -62,7 +62,7 @@ class CmMemberRequestResource extends JsonResource
             'member_type' => $memberType,
             'notes' => $this->notes,
             'gender' => $this->gender,
-            'sponsors' => $this->sponsors,
+            'sponsors' => $this->sponsor,
             'financial_status' => $financialStatus,
             'status' => new StatusResource($status),
             'created_at' => $this->created_at,

@@ -368,7 +368,7 @@ export default {
                 <div class="col-md-12">
                     <div class="form-group position-relative">
                         <label class="control-label">
-                            {{ getCompanyKey("sponser") }}
+                            {{ $t("general.sponser") }}
                             <span
                                 v-if="isRequired('cm_members_id')"
                                 class="text-danger"

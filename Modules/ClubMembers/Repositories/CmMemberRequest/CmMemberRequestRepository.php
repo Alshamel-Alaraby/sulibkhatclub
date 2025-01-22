@@ -28,7 +28,8 @@ class CmMemberRequestRepository implements CmMemberRequestInterface
         }
 
         if ($request->member_id) {
-            $models->where('id', $request->member_id);
+            $memberIds = is_array($request->member_id) ? $request->member_id : explode(',', $request->member_id);
+            $models->whereIn('id', $memberIds);
         }
         if ($request->doesNotHaveTransaction) {
             $models->whereDoesntHave('cmTransaction');
@@ -36,6 +37,10 @@ class CmMemberRequestRepository implements CmMemberRequestInterface
         /*dd($models->get());*/
         if ($request->hasTransaction) {
             $models->whereHas('cmTransaction');
+        }
+        if ($request->sponsor_id) {
+            $sponsorIds = is_array($request->sponsor_id) ? $request->sponsor_id : explode(',', $request->sponsor_id);
+            $models->whereIn('sponsor_id', $sponsorIds);
         }
 
         if ($request->per_page) {

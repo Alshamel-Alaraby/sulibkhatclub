@@ -48,6 +48,7 @@ export default {
     },
     data() {
         return {
+            printSponsor: [],
             selectedNameMember: [],
             membersNames: [],
             sponsorsNames: [],
@@ -436,16 +437,19 @@ export default {
             }
         },
         updateMembers() {
-            this.members = this.members.filter((member) =>
-                this.selectedNameMember.includes(member.id)
-            );
+         this.getData();
         },
-        updateSponser() {
-            console.log("updateSponser", this.selectedNameSponser);
-            this.members = this.members.filter((member) =>
-                this.selectedNameSponser.includes(member.sponsor_id)
+       updateSponser() {
+            this.getData();
+
+            const selectedSponsors = this.sponsorsNames.filter((sponsor) =>
+                this.selectedNameSponser.includes(sponsor.id)
             );
+
+            this.printSponsor = selectedSponsors.map((sponsor) => sponsor.name);
+
         },
+
         getOriginalMembers() {
             this.getData();
         },
@@ -517,24 +521,24 @@ export default {
             const elementTest = document.querySelector(selector);
 
             if (elementTest) {
-                const rowsPerPage = 50; // Maximum rows per page
+                const rowsPerPage = 19;
                 const members = this.members;
                 const totalPages = Math.ceil(members.length / rowsPerPage);
 
-                // Temporarily show the header
+
                 const headerElement =
                     document.querySelector(".data-header-print");
-                headerElement.style.display = "flex"; // Make it visible temporarily
-                const header = headerElement.outerHTML; // Get header HTML
-                headerElement.style.display = "none"; // Restore original style
+                headerElement.style.display = "flex";
+                const header = headerElement.outerHTML;
+                headerElement.style.display = "none";
 
-                // Get the rendered <tbody> from the DOM
+
                 const originalTbody = document
                     .querySelector(selector)
                     .querySelector("tbody");
                 const allRows = Array.from(
                     originalTbody.querySelectorAll("tr")
-                ); // Get all rendered rows
+                );
 
                 let printableContent = "";
 
@@ -543,24 +547,21 @@ export default {
                     const pageRows = allRows.slice(
                         startIndex,
                         startIndex + rowsPerPage
-                    ); // Get rows for this page
+                    );
 
-                    // Create a new <tbody> for the current page
+
                     const tbodyClone = document.createElement("tbody");
                     pageRows.forEach((row) =>
                         tbodyClone.appendChild(row.cloneNode(true))
-                    ); // Clone rows for this page
-
-                    // Clone the entire table
-                    const tableClone = document
+                    );
+                                        const tableClone = document
                         .querySelector(selector)
                         .querySelector("table")
                         .cloneNode(true);
 
-                    // Replace the table's <tbody> with the cloned, paginated <tbody>
-                    tableClone.querySelector("tbody").replaceWith(tbodyClone);
+                                        tableClone.querySelector("tbody").replaceWith(tbodyClone);
 
-                    // Add header and table for this page
+
                     printableContent += `
                 <div style="page-break-after: always;">
                     ${header}
@@ -574,7 +575,7 @@ export default {
                 document.body.appendChild(container);
 
                 $(container).printThis({
-                    header: null, // Header is already included in the content
+                    header: null,
                     pageTitle: "Members Apply",
                     importCSS: true,
                     afterPrint: () => {
@@ -670,7 +671,9 @@ export default {
          *  start get Data countrie && pagination
          */
         getData(page = 1) {
+
             this.isLoader = true;
+
             let _filterSetting = [...this.filterSetting];
             let index = this.filterSetting.indexOf("document_no");
             if (index > -1) {
@@ -689,7 +692,7 @@ export default {
             }
             adminApi
                 .get(
-                    `/club-members/member-requests?member_types=1&page=${page}&per_page=${this.per_page}&company_id=${this.company_id}&search=${this.search}&${filter}`
+                    `/club-members/member-requests?member_types=1&page=${page}&per_page=${this.per_page}&company_id=${this.company_id}&search=${this.search}&${filter}&sponsor_id=${this.selectedNameSponser}&member_id=${this.selectedNameMember}`
                 )
                 .then((res) => {
                     let l = res.data;
@@ -3037,7 +3040,7 @@ export default {
                                         <b-button
                                             variant="success"
                                             class="mx-1"
-                                            disabled
+
                                             v-else
                                         >
                                             <b-spinner small></b-spinner>
@@ -3429,25 +3432,15 @@ export default {
                             <loader size="large" v-if="isLoader" />
                             <!--       end loader       -->
                             <div
+                                style="display: none;"
                                 class="data-header-print"
                                 :class="[
-                                    $i18n.locale == 'ar'
-                                        ? 'dir-print-rtl'
-                                        : 'dir-print-ltr',
+                                    $i18n.locale == 'ar' ? 'dir-print-rtl' : 'dir-print-ltr',
                                 ]"
-                                style="
-                                    display: none;
-                                    justify-content: space-between;
-                                    align-items: center;
-                                    width: 100%;
-                                "
                             >
                                 <!-- Left section with logo -->
                                 <div style="width: 15%; padding-left: 20px">
-                                    <img
-                                        style="width: 100%"
-                                        :src="'/images/sulib.png'"
-                                    />
+                                    <img style="width: 100%" :src="'/images/sulib.png'" />
                                 </div>
 
                                 <!-- Center section with headings -->
@@ -3456,26 +3449,35 @@ export default {
                                     style="
                                         width: 65%;
                                         display: flex;
-                                        flex-direction: column;
-                                        align-items: center;
-                                    "
-                                >
-                                    <h2 style="font-weight: bold">
-                                        {{ $t("general.SulaibikhatClub") }}
-                                    </h2>
-                                    <h2 style="font-weight: bold">
-                                        {{ $t("general.SubscriptionRequests") }}
-                                    </h2>
-                                </div>
+                            flex-direction: column;
+                            align-items: center;
+                        "
+                            >
+                                <h2 style="font-weight: bold">
+                                    {{ $t("general.SulaibikhatClub") }}
+                                </h2>
+                                <h2 style="font-weight: bold">
+                                    {{ $t("general.SubscriptionRequests") }}
+                                </h2>
+                            </div>
 
-                                <!-- Right section with total count -->
+                            <!-- Right section with total count and sponsors -->
+                            <div
+                                class="row"
+                                style="
+                                    display: flex;
+                                    flex-direction: column;
+                                    align-items: flex-start;
+                                    width: 20%;
+                                "
+                            >
+                                <!-- Total Count -->
                                 <div
                                     class="text-right"
                                     style="
-                                        width: 15%;
-                                        display: flex;
-                                        justify-content: flex-end;
-                                        align-items: center;
+                                        width: 100%;
+                                        text-align: left;
+                                        margin-bottom: 10px;
                                     "
                                 >
                                     <h5
@@ -3484,33 +3486,37 @@ export default {
                                             font-weight: bold;
                                         "
                                     >
-                                        {{ $t("general.totalCount") }} :
-                                        {{ members.length }}
+                                        {{ $t("general.totalCount") }} : {{ members.length }}
                                     </h5>
                                 </div>
 
+                                <!-- Sponsor Labels -->
                                 <div
-                                    class="text-center p-0 m-0"
-                                    v-if="
-                                        members.length > 0 &&
-                                        parseInt(showSponsor) == 1
-                                    "
+                                    class="text-left p-0 m-0"
+                                    v-if="members.length > 0 && parseInt(showSponsor) == 1"
+                                    style="width: 100%;"
                                 >
                                     <h3
-                                        v-if="members.length > 0"
-                                        style="font-weight: bold"
+                                        style="
+                                            font-weight: bold;
+                                            margin: 0 0 5px 0;
+                                            font-size: 14px;
+                                        "
                                     >
-                                        {{ getCompanyKey("sponsor") }} :
-                                        {{
-                                            members[0].sponsor
-                                                ? $i18n.locale == "ar"
-                                                    ? members[0].sponsor.name
-                                                    : members[0].sponsor.name_e
-                                                : "-"
-                                        }}
+                                        {{ getCompanyKey("sponsor") }}:
                                     </h3>
+                                    <ul style="padding-left: 20px; margin: 0;">
+                                        <li
+                                            v-for="sponsor in printSponsor"
+                                            :key="sponsor"
+                                            style="list-style: none;"
+                                        >
+                                            {{ sponsor }}
+                                        </li>
+                                    </ul>
                                 </div>
                             </div>
+                        </div>
 
                             <table
                                 class="table table-borderless table-hover table-centered m-0"
@@ -4453,7 +4459,7 @@ export default {
                                                         <b-button
                                                             variant="success"
                                                             class="mx-1"
-                                                            disabled
+
                                                             v-else
                                                         >
                                                             <b-spinner
@@ -6127,7 +6133,7 @@ export default {
                                                                     )
                                                                 }}</label>
                                                                 <input
-                                                                    disabled
+
                                                                     v-model="
                                                                         transaction.document_no
                                                                     "
@@ -6146,7 +6152,7 @@ export default {
                                                                     )
                                                                 }}</label>
                                                                 <input
-                                                                    disabled
+
                                                                     class="form-control"
                                                                     type="text"
                                                                     :value="
@@ -6169,7 +6175,7 @@ export default {
                                                                     )
                                                                 }}</label>
                                                                 <input
-                                                                    disabled
+
                                                                     v-model="
                                                                         transaction.year
                                                                     "
@@ -6188,7 +6194,7 @@ export default {
                                                                     )
                                                                 }}</label>
                                                                 <input
-                                                                    disabled
+
                                                                     v-model="
                                                                         transaction.amount
                                                                     "
@@ -6245,54 +6251,54 @@ export default {
 </template>
 
 <style>
-/* General Print Styles */
+
 @media print {
-    /* General Table Styling */
+
     table.table {
-        width: 100%; /* Ensure the table spans the full width */
-        border-collapse: collapse; /* Remove gaps between cells */
-        border: 1px solid black; /* Add a visible border */
-        font-size: 12px; /* Adjust font size for printing */
+        width: 100%;
+        border-collapse: collapse;
+        border: 1px solid black;
+        font-size: 20px;
     }
 
-    /* Table Header (thead) Styling */
+
     table.table thead {
-        display: table-header-group; /* Ensure the header repeats on each page */
-        background-color: #f5f5f5; /* Light gray background for headers */
-        color: black; /* Text color for headers */
-        text-align: center; /* Center align text in headers */
-        font-weight: bold; /* Make header text bold */
-        border-bottom: 2px solid black; /* Add a distinct bottom border */
+        display: table-header-group;
+        background-color: #f5f5f5;
+        color: black;
+        text-align: center;
+        font-weight: bold;
+        border-bottom: 2px solid black;
     }
 
-    /* Table Rows (tr) and Cells (td) Styling */
+
     table.table tbody tr {
-        page-break-inside: avoid; /* Prevent rows from breaking across pages */
+        page-break-inside: avoid;
     }
 
     table.table th,
     table.table td {
-        border: 1px solid black; /* Add borders for all cells */
-        padding: 8px; /* Add padding for better readability */
-        text-align: left; /* Align text to the left */
+        border: 1px solid black;
+        padding: 8px;
+        text-align: left;
+        font-weight: bold;
     }
 
-    /* Remove Hover Effects for Printing */
+
     table.table-hover tbody tr:hover {
-        background-color: transparent; /* Disable hover background */
+        background-color: transparent;
     }
 
-    /* Centering Table Content */
     table.table-centered td,
     table.table-centered th {
-        text-align: center; /* Center all text */
-        vertical-align: middle; /* Vertically center text */
+        text-align: center;
+        vertical-align: middle;
     }
 
-    /* Remove Borderless Appearance */
+
     table.table-borderless td,
     table.table-borderless th {
-        border: 1px solid black; /* Force borders for printing */
+        border: 1px solid black;
     }
 
     body {
@@ -6300,17 +6306,34 @@ export default {
         padding: 0;
     }
 
-    /* Header Styling for Print */
     .data-header-print {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        width: 100%;
-        margin-bottom: 10px;
-        background-color: white;
-        /* border-bottom: 2px solid black; /* Add bottom border for header */
-        padding: 10px 0;
-    }
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 10px;
+    margin-left: 30px;
+    background-color: white;
+    padding: 10px 0;
+    border-bottom: 2px solid black; /* Adds a clear visual separation */
+}
+
+.data-header-print h2 {
+    margin: 5px 0; /* Adjust spacing between headings */
+}
+
+.data-header-print .row {
+    margin-top: 10px; /* Add some space above the sponsor section */
+}
+
+.data-header-print ul {
+    padding-left: 20px;
+    margin: 5px 0;
+}
+
+.data-header-print li {
+    font-size: 12px; /* Adjust font size for better readability */
+}
 
     /* Additional Styling for RTL */
     .dir-print-rtl {
