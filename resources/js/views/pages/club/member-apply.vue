@@ -521,17 +521,35 @@ export default {
             const elementTest = document.querySelector(selector);
 
             if (elementTest) {
-                const rowsPerPage = 19;
                 const members = this.members;
-                const totalPages = Math.ceil(members.length / rowsPerPage);
 
+                const table = document.querySelector(`${selector} table`);
+                let columnCount = 0;
+
+                if (table) {
+                    const headerRow =
+                        table.querySelector("thead tr") ||
+                        table.querySelector("tbody tr");
+                    if (headerRow) {
+                        columnCount =
+                            headerRow.querySelectorAll("th, td").length - 2;
+                    }
+                }
+
+                let rowsPerPage;
+                if (columnCount < 6) {
+                    rowsPerPage = 55;
+                } else {
+                    rowsPerPage = 30;
+                }
+
+                const totalPages = Math.ceil(members.length / rowsPerPage);
 
                 const headerElement =
                     document.querySelector(".data-header-print");
                 headerElement.style.display = "flex";
                 const header = headerElement.outerHTML;
                 headerElement.style.display = "none";
-
 
                 const originalTbody = document
                     .querySelector(selector)
@@ -548,19 +566,13 @@ export default {
                         startIndex,
                         startIndex + rowsPerPage
                     );
-
-
                     const tbodyClone = document.createElement("tbody");
                     pageRows.forEach((row) =>
                         tbodyClone.appendChild(row.cloneNode(true))
                     );
-                                        const tableClone = document
-                        .querySelector(selector)
-                        .querySelector("table")
-                        .cloneNode(true);
 
-                                        tableClone.querySelector("tbody").replaceWith(tbodyClone);
-
+                    const tableClone = table.cloneNode(true);
+                    tableClone.querySelector("tbody").replaceWith(tbodyClone);
 
                     printableContent += `
                 <div style="page-break-after: always;">
@@ -587,6 +599,7 @@ export default {
                 console.log("Element to print not found", selector);
             }
         },
+
         getCustomTableFields() {
             adminApi
                 .get(`/customTable/table-columns/cm_member_requests`)
@@ -6044,9 +6057,7 @@ export default {
                                                                     >
                                                                 </label>
                                                                 <select
-                                                                    :disabled="
-                                                                        true
-                                                                    "
+
                                                                     class="form-control"
                                                                     v-model="
                                                                         edit.member_type_id

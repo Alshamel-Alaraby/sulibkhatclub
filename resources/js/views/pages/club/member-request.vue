@@ -273,8 +273,28 @@ export default {
             const elementTest = document.querySelector(selector);
 
             if (elementTest) {
-                const rowsPerPage = 30;
                 const members = this.members;
+
+                const table = document.querySelector(`${selector} table`);
+                let columnCount = 0;
+
+                if (table) {
+                    const headerRow =
+                        table.querySelector("thead tr") ||
+                        table.querySelector("tbody tr");
+                    if (headerRow) {
+                        columnCount =
+                            headerRow.querySelectorAll("th, td").length - 2;
+                    }
+                }
+
+                let rowsPerPage;
+                if (columnCount < 6) {
+                    rowsPerPage = 55;
+                } else {
+                    rowsPerPage = 30;
+                }
+
                 const totalPages = Math.ceil(members.length / rowsPerPage);
 
                 const headerElement =
@@ -303,11 +323,7 @@ export default {
                         tbodyClone.appendChild(row.cloneNode(true))
                     );
 
-                    const tableClone = document
-                        .querySelector(selector)
-                        .querySelector("table")
-                        .cloneNode(true);
-
+                    const tableClone = table.cloneNode(true);
                     tableClone.querySelector("tbody").replaceWith(tbodyClone);
 
                     printableContent += `
@@ -324,7 +340,7 @@ export default {
 
                 $(container).printThis({
                     header: null,
-                    pageTitle: "Members Apply",
+                    pageTitle: "Members Rreqest",
                     importCSS: true,
                     afterPrint: () => {
                         console.log("Print completed");
@@ -335,6 +351,7 @@ export default {
                 console.log("Element to print not found", selector);
             }
         },
+
         handelSerach() {
             clearTimeout(this.debounce);
             this.debounce = setTimeout(() => {
@@ -2172,50 +2189,46 @@ export default {
 @media print {
     /* General Table Styling */
     table.table {
-        width: 100%; /* Ensure the table spans the full width */
-        border-collapse: collapse; /* Remove gaps between cells */
-        border: 1px solid black; /* Add a visible border */
-        font-size: 12px; /* Adjust font size for printing */
+        width: 100%;
+        border-collapse: collapse;
+        border: 1px solid black;
+        font-size: 12px;
+        min-height: 200px;
     }
 
-    /* Table Header (thead) Styling */
     table.table thead {
-        display: table-header-group; /* Ensure the header repeats on each page */
-        background-color: #f5f5f5; /* Light gray background for headers */
-        color: black; /* Text color for headers */
-        text-align: center; /* Center align text in headers */
-        font-weight: bold; /* Make header text bold */
-        border-bottom: 2px solid black; /* Add a distinct bottom border */
+        display: table-header-group;
+        background-color: #f5f5f5;
+        color: black;
+        text-align: center;
+        font-weight: bold;
+        border-bottom: 2px solid black;
     }
 
-    /* Table Rows (tr) and Cells (td) Styling */
     table.table tbody tr {
-        page-break-inside: avoid; /* Prevent rows from breaking across pages */
+        page-break-inside: avoid;
     }
 
     table.table th,
     table.table td {
-        border: 1px solid black; /* Add borders for all cells */
-        padding: 8px; /* Add padding for better readability */
-        text-align: left; /* Align text to the left */
+        border: 1px solid black;
+        padding: 8px;
+        text-align: left;
     }
 
-    /* Remove Hover Effects for Printing */
     table.table-hover tbody tr:hover {
-        background-color: transparent; /* Disable hover background */
+        background-color: transparent;
     }
 
-    /* Centering Table Content */
     table.table-centered td,
     table.table-centered th {
-        text-align: center; /* Center all text */
-        vertical-align: middle; /* Vertically center text */
+        text-align: center;
+        vertical-align: middle;
     }
 
-    /* Remove Borderless Appearance */
     table.table-borderless td,
     table.table-borderless th {
-        border: 1px solid black; /* Force borders for printing */
+        border: 1px solid black;
     }
 
     body {
@@ -2223,7 +2236,6 @@ export default {
         padding: 0;
     }
 
-    /* Header Styling for Print */
     .data-header-print {
         display: flex;
         justify-content: space-between;
@@ -2231,11 +2243,10 @@ export default {
         width: 100%;
         margin-bottom: 10px;
         background-color: white;
-        /* border-bottom: 2px solid black; /* Add bottom border for header */
+
         padding: 10px 0;
     }
 
-    /* Additional Styling for RTL */
     .dir-print-rtl {
         direction: rtl;
         text-align: right;
