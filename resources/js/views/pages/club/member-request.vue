@@ -204,9 +204,16 @@ export default {
         },
 
         updateMembers() {
-            this.members = this.members.filter((member) =>
-                this.selectedNameMember.includes(member.id)
+            this.getData();
+        },
+        updateSponser() {
+            this.getData();
+
+            const selectedSponsors = this.sponsorsNames.filter((sponsor) =>
+                this.selectedNameSponser.includes(sponsor.id)
             );
+
+            this.printSponsor = selectedSponsors.map((sponsor) => sponsor.name);
         },
         getOriginalMembers() {
             this.getData();
@@ -218,13 +225,6 @@ export default {
                 ? member.full_name
                 : member.full_name;
         },
-        updateSponser() {
-            console.log("updateSponser", this.selectedNameSponser);
-            this.members = this.members.filter((member) =>
-                this.selectedNameSponser.includes(member.sponsor_id)
-            );
-        },
-
         getMemberNames() {
             this.isLoader = true;
             adminApi
@@ -394,7 +394,7 @@ export default {
             }
             adminApi
                 .get(
-                    `/club-members/member-requests?hasTransaction=1&page=${page}&per_page=${this.per_page}&company_id=${this.company_id}&search=${this.search}&${filter}`
+                    `/club-members/member-requests?hasTransaction=1&page=${page}&per_page=${this.per_page}&company_id=${this.company_id}&search=${this.search}&${filter}&sponsor_id=${this.selectedNameSponser}&member_id=${this.selectedNameMember}`
                 )
                 .then((res) => {
                     let l = res.data;
