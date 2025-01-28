@@ -279,35 +279,28 @@ export default {
                 const members = this.members;
                 const totalPages = Math.ceil(members.length / rowsPerPage);
 
-
-                const headerElement =
-                    document.querySelector(".data-header-print");
+                // Get the header element
+                const headerElement = document.querySelector(".data-header-print");
                 headerElement.style.display = "flex";
                 const header = headerElement.outerHTML;
                 headerElement.style.display = "none";
 
+                // Get the original table body and rows
                 const originalTbody = document
                     .querySelector(selector)
                     .querySelector("tbody");
-                const allRows = Array.from(
-                    originalTbody.querySelectorAll("tr")
-                );
+                const allRows = Array.from(originalTbody.querySelectorAll("tr"));
 
                 let printableContent = "";
 
+                // Generate printable content for each page
                 for (let page = 0; page < totalPages; page++) {
                     const startIndex = page * rowsPerPage;
-                    const pageRows = allRows.slice(
-                        startIndex,
-                        startIndex + rowsPerPage
-                    );
+                    const pageRows = allRows.slice(startIndex, startIndex + rowsPerPage);
 
-
+                    // Clone the table and replace the tbody with the current page's rows
                     const tbodyClone = document.createElement("tbody");
-                    pageRows.forEach((row) =>
-                        tbodyClone.appendChild(row.cloneNode(true))
-                    );
-
+                    pageRows.forEach((row) => tbodyClone.appendChild(row.cloneNode(true)));
 
                     const tableClone = document
                         .querySelector(selector)
@@ -316,25 +309,34 @@ export default {
 
                     tableClone.querySelector("tbody").replaceWith(tbodyClone);
 
+                    // Add the header and table for this page to the printable content
                     printableContent += `
-                <div style="page-break-after: always;">
-                    ${header}
-                    ${tableClone.outerHTML}
-                </div>
-            `;
+                        <div class="print-page" style="page-break-after: always;">
+                            ${header}
+                            ${tableClone.outerHTML}
+                        </div>
+                    `;
                 }
 
+                // Create a clean container for printing
                 const container = document.createElement("div");
                 container.innerHTML = printableContent;
                 document.body.appendChild(container);
 
+                // Print the container using printThis
                 $(container).printThis({
                     header: null,
                     pageTitle: "Members Apply",
-                    importCSS: true,
+                    importCSS: true, // Import existing CSS
+                    loadCSS: "", // Add additional CSS if needed
+                    removeInline: false, // Keep inline styles
+                    printDelay: 500, // Delay to ensure content is ready
+                    canvas: false, // Do not copy canvas elements
                     afterPrint: () => {
                         console.log("Print completed");
+                        // Remove the container after printing
                         container.remove();
+                        window.location.reload()
                     },
                 });
             } else {

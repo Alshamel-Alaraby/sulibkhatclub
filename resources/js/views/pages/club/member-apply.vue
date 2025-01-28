@@ -590,6 +590,7 @@ export default {
                     header: null,
                     pageTitle: "Members Apply",
                     importCSS: true,
+                    canvas: false,
                     afterPrint: () => {
                         console.log("Print completed");
                         container.remove();
@@ -3462,9 +3463,9 @@ export default {
                                     style="
                                         width: 65%;
                                         display: flex;
-                            flex-direction: column;
-                            align-items: center;
-                        "
+                                        flex-direction: column;
+                                        align-items: center;
+                                    "
                             >
                                 <h2 style="font-weight: bold">
                                     {{ $t("general.SulaibikhatClub") }}
@@ -3486,17 +3487,17 @@ export default {
                             >
                                 <!-- Total Count -->
                                 <div
-                                    class="text-right"
+                                    class="text-left p-0 m-0"
                                     style="
                                         width: 100%;
-                                        text-align: left;
                                         margin-bottom: 10px;
                                     "
                                 >
                                     <h5
                                         style="
-                                            font-size: 18px;
+                                            font-size: 15px;
                                             font-weight: bold;
+                                            padding-left:20px
                                         "
                                     >
                                         {{ $t("general.totalCount") }} : {{ members.length }}
@@ -3507,22 +3508,24 @@ export default {
                                 <div
                                     class="text-left p-0 m-0"
                                     v-if="members.length > 0 && parseInt(showSponsor) == 1"
-                                    style="width: 100%;"
+                                    style="width: 100%; "
                                 >
                                     <h3
                                         style="
                                             font-weight: bold;
                                             margin: 0 0 5px 0;
-                                            font-size: 14px;
+                                            font-size: 15px;
+                                            padding-left:30px;
                                         "
                                     >
                                         {{ getCompanyKey("sponsor") }}:
                                     </h3>
-                                    <ul style="padding-left: 20px; margin: 0;">
+                                    <ul style="padding-left: 30px; margin: 0;
+                                            font-size:20px">
                                         <li
                                             v-for="sponsor in printSponsor"
                                             :key="sponsor"
-                                            style="list-style: none;"
+                                            style="list-style: none;  font-size:20px"
                                         >
                                             {{ sponsor }}
                                         </li>

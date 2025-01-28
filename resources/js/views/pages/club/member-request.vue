@@ -342,6 +342,7 @@ export default {
                     header: null,
                     pageTitle: "Members Rreqest",
                     importCSS: true,
+                    canvas: false,
                     afterPrint: () => {
                         console.log("Print completed");
                         container.remove();
