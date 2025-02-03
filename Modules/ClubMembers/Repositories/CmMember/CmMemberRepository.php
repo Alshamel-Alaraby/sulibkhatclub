@@ -20,7 +20,6 @@ class CmMemberRepository implements CmMemberInterface
         $this->modelRequest = $modelRequest;
         $this->modelCmHistoryTransform = $modelCmHistoryTransform;
         $this->modelTransaction = $modelTransaction;
-
     }
 
     public function all($request)
@@ -95,9 +94,9 @@ class CmMemberRepository implements CmMemberInterface
         }
         if ($request->has('sponser_ids') && $request->sponser_ids !== "[]") {
 
-             $sponser_ids = is_array($request->sponser_ids) ? $request->sponser_ids : json_decode($request->sponser_ids, true);
-            $models->whereHas('sponsors',function ($q) use ($sponser_ids){
-                $q->whereIn('sponsor_id',$sponser_ids);
+            $sponser_ids = is_array($request->sponser_ids) ? $request->sponser_ids : json_decode($request->sponser_ids, true);
+            $models->whereHas('sponsors', function ($q) use ($sponser_ids) {
+                $q->whereIn('sponsor_id', $sponser_ids);
             });
         }
 
@@ -127,7 +126,6 @@ class CmMemberRepository implements CmMemberInterface
         } else {
             return ['data' => $models->get(), 'paginate' => false];
         }
-
     }
 
     public function create($request)
@@ -160,19 +158,19 @@ class CmMemberRepository implements CmMemberInterface
     {
         DB::transaction(function () use ($id, $request) {
             if ($request['first_name']) {
-                $full_name['first_name'] = $request['first_name'] && $request['first_name'] != null ?$request['first_name']:'';
+                $full_name['first_name'] = $request['first_name'] && $request['first_name'] != null ? $request['first_name'] : '';
             }
             if ($request['second_name']) {
-                $full_name['second_name'] = $request['second_name'] && $request['second_name'] != null?$request['second_name']:'';
+                $full_name['second_name'] = $request['second_name'] && $request['second_name'] != null ? $request['second_name'] : '';
             }
             if ($request['third_name']) {
-                $full_name['third_name'] = $request['third_name'] && $request['third_name'] != null?$request['third_name']:'';
+                $full_name['third_name'] = $request['third_name'] && $request['third_name'] != null ? $request['third_name'] : '';
             }
             if ($request['last_name']) {
-                $full_name['last_name'] = $request['last_name'] && $request['last_name'] != null?$request['last_name']:'';
+                $full_name['last_name'] = $request['last_name'] && $request['last_name'] != null ? $request['last_name'] : '';
             }
             if ($request['family_name']) {
-                $full_name['family_name'] = $request['family_name'] && $request['family_name'] != null?$request['family_name']:'';
+                $full_name['family_name'] = $request['family_name'] && $request['family_name'] != null ? $request['family_name'] : '';
             }
 
             $array = implode(' ', $full_name);
@@ -193,7 +191,8 @@ class CmMemberRepository implements CmMemberInterface
             $increment_applying_number = $this->model->max('applying_number');
             $new_applying_number = $increment_applying_number + 1;
 
-            $this->model->where("id", $id)->update(array_merge($request->all(),
+            $this->model->where("id", $id)->update(array_merge(
+                $request->all(),
                 [
                     'acceptance' => 1,
                     'membership_number' => $new_member_number,
@@ -201,7 +200,8 @@ class CmMemberRepository implements CmMemberInterface
                     'financial_status_id' => 3,
                     'member_type_id' => 4,
                     'status_id' => 2,
-                ]));
+                ]
+            ));
         });
 
         $model = $this->model->find($id);
@@ -260,7 +260,6 @@ class CmMemberRepository implements CmMemberInterface
         } else {
             return ['data' => $models->get(), 'paginate' => false];
         }
-
     }
 
     public function acceptMembers($request)
@@ -276,14 +275,16 @@ class CmMemberRepository implements CmMemberInterface
                     $membercreate = collect($memberRequest)->except(['id', 'deleted_at', 'created_at', 'updated_at', 'financial_status_id', 'member_type_id', 'status_id']);
                     $model = $this->model->create($membercreate->all());
                     $accept = collect($accept_member)->except(['id', 'financial_status_id', 'member_type_id', 'status_id']);
-                    $model->update(array_merge($accept->all(),
+                    $model->update(array_merge(
+                        $accept->all(),
                         [
                             'acceptance' => 1,
                             'membership_number' => $max,
                             'financial_status_id' => 1,
                             'member_kind_id' => 1,
                             'member_status_id' => 1,
-                        ]));
+                        ]
+                    ));
                     $transaction = $this->modelTransaction->where('member_request_id', $memberRequest->id)->first();
                     if ($transaction) {
                         $transaction->update([
@@ -297,13 +298,12 @@ class CmMemberRepository implements CmMemberInterface
                 }
             }
             return 200;
-
         });
     }
 
     public function reportCmMember($request)
     {
-//        $this->publicUpdatePermissionCmMember($request->members_permissions_id);
+        //        $this->publicUpdatePermissionCmMember($request->members_permissions_id);
         $models = $this->model->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
 
         if ($request->cm_permissions_id == 1) {
@@ -322,15 +322,15 @@ class CmMemberRepository implements CmMemberInterface
         }
 
         if ($request->members_permissions_id) {
-            $year = Carbon::createFromFormat('d-m-Y',$request->dateOfYear)->format('Y') + 1;
-            $date = Carbon::createFromFormat('d-m-Y',$request->dateOfYear)->format('Y-m-d'); ///2023-10-05
+            $year = Carbon::createFromFormat('d-m-Y', $request->dateOfYear)->format('Y') + 1;
+            $date = Carbon::createFromFormat('d-m-Y', $request->dateOfYear)->format('Y-m-d'); ///2023-10-05
             //dd($date);
-            DB::statement('call p_statistics(?)',["$date"]);
+            DB::statement('call p_statistics(?)', ["$date"]);
 
             $models->whereIn('members_permissions_id', $request->members_permissions_id)->where('member_status_id', 1)->where('last_transaction_year', $year)->with('lastCmTransaction');
 
             $new_date = Carbon::now()->format('Y-m-d');
-            DB::statement('call p_statistics(?)',["$new_date"]);
+            DB::statement('call p_statistics(?)', ["$new_date"]);
         }
 
         if ($request->per_page) {
@@ -338,7 +338,6 @@ class CmMemberRepository implements CmMemberInterface
         } else {
             return ['data' => $models->get(), 'paginate' => false];
         }
-
     }
 
     public function updateLastTransactionDate()
@@ -350,10 +349,9 @@ class CmMemberRepository implements CmMemberInterface
             $member->update(['last_transaction_date' => $Last_date]);
         endforeach;
         return 200;
-
     }
-//        Artisan::call('permission:db');
-//        return "all";
+    //        Artisan::call('permission:db');
+    //        return "all";
     public function updateCmMember()
     {
         //return CmMember::with('lastCmTransaction')->find(13838);
@@ -415,8 +413,7 @@ class CmMemberRepository implements CmMemberInterface
                 ->whereNotNull('last_transaction_date') // عنده transaction
                 ->where('last_transaction_year', $financialyear->year) // سنة ال transaction هي سنة السنة المالية
                 ->whereDate('last_transaction_date', '<=', $date_allowed_vote_date)
-                ->update
-                ([
+                ->update([
                     'financial_status_id' => 3, //مسدد في الموعد
                 ]);
 
@@ -426,8 +423,7 @@ class CmMemberRepository implements CmMemberInterface
                 ->whereNotNull('last_transaction_date') // عنده transaction
                 ->where('last_transaction_year', $financialyear->year) // سنة ال transaction هي سنة السنة المالية
                 ->whereDate('last_transaction_date', '>', $date_allowed_vote_date)
-                ->update
-                ([
+                ->update([
                     'financial_status_id' => 4, //مسدد بعد الموعد
                 ]);
 
@@ -469,8 +465,7 @@ class CmMemberRepository implements CmMemberInterface
                         $member->financial_status_id == $setting->cm_financial_status_id
                     ) {
 
-                        $member->update
-                        ([
+                        $member->update([
                             'members_permissions_id' => $setting->cm_permissions_id,
                         ]);
                         //   }
@@ -479,16 +474,12 @@ class CmMemberRepository implements CmMemberInterface
                         //}
 
                     } else {
-                        $member->update
-                        ([
+                        $member->update([
                             'members_permissions_id' => 1,
                         ]);
                     }
-
                 }
-
             }
-
         } else {
 
             return 'There must be an active financial year!';
@@ -542,8 +533,7 @@ class CmMemberRepository implements CmMemberInterface
                 ->whereNotNull('last_transaction_date') // عنده transaction
                 ->where('last_transaction_year', $financialyear->year) // سنة ال transaction هي سنة السنة المالية
                 ->whereDate('last_transaction_date', '<=', $date_allowed_vote_date)
-                ->update
-                ([
+                ->update([
                     'financial_status_id' => 3, //مسدد في الموعد
                 ]);
 
@@ -553,11 +543,9 @@ class CmMemberRepository implements CmMemberInterface
                 ->whereNotNull('last_transaction_date') // عنده transaction
                 ->where('last_transaction_year', $financialyear->year) // سنة ال transaction هي سنة السنة المالية
                 ->whereDate('last_transaction_date', '>', $date_allowed_vote_date)
-                ->update
-                ([
+                ->update([
                     'financial_status_id' => 4, //مسدد في الموعد
-                ])
-            ;
+                ]);
 
             foreach ($running_member_all as $member) {
 
@@ -567,8 +555,7 @@ class CmMemberRepository implements CmMemberInterface
                 foreach ($settings->reverse() as $setting) {
                     if ($member->member_kind_id == $setting->cm_members_type_id && $setting->cm_financial_status_id == $member->financial_status_id && $diffYears >= $setting->membership_period) {
 
-                        $member->update
-                        ([
+                        $member->update([
                             'members_permissions_id' => $setting->cm_permissions_id,
                         ]);
                         //   }
@@ -577,17 +564,12 @@ class CmMemberRepository implements CmMemberInterface
                         //}
 
                     } else {
-                        $member->update
-                        ([
+                        $member->update([
                             'members_permissions_id' => 1,
                         ]);
-
                     }
-
                 }
-
             }
-
         } else {
 
             return 'There must be an active financial year!';
@@ -611,7 +593,6 @@ class CmMemberRepository implements CmMemberInterface
                         'financial_status_id' => 1, // غير مطلوب السداد
                         'members_permissions_id' => 4, // كل الحقوق
                     ]);
-
                 } else {
                     $item->update([
                         'financial_status_id' => 2, // غير مسدد
@@ -651,22 +632,17 @@ class CmMemberRepository implements CmMemberInterface
                             $Last_Member_transaction = \Carbon\Carbon::parse($member->last_transaction_date)->format('Y-m-d'); // format: (yyyy-mm-dd)
 
                             if ($Last_Member_transaction <= $yearGlued_allowed_vote_date) {
-                                $member->update
-                                ([
+                                $member->update([
                                     'financial_status_id' => 3, //مسدد في الموعد
                                 ]);
 
                                 $paidontime = true;
-
                             } else // ( $Last_Member_transaction > $yearGlued_allowed_vote_date )
                             {
-                                $member->update
-                                ([
+                                $member->update([
                                     'financial_status_id' => 4, // مسدد بعد الموعد
                                 ]);
-
                             }
-
                         }
                         if ($setting->cm_financial_status_id == 1) {
                             $paidontime = true; // كانه داااافع
@@ -679,8 +655,7 @@ class CmMemberRepository implements CmMemberInterface
                             //if ($Last_Member_transaction <= $yearGlued_allowed_vote_date)
                             //{
                             //   if ($member->member_kind_id == 1){
-                            $member->update
-                            ([
+                            $member->update([
                                 'members_permissions_id' => $setting->cm_permissions_id,
                             ]);
                             //   }
@@ -689,19 +664,13 @@ class CmMemberRepository implements CmMemberInterface
                             //}
 
                         } else {
-                            $member->update
-                            ([
+                            $member->update([
                                 'members_permissions_id' => 1,
                             ]);
-
                         }
-
                     }
-
                 }
-
             }
-
         } else {
 
             return 'There must be an active financial year!';
@@ -758,9 +727,9 @@ class CmMemberRepository implements CmMemberInterface
         }
         if ($request->has('sponser_ids') && $request->sponser_ids !== "[]") {
 
-             $sponser_ids = is_array($request->sponser_ids) ? $request->sponser_ids : json_decode($request->sponser_ids, true);
-            $models->whereHas('sponsors',function ($q) use ($sponser_ids){
-                $q->whereIn('sponsor_id',$sponser_ids);
+            $sponser_ids = is_array($request->sponser_ids) ? $request->sponser_ids : json_decode($request->sponser_ids, true);
+            $models->whereHas('sponsors', function ($q) use ($sponser_ids) {
+                $q->whereIn('sponsor_id', $sponser_ids);
             });
         }
 
@@ -824,21 +793,19 @@ class CmMemberRepository implements CmMemberInterface
             $models->where('family_name', 'like', $request->family_name . '%');
         }
 
-        if ($request->year)
-        {
-            $models->whereRelation('lastCmTransaction',function ($q) use ($request){
-                $q->where('year',$request->year);
+        if ($request->year) {
+            $models->whereRelation('lastCmTransaction', function ($q) use ($request) {
+                $q->where('year', $request->year);
             });
         }
-        if (isset($request->gender) &&($request->gender == 0 || $request->gender == 1)) {
+        if (isset($request->gender) && ($request->gender == 0 || $request->gender == 1)) {
             $models->where('gender', $request->gender);
         }
 
         if ($request->per_page) {
             return ['data' => $models->paginate($request->per_page), 'paginate' => true];
-        }  else {
+        } else {
             return ['data' => $models->get(), 'paginate' => false];
         }
     }
-
 }

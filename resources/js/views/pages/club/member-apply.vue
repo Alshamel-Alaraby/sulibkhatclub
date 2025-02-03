@@ -538,9 +538,9 @@ export default {
 
                 let rowsPerPage;
                 if (columnCount < 6) {
-                    rowsPerPage = 55;
+                    rowsPerPage = 36;
                 } else {
-                    rowsPerPage = 30;
+                    rowsPerPage = 19;
                 }
 
                 const totalPages = Math.ceil(members.length / rowsPerPage);

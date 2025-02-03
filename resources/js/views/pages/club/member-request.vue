@@ -57,6 +57,7 @@ export default {
     },
     data() {
         return {
+            showSponsor: 0,
             selectedNameMember: [],
             membersNames: [],
             sponsorsNames: [],
@@ -289,10 +290,10 @@ export default {
                 }
 
                 let rowsPerPage;
-                if (columnCount < 6) {
-                    rowsPerPage = 55;
+                if (columnCount < 5) {
+                    rowsPerPage = 36;
                 } else {
-                    rowsPerPage = 30;
+                    rowsPerPage = 19;
                 }
 
                 const totalPages = Math.ceil(members.length / rowsPerPage);
@@ -312,6 +313,19 @@ export default {
 
                 let printableContent = "";
 
+                const landscapeStyle =
+                    columnCount > 7
+                        ? `<style>
+                @page {
+                    size: landscape;
+                }
+                table.table {
+                    width: 100%;
+                    font-size: 10px; /* Adjust font size for landscape */
+                }
+            </style>`
+                        : "";
+
                 for (let page = 0; page < totalPages; page++) {
                     const startIndex = page * rowsPerPage;
                     const pageRows = allRows.slice(
@@ -328,6 +342,7 @@ export default {
 
                     printableContent += `
                 <div style="page-break-after: always;">
+                    ${landscapeStyle} <!-- Include landscape styles if needed -->
                     ${header}
                     ${tableClone.outerHTML}
                 </div>
@@ -340,7 +355,7 @@ export default {
 
                 $(container).printThis({
                     header: null,
-                    pageTitle: "Members Rreqest",
+                    pageTitle: "Members Request",
                     importCSS: true,
                     canvas: false,
                     afterPrint: () => {
@@ -895,6 +910,22 @@ export default {
                                     </button>
                                 </div>
                                 <!-- end create and printer -->
+                                <div class="form-group">
+                                    <label class="control-label">
+                                        {{ $t("general.showSponsorPrint") }}
+                                    </label>
+                                    <select
+                                        v-model="showSponsor"
+                                        class="form-control"
+                                    >
+                                        <option value="1">
+                                            {{ $t("general.Yes") }}
+                                        </option>
+                                        <option value="0">
+                                            {{ $t("general.No") }}
+                                        </option>
+                                    </select>
+                                </div>
                             </div>
                             <div
                                 class="col-xs-10 col-md-9 col-lg-7 d-flex align-items-center justify-content-end"
@@ -1644,57 +1675,112 @@ export default {
                             <loader size="large" v-if="isLoader" />
                             <!--       end loader       -->
                             <div
-                                class="row data-header-print"
+                                style="display: none"
+                                class="data-header-print"
                                 :class="[
                                     $i18n.locale == 'ar'
                                         ? 'dir-print-rtl'
                                         : 'dir-print-ltr',
                                 ]"
                             >
-                                <div
-                                    class="col-md-4"
-                                    style="
-                                        width: 15%;
-                                        padding: 0 0 10px 20px;
-                                        display: inline-block;
-                                    "
-                                >
+                                <!-- Left section with logo -->
+                                <div style="width: 15%; padding-left: 20px">
                                     <img
-                                        style="width: 70%"
+                                        style="width: 100%"
                                         :src="'/images/sulib.png'"
                                     />
                                 </div>
+
+                                <!-- Center section with headings -->
                                 <div
                                     class="text-center"
                                     style="
-                                        width: 69%;
-                                        padding-top: 5px;
-                                        display: inline-block;
+                                        width: 65%;
+                                        display: flex;
+                                        flex-direction: column;
+                                        align-items: center;
                                     "
                                 >
+                                    <h2 style="font-weight: bold">
+                                        {{ $t("general.SulaibikhatClub") }}
+                                    </h2>
+                                    <h2 style="font-weight: bold">
+                                        {{
+                                            $t(
+                                                "general.StatementOfParticipantsAwaitingAcceptance"
+                                            )
+                                        }}
+                                    </h2>
+                                </div>
+
+                                <!-- Right section with total count and sponsors -->
+                                <div
+                                    class="row"
+                                    style="
+                                        display: flex;
+                                        flex-direction: column;
+                                        align-items: flex-start;
+                                        width: 20%;
+                                    "
+                                >
+                                    <!-- Total Count -->
                                     <div
-                                        style="
-                                            width: 100%;
-                                            display: inline-block;
-                                        "
+                                        class="text-left p-0 m-0"
+                                        style="width: 100%; margin-bottom: 10px"
                                     >
-                                        <h2 style="font-weight: bold">
-                                            {{ $t("general.SulaibikhatClub") }}
-                                        </h2>
-                                        <h2 style="font-weight: bold">
-                                            {{
-                                                $t(
-                                                    "general.StatementOfParticipantsAwaitingAcceptance"
-                                                )
-                                            }}
-                                        </h2>
+                                        <h5
+                                            style="
+                                                font-size: 15px;
+                                                font-weight: bold;
+                                                padding-left: 20px;
+                                            "
+                                        >
+                                            {{ $t("general.totalCount") }} :
+                                            {{ members.length }}
+                                        </h5>
+                                    </div>
+
+                                    <!-- Sponsor Labels -->
+                                    <div
+                                        class="text-left p-0 m-0"
+                                        v-if="
+                                            members.length > 0 &&
+                                            parseInt(showSponsor) == 1
+                                        "
+                                        style="width: 100%"
+                                    >
+                                        <h3
+                                            style="
+                                                font-weight: bold;
+                                                margin: 0 0 5px 0;
+                                                font-size: 15px;
+                                                padding-left: 30px;
+                                            "
+                                        >
+                                            {{ getCompanyKey("sponsor") }}:
+                                        </h3>
+                                        <ul
+                                            style="
+                                                padding-left: 30px;
+                                                margin: 0;
+                                                font-size: 20px;
+                                            "
+                                        >
+                                            <li
+                                                v-for="sponsor in printSponsor"
+                                                :key="sponsor"
+                                                style="
+                                                    list-style: none;
+                                                    font-size: 20px;
+                                                "
+                                            >
+                                                {{ sponsor }}
+                                            </li>
+                                        </ul>
                                     </div>
                                 </div>
-                                <div
-                                    class="text-center"
-                                    style="width: 15%; display: inline-block"
-                                ></div>
                             </div>
+
                             <table
                                 class="table table-borderless table-hover table-centered m-0"
                                 :class="[
@@ -2188,15 +2274,16 @@ export default {
     display: none;
 }
 @media print {
-    /* General Table Styling */
+    /* Ensure the table uses the full width and handles overflow */
     table.table {
         width: 100%;
         border-collapse: collapse;
         border: 1px solid black;
-        font-size: 12px;
-        min-height: 200px;
+        font-size: 12px; /* Reduced font size for better fit */
+        overflow-x: auto; /* Handle horizontal overflow */
     }
 
+    /* Table header styling */
     table.table thead {
         display: table-header-group;
         background-color: #f5f5f5;
@@ -2204,50 +2291,78 @@ export default {
         text-align: center;
         font-weight: bold;
         border-bottom: 2px solid black;
+        font-size: 14px; /* Slightly larger font size for headers */
     }
 
+    /* Prevent rows from breaking across pages */
     table.table tbody tr {
         page-break-inside: avoid;
     }
 
+    /* Cell styling */
     table.table th,
     table.table td {
         border: 1px solid black;
-        padding: 8px;
+        padding: 4px; /* Reduced padding for better fit */
         text-align: left;
+        font-weight: normal; /* Normal font weight for better readability */
     }
 
+    /* Remove hover effect in print view */
     table.table-hover tbody tr:hover {
         background-color: transparent;
     }
 
+    /* Center aligned cells */
     table.table-centered td,
     table.table-centered th {
         text-align: center;
         vertical-align: middle;
     }
 
+    /* Borderless cells */
     table.table-borderless td,
     table.table-borderless th {
         border: 1px solid black;
     }
 
+    /* Body margin and padding */
     body {
         margin: 0;
         padding: 0;
     }
 
+    /* Header styling for print */
     .data-header-print {
         display: flex;
         justify-content: space-between;
         align-items: center;
         width: 100%;
         margin-bottom: 10px;
+        margin-left: 30px;
         background-color: white;
-
         padding: 10px 0;
+        border-bottom: 2px solid black; /* Adds a clear visual separation */
     }
 
+    .data-header-print h2 {
+        margin: 5px 0; /* Adjust spacing between headings */
+    }
+
+    .data-header-print .row {
+        margin-top: 10px; /* Add some space above the sponsor section */
+    }
+
+    .data-header-print ul {
+        padding-left: 20px;
+        margin: 5px 0;
+    }
+
+    .data-header-print li {
+        font-size: 12px; /* Adjust font size for better readability */
+    }
+
+    /* Additional Styling for RTL */
     .dir-print-rtl {
         direction: rtl;
         text-align: right;
